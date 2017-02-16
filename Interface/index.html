@@ -28,50 +28,62 @@
     <form class="paramForm">
       <div class="formBox satellite">
         <h3>Satellite</h3>
-    	  <input type="radio" name="satellite" value="Sentinel-1"> Sentinel-1<br>
-    	  <input type="radio" name="satellite" value="Sentinel-2" checked> Sentinel-2<br>
-    	  <input type="radio" name="satellite" value="Sentinel-3"> Sentinel-3<br>
+    	  <input type="radio" name="satellite" value="Sentinel-1"><p>Sentinel-1</p>
+    	  <input type="radio" name="satellite" value="Sentinel-2" checked><p>Sentinel-2</p>
+    	  <input type="radio" name="satellite" value="Sentinel-3"><p>Sentinel-3</p>
       </div>
       <div class="formBox cloud">
     		<h3>Cloud Cover (%)</h3>
     		<h4>From: </h4>
     		<input type="number" name="clouds-from" min="0" max="100" value="0">
+        <br>
     		<h4>To: </h4>
     		<input type="number" name="clouds-to" min="0" max="100" value="5">
       </div>
       <div class="formBox timeline">
     		<h3>Timeline</h3>
     		<h4>From:</h4>
-    		<input type="date" name="date-from" value="2016-01-01">
+    		<input type="date" name="date-from" value="2016-04-01">
+        <br>
     		<h4>To:</h4>
-    		<input type="date" name="date-to" value="2017-02-01">
+    		<input type="date" name="date-to" value="2016-09-01">
       </div>
       <div class="formBox map">
         <div id="map"></div>
       </div>
       <div class="btnHolder">
   		    <input type="button" class="getSat btn" value="Find images">
-  		    <input type="reset" class="btn reset">
+  		    <input type="reset" class="btn reset" value="Reset">
       </div>
     </form>
   </div>
 
 	<script>
     /* globals $ nrs L Wkt */
-    $('.getSat').click(function () {
-      var formData = $('.paramForm').serializeArray()
 
+    $('.getSat').click(function () {
+      checkFormErrors()
+
+      var formData = $('.paramForm').serializeArray()
       var wkt = new Wkt.Wkt()
       wkt.read(JSON.stringify(defGeomLayer.toGeoJSON()))
 
-      console.log(nrs.getParamObj(
+      console.log(nrs.getESAString(nrs.getParamObj(
         formData,
         wkt.write()
-      ))
+      )))
+    })
+
+    var checkFormErrors = function () {
+      console.log('checking for errors... OK!')
+    }
+
+    $('.formBox.satellite > p').click(function () {
+      $(this).prev().click()
     })
 
     var map = L.map('map', {
-      center: [ 55.787016, 12.522536 ],
+      center: [ 55.3322691334024, 10.3491210937499 ],
       zoom: 6,
       maxZoom: 12,
       minZoom: 5,
@@ -88,11 +100,11 @@
     }).addTo(map)
 
     var defGeomLatLng = [
-      [54.463652645044796, 10.8050537109375],
-      [54.463652645044796, 12.8759765625000],
-      [56.225031333026806, 12.8759765625000],
-      [56.225031333026806, 10.8050537109375],
-      [54.463652645044796, 10.8050537109375]
+      [54.575245800783310, 9.52514648437500],
+      [54.575245800783310, 11.1126708984375],
+      [55.936894769039434, 11.1126708984375],
+      [55.936894769039434, 9.52514648437500],
+      [54.575245800783310, 9.52514648437500]
     ]
 
     var defGeomLayer = L.polygon(defGeomLatLng, {
@@ -100,10 +112,31 @@
       draggable: true
     }).addTo(map)
 
+    defGeomLayer.enableEdit()
+
     defGeomLayer
       .on('dblclick', L.DomEvent.stop)
       .on('dblclick', defGeomLayer.toggleEdit)
-    defGeomLayer.enableEdit()
+
+    $('.reset').click(function () {
+      map.panTo([55.33226, 10.34912])
+      defGeomLayer
+        .setLatLngs(defGeomLatLng)
+        .redraw()
+        .toggleEdit()
+      defGeomLayer.toggleEdit()
+    })
+
+    $.ajax({
+      url: 'https://scihub.copernicus.eu/dhus/search?q=footprint:%22Intersects(POLYGON((9.613037109375002%2054.60071000748466,11.200561523437502%2054.60071000748466,11.200561523437502%2055.961500968488195,9.613037109375002%2055.961500968488195,9.613037109375002%2054.60071000748466)))%22%20AND%20platformname:Sentinel-2%20AND%20cloudcoverpercentage:[0%20TO%205]%20AND%20ingestiondate:[2016-04-01T00:00:00.000Z%20TO%202016-09-01T00:00:00.000Z]&format=json',
+      password: 'casperfibaek',
+      username: 'Goldfish',
+      xhrFields: {
+        withCredentials: true
+      },
+      crossOrigin: true,
+      dataType: 'json'
+    })
 
 	</script>
 </body>
