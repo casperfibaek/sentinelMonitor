@@ -10,6 +10,7 @@ Allows you to set various parameters, such as:
   * Bands
   * Satellite
 
-Created using electron.
+Local application using electron
+Website using express/api
 
 Currently under development..

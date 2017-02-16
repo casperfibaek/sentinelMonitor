@@ -2,38 +2,51 @@
 <html>
 <head>
 	<title>Get information</title>
-  <script
-    src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous">
-  </script>
+
+  <!-- external -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <!-- internal -->
+  <script src="js/NirasSentinelAPI.js"></script>
+
+  <!-- stylesheets -->
+  <link rel="stylesheet" type="text/css" href="css/custom.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+
 </head>
 <body>
-	<h1>Sentinel data finder</h1>
-	<form id="paramForm">
-	  <input type="radio" name="satellite" value="Sentinel-1"> Sentinel-1<br>
-	  <input type="radio" name="satellite" value="Sentinel-2" checked> Sentinel-2<br>
-	  <input type="radio" name="satellite" value="Sentinel-3"> Sentinel-3<br>
-		<p>Cloud Cover (%)</p>
-		From: <br>
-		<input type="number" name="clouds-from" min="0" max="100" value="0"><br>
-		To: <br>
-		<input type="number" name="clouds-to" min="0" max="100" value="5"><br>
-		<p>Timeline</p>
-		From: </br>
-		<input type="date" name="date-from" value="2016-01-01"><br>
-		To: </br>
-		<input type="date" name="date-to" value="2017-02-01"><br>
-		<br>
-		<input type="submit" value="Submit">
-		<input type="reset">
-	</form>
+
+  <div class="formContainer">
+    <div class="header">
+      <h1>Sentinel data finder</h1>
+    </div>
+    <form id="paramForm">
+  	  <input type="radio" name="satellite" value="Sentinel-1"> Sentinel-1<br>
+  	  <input type="radio" name="satellite" value="Sentinel-2" checked> Sentinel-2<br>
+  	  <input type="radio" name="satellite" value="Sentinel-3"> Sentinel-3<br>
+  		<h3>Cloud Cover (%)</h3>
+  		<h4>From: </h4>
+  		<input type="number" name="clouds-from" min="0" max="100" value="0">
+  		<h4>To: </h4>
+  		<input type="number" name="clouds-to" min="0" max="100" value="5">
+  		<h3>Timeline</h3>
+  		<h4>From:</h4>
+  		<input type="date" name="date-from" value="2016-01-01">
+  		<h4>To:</h4>
+  		<input type="date" name="date-to" value="2017-02-01">
+      <hr>
+  		<input type="button" class="getSat bottom" value="Click Me!">
+  		<input type="reset" class="bottom">
+  	</form>
+  </div>
 
 	<script>
-    /* global $ */
-    $('form').submit(function (event) {
-      console.log($(this).serializeArray())
-      event.preventDefault()
+    /* globals $ nrs */
+
+    $('.getSat').click(function () {
+      var formData = $('#paramForm').serializeArray()
+      console.log(nrs.getParamObj(formData))
     })
+
 	</script>
 </body>
