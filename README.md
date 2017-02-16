@@ -10,4 +10,6 @@ Allows you to set various parameters, such as:
   * Bands
   * Satellite
 
+Created using electron.
+
 Currently under development..
