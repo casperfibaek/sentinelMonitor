@@ -1,16 +1,31 @@
 * {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans Light', 'Open Sans Regular', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #42464e;
+}
+
+#map {
+  height: 300px;
+  width: 100%;
+  margin-top: 6px;
+  background: #c9ccc8;
 }
 
 .formContainer{
   margin: 0 auto;
-  max-width: 400px;
+  max-width: 320px;
   padding-right: 20px;
   padding-left: 20px;
   padding-bottom: 60px;
   padding-top: 20px;
   background: #e4e6e3;
   color: #2f2f33;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 .formContainer > .header {
@@ -20,25 +35,77 @@
   padding-right: 20px;
   margin-right: 20px;
   margin-top: -20px;
-
   padding-bottom: 2px;
   padding-top: 2px;
   background: #2f2f33;
   color: #e4e6e3;
 }
 
-#paramForm{
+.paramForm{
   margin-top: 20px;
 }
 
-.bottom{
-  float: right;
-  margin-right: 10px;
+.formBox{
+  background: #c9ccc8;
+  padding-top: 4px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
 }
 
-#paramForm > hr{
+input {
+  border: none;
+  padding: 4px;
+  padding-left: 8px;
+}
+
+.formBox.satellite > input{
+  margin-top: 10px;
+}
+
+.btnHolder{
   margin-top: 30px;
-  margin-bottom: 10px;
+}
+
+.btn{
+  cursor: pointer;
+  float: right;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .5rem 1rem;
+  font-size: 1rem;
+  border-radius: .25rem;
+  transition: all .12s ease-in-out;
+}
+
+.btn.getSat{
+  color: #fff;
+  background-color: #0275d8;
+  border-color: #0275d8;
+}
+
+.btn.getSat:hover{
+  background-color: #025aa5;
+  border-color: #01549b;
+}
+
+.btn.reset{
+  margin-right: 10px;
+  color: #fff;
+  background-color: #db4c0e;
+  border-color: #db4c0e;
+}
+
+.btn.reset:hover{
+  background-color: #c64b16;
+  border-color: #ba4c1d;
 }
 
 h1{
@@ -46,10 +113,22 @@ h1{
 }
 
 h3{
+  text-align: center;
   margin-bottom: 6px;
+  margin-top: 4px;
 }
 
 h4{
   margin-bottom: 2px;
   margin-top: 6px;
+}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive{
+  border-radius: 50% !important;
+  margin-left: -7px !important;
+  margin-top: -7px !important;
+  width: 14px !important;
+  height: 14px !important;
 }

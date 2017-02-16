@@ -5,48 +5,105 @@
 
   <!-- external -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 
   <!-- internal -->
   <script src="js/NirasSentinelAPI.js"></script>
+  <script src="js/Leaflet.Editable.js"></script>
+  <script src="js/Path.Drag.js"></script>
+  <script src="js/wicket.js"></script>
 
   <!-- stylesheets -->
   <link rel="stylesheet" type="text/css" href="css/custom.css">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 
 </head>
 <body>
 
   <div class="formContainer">
     <div class="header">
-      <h1>Sentinel data finder</h1>
+      <h1>Sentinel Data Finder</h1>
     </div>
-    <form id="paramForm">
-  	  <input type="radio" name="satellite" value="Sentinel-1"> Sentinel-1<br>
-  	  <input type="radio" name="satellite" value="Sentinel-2" checked> Sentinel-2<br>
-  	  <input type="radio" name="satellite" value="Sentinel-3"> Sentinel-3<br>
-  		<h3>Cloud Cover (%)</h3>
-  		<h4>From: </h4>
-  		<input type="number" name="clouds-from" min="0" max="100" value="0">
-  		<h4>To: </h4>
-  		<input type="number" name="clouds-to" min="0" max="100" value="5">
-  		<h3>Timeline</h3>
-  		<h4>From:</h4>
-  		<input type="date" name="date-from" value="2016-01-01">
-  		<h4>To:</h4>
-  		<input type="date" name="date-to" value="2017-02-01">
-      <hr>
-  		<input type="button" class="getSat bottom" value="Click Me!">
-  		<input type="reset" class="bottom">
-  	</form>
+    <form class="paramForm">
+      <div class="formBox satellite">
+        <h3>Satellite</h3>
+    	  <input type="radio" name="satellite" value="Sentinel-1"> Sentinel-1<br>
+    	  <input type="radio" name="satellite" value="Sentinel-2" checked> Sentinel-2<br>
+    	  <input type="radio" name="satellite" value="Sentinel-3"> Sentinel-3<br>
+      </div>
+      <div class="formBox cloud">
+    		<h3>Cloud Cover (%)</h3>
+    		<h4>From: </h4>
+    		<input type="number" name="clouds-from" min="0" max="100" value="0">
+    		<h4>To: </h4>
+    		<input type="number" name="clouds-to" min="0" max="100" value="5">
+      </div>
+      <div class="formBox timeline">
+    		<h3>Timeline</h3>
+    		<h4>From:</h4>
+    		<input type="date" name="date-from" value="2016-01-01">
+    		<h4>To:</h4>
+    		<input type="date" name="date-to" value="2017-02-01">
+      </div>
+      <div class="formBox map">
+        <div id="map"></div>
+      </div>
+      <div class="btnHolder">
+  		    <input type="button" class="getSat btn" value="Find images">
+  		    <input type="reset" class="btn reset">
+      </div>
+    </form>
   </div>
 
 	<script>
-    /* globals $ nrs */
-
+    /* globals $ nrs L Wkt */
     $('.getSat').click(function () {
-      var formData = $('#paramForm').serializeArray()
-      console.log(nrs.getParamObj(formData))
+      var formData = $('.paramForm').serializeArray()
+
+      var wkt = new Wkt.Wkt()
+      wkt.read(JSON.stringify(defGeomLayer.toGeoJSON()))
+
+      console.log(nrs.getParamObj(
+        formData,
+        wkt.write()
+      ))
     })
+
+    var map = L.map('map', {
+      center: [ 55.787016, 12.522536 ],
+      zoom: 6,
+      maxZoom: 12,
+      minZoom: 5,
+      editable: true,
+      zoomControl: false,
+      attributionControl: false
+    })
+
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
+        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      maxZoom: 21,
+      maxNativeZoom: 18
+    }).addTo(map)
+
+    var defGeomLatLng = [
+      [54.463652645044796, 10.8050537109375],
+      [54.463652645044796, 12.8759765625000],
+      [56.225031333026806, 12.8759765625000],
+      [56.225031333026806, 10.8050537109375],
+      [54.463652645044796, 10.8050537109375]
+    ]
+
+    var defGeomLayer = L.polygon(defGeomLatLng, {
+      color: '#ff0033',
+      draggable: true
+    }).addTo(map)
+
+    defGeomLayer
+      .on('dblclick', L.DomEvent.stop)
+      .on('dblclick', defGeomLayer.toggleEdit)
+    defGeomLayer.enableEdit()
 
 	</script>
 </body>
