@@ -79,8 +79,8 @@ const NirasSentinelAPI = (function () {
         image.sunAngle = SunCalc.getPosition(
           new Date(image.date.beginposition), 55.40, 10.40
         )
-        image.sunAngle.azimuth = (image.sunAngle.azimuth * 180) / Math.PI
-        image.sunAngle.altitude = (image.sunAngle.altitude * 180) / Math.PI
+        image.sunAngle.azimuth *= 180 / Math.PI
+        image.sunAngle.altitude *= 180 / Math.PI
 
         metaData.images.push(image)
       }
@@ -92,3 +92,4 @@ const NirasSentinelAPI = (function () {
 })()
 
 const nrs = new NirasSentinelAPI() // eslint-disable-line
+exports.nrs
