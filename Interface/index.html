@@ -13,130 +13,50 @@
   <script src="js/Leaflet.Editable.js"></script>
   <script src="js/Path.Drag.js"></script>
   <script src="js/wicket.js"></script>
+  <script src="js/suncalc.js"></script>  
+  <script src="js/sample.js"></script>
 
   <!-- stylesheets -->
   <link rel="stylesheet" type="text/css" href="css/custom.css">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 
 </head>
-<body>
-
-  <div class="formContainer">
-    <div class="header">
-      <h1>Sentinel Data Finder</h1>
+  <body>
+    <div class="formContainer">
+      <div class="header">
+        <h1>Sentinel Data Finder</h1>
+      </div>
+      <form class="paramForm">
+        <div class="formBox satellite">
+          <h3>Satellite</h3>
+      	  <input type="radio" name="satellite" value="Sentinel-1"><p>Sentinel-1</p>
+      	  <input type="radio" name="satellite" value="Sentinel-2" checked><p>Sentinel-2</p>
+      	  <input type="radio" name="satellite" value="Sentinel-3"><p>Sentinel-3</p>
+        </div>
+        <div class="formBox cloud">
+      		<h3>Cloud Cover (%)</h3>
+      		<h4>From: </h4>
+      		<input type="number" name="clouds-from" min="0" max="100" value="0">
+          <br>
+      		<h4>To: </h4>
+      		<input type="number" name="clouds-to" min="0" max="100" value="5">
+        </div>
+        <div class="formBox timeline">
+      		<h3>Timeline</h3>
+      		<h4>From:</h4>
+      		<input type="date" name="date-from" value="2016-04-01">
+          <br>
+      		<h4>To:</h4>
+      		<input type="date" name="date-to" value="2016-09-01">
+        </div>
+        <div class="formBox map">
+          <div id="map"></div>
+        </div>
+        <div class="btnHolder">
+    		    <input type="button" class="getSat btn" value="Find images">
+    		    <input type="reset" class="btn reset" value="Reset">
+        </div>
+      </form>
     </div>
-    <form class="paramForm">
-      <div class="formBox satellite">
-        <h3>Satellite</h3>
-    	  <input type="radio" name="satellite" value="Sentinel-1"><p>Sentinel-1</p>
-    	  <input type="radio" name="satellite" value="Sentinel-2" checked><p>Sentinel-2</p>
-    	  <input type="radio" name="satellite" value="Sentinel-3"><p>Sentinel-3</p>
-      </div>
-      <div class="formBox cloud">
-    		<h3>Cloud Cover (%)</h3>
-    		<h4>From: </h4>
-    		<input type="number" name="clouds-from" min="0" max="100" value="0">
-        <br>
-    		<h4>To: </h4>
-    		<input type="number" name="clouds-to" min="0" max="100" value="5">
-      </div>
-      <div class="formBox timeline">
-    		<h3>Timeline</h3>
-    		<h4>From:</h4>
-    		<input type="date" name="date-from" value="2016-04-01">
-        <br>
-    		<h4>To:</h4>
-    		<input type="date" name="date-to" value="2016-09-01">
-      </div>
-      <div class="formBox map">
-        <div id="map"></div>
-      </div>
-      <div class="btnHolder">
-  		    <input type="button" class="getSat btn" value="Find images">
-  		    <input type="reset" class="btn reset" value="Reset">
-      </div>
-    </form>
-  </div>
-
-	<script>
-    /* globals $ nrs L Wkt */
-
-    $('.getSat').click(function () {
-      checkFormErrors()
-
-      var formData = $('.paramForm').serializeArray()
-      var wkt = new Wkt.Wkt()
-      wkt.read(JSON.stringify(defGeomLayer.toGeoJSON()))
-
-      console.log(nrs.getESAString(nrs.getParamObj(
-        formData,
-        wkt.write()
-      )))
-    })
-
-    var checkFormErrors = function () {
-      console.log('checking for errors... OK!')
-    }
-
-    $('.formBox.satellite > p').click(function () {
-      $(this).prev().click()
-    })
-
-    var map = L.map('map', {
-      center: [ 55.3322691334024, 10.3491210937499 ],
-      zoom: 6,
-      maxZoom: 12,
-      minZoom: 5,
-      editable: true,
-      zoomControl: false,
-      attributionControl: false
-    })
-
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-      maxZoom: 21,
-      maxNativeZoom: 18
-    }).addTo(map)
-
-    var defGeomLatLng = [
-      [54.575245800783310, 9.52514648437500],
-      [54.575245800783310, 11.1126708984375],
-      [55.936894769039434, 11.1126708984375],
-      [55.936894769039434, 9.52514648437500],
-      [54.575245800783310, 9.52514648437500]
-    ]
-
-    var defGeomLayer = L.polygon(defGeomLatLng, {
-      color: '#ff0033',
-      draggable: true
-    }).addTo(map)
-
-    defGeomLayer.enableEdit()
-
-    defGeomLayer
-      .on('dblclick', L.DomEvent.stop)
-      .on('dblclick', defGeomLayer.toggleEdit)
-
-    $('.reset').click(function () {
-      map.panTo([55.33226, 10.34912])
-      defGeomLayer
-        .setLatLngs(defGeomLatLng)
-        .redraw()
-        .toggleEdit()
-      defGeomLayer.toggleEdit()
-    })
-
-    $.ajax({
-      url: 'https://scihub.copernicus.eu/dhus/search?q=footprint:%22Intersects(POLYGON((9.613037109375002%2054.60071000748466,11.200561523437502%2054.60071000748466,11.200561523437502%2055.961500968488195,9.613037109375002%2055.961500968488195,9.613037109375002%2054.60071000748466)))%22%20AND%20platformname:Sentinel-2%20AND%20cloudcoverpercentage:[0%20TO%205]%20AND%20ingestiondate:[2016-04-01T00:00:00.000Z%20TO%202016-09-01T00:00:00.000Z]&format=json',
-      password: 'casperfibaek',
-      username: 'Goldfish',
-      xhrFields: {
-        withCredentials: true
-      },
-      crossOrigin: true,
-      dataType: 'json'
-    })
-
-	</script>
-</body>
+  	<script src="js/init.js"></script>
+  </body>
+</html>
