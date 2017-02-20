@@ -52,20 +52,27 @@ const SentinelAPI = (function () {
       return 'Hello world!'
     }
 
-    this.makeSense = function (obj) {
+    this.toGeoJSON = function (obj) {
+      let wkt = new wicket.Wkt()
+      wkt.read(obj)
+      return wkt.toJson()
+    }
+
+    this.makeSense = function (obj, geom) {
       var m = obj.feed
       let metaData = {
         'amount': m.entry.length,
         'searchParam': m.id,
         'images': []
       }
+      let geomArea = turf.area(geom) * 0.000001 // km2
 
       for (let i = 0; i < metaData.amount; i++) {
         var curr = m.entry[i]
 
         let image = {
           'date': {},
-          'clouds': Number(curr.double.content),
+          'clouds': round(Number(curr.double.content), 2),
           'footprint': {},
           'information': {},
           'sunAngle': {},
@@ -79,32 +86,44 @@ const SentinelAPI = (function () {
         }
 
         for (let j = 0; j < curr.str.length; j++) {
+          if (curr.str[j].name === 'gmlfootprint') { continue }
           image.information[curr.str[j].name] = curr.str[j].content
         }
 
         let wkt = new wicket.Wkt()
         wkt.read(image.information.footprint)
         let json = wkt.toJson()
+        delete image.information.footprint
         let center = {
           'geom': gp.parse(turf.centerOfMass(json), 4)
         }
 
-        let simple = turf.simplify(json, 200, false)
+        let simple = turf.simplify(json, 300, false)
         image.footprint = gp.parse(simple, 4)
-        image.footprint.area = turf.area(image.footprint) * 0.0001
+        image.footprint.area = round(turf.area(image.footprint) * 0.000001, 2) // km2
 
         center.lat = center.geom.geometry.coordinates[1]
         center.lng = center.geom.geometry.coordinates[0]
         image.sunAngle = SunCalc.getPosition(
           new Date(image.date.beginposition), center.lat, center.lng
         )
-        image.sunAngle.azimuth *= 180 / Math.PI
-        image.sunAngle.altitude *= 180 / Math.PI
+        image.sunAngle.azimuth = round(image.sunAngle.azimuth * 180 / Math.PI, 2)
+        image.sunAngle.altitude = round(image.sunAngle.altitude * 180 / Math.PI, 2)
+
+        image.intersection = {
+          'geom': gp.parse(turf.intersect(image.footprint, geom), 5)
+        }
+        image.intersection.area = round(turf.area(image.intersection.geom) * 0.000001, 2) // km2
+        image.cover = round((image.intersection.area / geomArea) * 100, 2)
 
         metaData.images.push(image)
       }
 
       return metaData
+    }
+
+    var round = function (num, roundTo) {
+      return Math.round(num * Math.pow(10, roundTo)) / Math.pow(10, roundTo)
     }
   }
   return api

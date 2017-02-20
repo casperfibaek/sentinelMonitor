@@ -1,5 +1,6 @@
 const path = require('path')
 const request = require('request')
+const fs = require('fs')
 const pg = require('pg')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -95,7 +96,23 @@ app.post('/ESA_Request', function (req, res) {
 
   request.get(esaString, {auth: credentials}, function (error, response, result) {
     if (!error && response.statusCode === 200) {
-      return res.status(200).json(nrs.makeSense(JSON.parse(result)))
+      let ESAreply = JSON.parse(result) // STRING --> json
+      let aoi = nrs.toGeoJSON(body.geom) // WKT --> GeoJSON0
+      let sense = nrs.makeSense(ESAreply, aoi)
+
+      for (let i = 0; i < sense.images.length; i++) {
+        let thumb = sense.images[i].thumbnail.href
+        let imgID = sense.images[i].information.identifier + '-ql'
+
+        request
+          .get(thumb, {auth: credentials})
+          .on('error', function (err) {
+            console.log(err)
+          })
+          .pipe(fs.createWriteStream(`./thumbs/${imgID}.jpeg`))
+      }
+
+      return res.status(200).json(sense)
     } else {
       return res.status(500).json({
         status: 'error',
@@ -103,4 +120,13 @@ app.post('/ESA_Request', function (req, res) {
       })
     }
   })
+})
+
+/* ------------------------------
+ * END POINT FOR IMAGES
+ * -----------------------------
+ */
+app.get('/images/:imageID', function (req, res) {
+  let imgID = req.param('imageID')
+  res.sendFile(`./thumbs/${imgID}.jpeg`)
 })

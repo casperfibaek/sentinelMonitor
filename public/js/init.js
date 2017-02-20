@@ -75,7 +75,7 @@ $('.getSat').click(function () {
         bob = res
       })
       .fail(function (xhr, status, error) {
-        console.log('AJAX call failed: ', xhr, JSON.parse(xhr.responseText).message)
+        console.log('AJAX call failed: ', xhr)
       })
   }
 })
@@ -106,7 +106,7 @@ $('.getLogin').click(function () {
       }
     })
     .fail(function (jqXHR, status, error) {
-      console.log('AJAX call failed: ' + status + ', ' + error)
+      console.log('AJAX call failed: ', jqXHR, status, error)
     })
 })
 
