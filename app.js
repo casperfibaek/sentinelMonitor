@@ -12,6 +12,15 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// Set basic views (concate and uglify)
+app.set('views', path.join(__dirname, 'views'))
+
+// Name a public folder (referenced in the views)
+app.use(express.static(path.join(__dirname, 'public')))
+
+// Change from jade to HBS (Stylistic choice)
+app.set('view engine', 'hbs')
+
 app.listen(3000, function () {
   console.log('The Sentinel Monitor API has been started')
 })

@@ -1,11 +1,10 @@
 {
-  "name": "users",
-  "version": "1.0.0",
-  "description": "",
-  "main": "user.js",
+  "name": "sentinel_monitor",
+  "version": "0.1.0",
+  "description": "A tool to monitor areas using the ESA Copernicus Programme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Casper Samsø Fibæk - NIRAS",
+  "license": "MIT"
 }

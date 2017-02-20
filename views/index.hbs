@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<div class="formContainer">
+  <div class="header">
+    <h1>Sentinel Data Finder</h1>
+  </div>
+  <form class="paramForm">
+    <div class="formBox satellite">
+      <h3>Satellite</h3>
+      <input type="radio" name="satellite" value="Sentinel-1"><p>Sentinel-1</p>
+      <input type="radio" name="satellite" value="Sentinel-2" checked><p>Sentinel-2</p>
+      <input type="radio" name="satellite" value="Sentinel-3"><p>Sentinel-3</p>
+    </div>
+    <div class="formBox cloud">
+      <h3>Cloud Cover (%)</h3>
+      <h4>From: </h4>
+      <input type="number" name="clouds-from" min="0" max="100" value="0">
+      <br>
+      <h4>To: </h4>
+      <input type="number" name="clouds-to" min="0" max="100" value="15">
+    </div>
+    <div class="formBox timeline">
+      <h3>Timeline</h3>
+      <h4>From:</h4>
+      <input type="date" name="date-from" value="2016-04-01">
+      <br>
+      <h4>To:</h4>
+      <input type="date" name="date-to" value="2016-09-01">
+    </div>
+    <div class="formBox map">
+      <div id="map"></div>
+    </div>
+    <div class="btnHolder">
+        <input type="button" class="getSat btn" value="Find images">
+        <input type="reset" class="btn reset" value="Reset">
+    </div>
+  </form>
+</div>
+<script src="js/init.js"></script>

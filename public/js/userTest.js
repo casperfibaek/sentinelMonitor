@@ -1,5 +1,6 @@
 var bob1 = {username: 'casperfibaek', password: 'goldfish'}
 var bob2 = {username: 'casperfiek', password: 'goldfi2sh'}
+var astrid = {username: 'astrid', password: 'elefant'}
 
 var testUser = function (obj) {
   $.ajax({
