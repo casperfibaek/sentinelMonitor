@@ -1,3 +1,8 @@
+// console.log('link: ', nrs.getESAString(nrs.getParamObj(
+//    formData,
+//    wkt.write()
+//  )))
+
 const SunCalc = require('./suncalc.js')
 const SentinelAPI = (function () {
   // Internal Constructor

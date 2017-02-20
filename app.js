@@ -1,11 +1,13 @@
+const path = require('path')
+const request = require('request')
 const pg = require('pg')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const path = require('path')
 const users = require('./users/connection')
 const nrs = require('./methods/baseAPI')
-const connectionString = users
+const connectionString = users.connectionString
+const credentials = users.credentials
 const app = express()
 
 // Allow any crossOrigin
@@ -76,4 +78,25 @@ app.post('/account', function (req, res) {
       })
     })
   }
+})
+
+/* ---------------------------------
+ * END POINT ESA DATA REQUEST
+ * ---------------------------------
+ */
+app.post('/ESA_Request', function (req, res) {
+  let body = req.body
+  let params = nrs.getParamObj(body.form, body.geom)
+  let esaString = nrs.getESAString(params)
+
+  request.get(esaString, {auth: credentials}, function (error, response, result) {
+    if (!error && response.statusCode === 200) {
+      return res.send(nrs.makeSense(JSON.parse(result)))
+    } else {
+      return res.send({
+        status: 'error',
+        message: 'could not connect to ESA'
+      })
+    }
+  })
 })

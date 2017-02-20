@@ -1,4 +1,4 @@
-/* globals $ nrs L Wkt */
+/* globals $ L Wkt */
 let map = L.map('map', {
   center: [ 55.3322691334024, 10.3491210937499 ],
   zoom: 6,
@@ -46,10 +46,22 @@ $('.getSat').click(function () {
     let wkt = new Wkt.Wkt()
     wkt.read(JSON.stringify(defGeomLayer.toGeoJSON()))
 
-    console.log('link: ', nrs.getESAString(nrs.getParamObj(
-       formData,
-       wkt.write()
-     )))
+    let push = {
+      form: formData,
+      geom: wkt.write()
+    }
+    $.ajax({
+      type: 'POST',
+      url: 'http://127.0.0.1:3000/ESA_Request',
+      dataType: 'json',
+      data: push
+    })
+        .done(function (res) {
+          console.log(res)
+        })
+        .fail(function (jqXHR, status, error) {
+          console.log('AJAX call failed: ' + status + ', ' + error)
+        })
   }
 })
 
