@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
 const users = require('./users/connection')
+const nrs = require('./methods/baseAPI')
 const connectionString = users
 const app = express()
 
@@ -21,13 +22,16 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Change from jade to HBS (Stylistic choice)
 app.set('view engine', 'hbs')
 
-app.listen(3000, function () {
-  console.log('The Sentinel Monitor API has been started')
+app.get('/', function (req, res, next) {
+  res.render('index', {
+    title: 'Sentinel-Monitor'
+  })
 })
 
-/* GET home page. */
-app.get('/', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '/interface/index.html'))
+console.log(nrs.test())
+
+app.listen(3000, function () {
+  console.log('The Sentinel Monitor API has been started')
 })
 
 /* ---------------------------------
