@@ -91,9 +91,9 @@ app.post('/ESA_Request', function (req, res) {
 
   request.get(esaString, {auth: credentials}, function (error, response, result) {
     if (!error && response.statusCode === 200) {
-      return res.send(nrs.makeSense(JSON.parse(result)))
+      return res.status(200).json(nrs.makeSense(JSON.parse(result)))
     } else {
-      return res.send({
+      return res.status(500).json({
         status: 'error',
         message: 'could not connect to ESA'
       })

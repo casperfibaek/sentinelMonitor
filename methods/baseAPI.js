@@ -1,9 +1,9 @@
-// console.log('link: ', nrs.getESAString(nrs.getParamObj(
-//    formData,
-//    wkt.write()
-//  )))
-
 const SunCalc = require('./suncalc.js')
+const wicket = require('./wicket.js')
+// const turf = require('@turf/turf')
+const gp = require('geojson-precision')
+const simplify = require('simplify-geojson')
+
 const SentinelAPI = (function () {
   // Internal Constructor
   const api = function () {
@@ -83,7 +83,11 @@ const SentinelAPI = (function () {
           image.information[curr.str[j].name] = curr.str[j].content
         }
 
-        image.footprint = image.information.footprint
+        let wkt = new wicket.Wkt()
+        wkt.read(image.information.footprint)
+        image.footprint = gp.parse(simplify(
+          wkt.toJson(), 1), 3)
+
         image.sunAngle = SunCalc.getPosition(
           new Date(image.date.beginposition), 55.40, 10.40
         )

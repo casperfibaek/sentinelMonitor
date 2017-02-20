@@ -3,7 +3,7 @@ let map = L.map('map', {
   center: [ 55.3322691334024, 10.3491210937499 ],
   zoom: 6,
   maxZoom: 12,
-  minZoom: 5,
+  minZoom: 3,
   editable: true,
   zoomControl: false,
   attributionControl: false
@@ -56,12 +56,13 @@ $('.getSat').click(function () {
       dataType: 'json',
       data: push
     })
-        .done(function (res) {
-          console.log(res)
-        })
-        .fail(function (jqXHR, status, error) {
-          console.log('AJAX call failed: ' + status + ', ' + error)
-        })
+      .done(function (res) {
+        console.log(res)
+        bob = res
+      })
+      .fail(function (jqXHR, status, error) {
+        console.log('AJAX call failed: ', JSON.parse(jqXHR.responseText).message)
+      })
   }
 })
 

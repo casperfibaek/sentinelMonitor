@@ -10,6 +10,9 @@
     "express": "^4.14.1",
     "hbs": "^4.0.1",
     "pg": "^6.1.2",
-    "cors": "^2.8.1"
+    "cors": "^2.8.1",
+	  "@turf/turf": "^3.10.2",
+    "geojson-precision": "^0.4.0",
+    "simplify-geojson": "^1.0.3"
   }
 }
