@@ -52,8 +52,9 @@ html, body {
   margin-top: 6px;
   background: #c9ccc8;
 }
-
+/* OBS this is for testing */
 .overlay{
+  /*display: none !important; */
   position: absolute;
   height: 100%;
   width: 100%;
@@ -180,7 +181,7 @@ input {
   border: 1px solid transparent;
   padding: .5rem 1rem;
   font-size: 1rem;
-  border-radius: .20rem;
+  border-radius: 2px;
   transition: all .12s ease-in-out;
 }
 
@@ -208,7 +209,7 @@ input {
 }
 
 .btn.getLogin{
-  margin-right: 10px;
+  margin-right: 18px;
   color: #fff;
   background-color: #2fa73a;
   border-color: #2fa73a;

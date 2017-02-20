@@ -69,9 +69,9 @@ const SentinelAPI = (function () {
           'footprint': {},
           'information': {},
           'sunAngle': {},
-          'thumbnail': curr.link[2],
           'link': curr.link[0],
-          'alternativeLink': curr.link[1]
+          'alternativeLink': curr.link[1],
+          'thumbnail': curr.link[2]
         }
 
         for (let w = 0; w < curr.date.length; w++) {
@@ -89,9 +89,9 @@ const SentinelAPI = (function () {
           'geom': gp.parse(turf.centerOfMass(json), 4)
         }
 
-        let simple = turf.simplify(json, 100, false)
+        let simple = turf.simplify(json, 200, false)
         image.footprint = gp.parse(simple, 4)
-        image.footprint.area = turf.area(image.footprint)
+        image.footprint.area = turf.area(image.footprint) * 0.0001
 
         center.lat = center.geom.geometry.coordinates[1]
         center.lng = center.geom.geometry.coordinates[0]

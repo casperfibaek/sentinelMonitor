@@ -40,6 +40,19 @@ defGeomLayer
 /*
  * EVENT LISTENERS
  */
+$('.formBox.satellite > p').click(function () {
+  $(this).prev().click()
+})
+
+$('.reset').click(function () {
+  map.panTo([55.33226, 10.34912])
+  defGeomLayer
+     .setLatLngs(defGeomLatLng)
+     .redraw()
+     .toggleEdit()
+  defGeomLayer.toggleEdit()
+})
+
 $('.getSat').click(function () {
   if (validateForm() === true) {
     let formData = $('.paramForm').serializeArray()
@@ -54,6 +67,7 @@ $('.getSat').click(function () {
       type: 'POST',
       url: 'http://127.0.0.1:3000/ESA_Request',
       dataType: 'json',
+      timeout: 90000,
       data: push
     })
       .done(function (res) {
@@ -66,17 +80,34 @@ $('.getSat').click(function () {
   }
 })
 
-$('.formBox.satellite > p').click(function () {
-  $(this).prev().click()
-})
+$('.getLogin').click(function () {
+  let user = {
+    username: $('.login-input[name="username"]').val(),
+    password: $('.login-input[name="password"]').val()
+  }
 
-$('.reset').click(function () {
-  map.panTo([55.33226, 10.34912])
-  defGeomLayer
-    .setLatLngs(defGeomLatLng)
-    .redraw()
-    .toggleEdit()
-  defGeomLayer.toggleEdit()
+  $.ajax({
+    type: 'POST',
+    url: 'http://127.0.0.1:3000/account',
+    dataType: 'json',
+    timeout: 10000,
+    data: user
+  })
+    .done(function (res) {
+      if (res.status === 'error') {
+        console.log(res)
+        $('.serverMessage > p').text(res.message)
+        $('.serverMessage').show()
+      } else {
+        $('.user-loader').show()
+        setTimeout(function () {
+          $('.overlay').remove()
+        }, 2000)
+      }
+    })
+    .fail(function (jqXHR, status, error) {
+      console.log('AJAX call failed: ' + status + ', ' + error)
+    })
 })
 
 /*
@@ -107,32 +138,3 @@ const validateForm = function () {
 
   return true
 }
-
-$('.getLogin').click(function () {
-  let user = {
-    username: $('.login-input[name="username"]').val(),
-    password: $('.login-input[name="password"]').val()
-  }
-
-  $.ajax({
-    type: 'POST',
-    url: 'http://127.0.0.1:3000/account',
-    dataType: 'json',
-    data: user
-  })
-    .done(function (res) {
-      if (res.status === 'error') {
-        console.log(res)
-        $('.serverMessage > p').text(res.message)
-        $('.serverMessage').show()
-      } else {
-        $('.user-loader').show()
-        setTimeout(function () {
-          $('.overlay').remove()
-        }, 2000)
-      }
-    })
-    .fail(function (jqXHR, status, error) {
-      console.log('AJAX call failed: ' + status + ', ' + error)
-    })
-})
