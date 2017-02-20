@@ -43,6 +43,7 @@ html, body {
   width: 100%;
   overflow: hidden;
   background: #42464e;
+  margin: 0;
 }
 
 #map {
@@ -50,6 +51,60 @@ html, body {
   width: 100%;
   margin-top: 6px;
   background: #c9ccc8;
+}
+
+.overlay{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #222224;
+  margin: 0;
+  z-index: 901;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .10s ease-in-out;
+}
+
+.loginScreen{
+  margin: 0 auto;
+}
+
+.loginForm{
+  background: #c9ccc8;
+  margin: 0 auto;
+  padding-top: 20px;
+  height: 240px;
+  width: 320px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+  transition: all .10s ease-in-out;
+}
+
+.loginForm > h3{
+  margin-left: 60px;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
+.login-input{
+  margin-left: 60px;
+}
+
+.serverMessage{
+  display: none;
+  background: #c9ccc8;
+  margin-top: 20px;
+  height: 60px;
+  width: 320px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+}
+
+.serverMessage > p{
+  text-align: center;
+  padding-top: 18px;
+  font-weight: 600;
 }
 
 .formContainer{
@@ -125,7 +180,7 @@ input {
   border: 1px solid transparent;
   padding: .5rem 1rem;
   font-size: 1rem;
-  border-radius: .25rem;
+  border-radius: .20rem;
   transition: all .12s ease-in-out;
 }
 
@@ -152,17 +207,41 @@ input {
   border-color: #ba4c1d;
 }
 
+.btn.getLogin{
+  margin-right: 10px;
+  color: #fff;
+  background-color: #2fa73a;
+  border-color: #2fa73a;
+}
+
+.btn.getLogin:hover{
+  background-color: #318c45;
+  border-color: #317d41;
+}
+
+.btn.createUser{
+  margin-right: 10px;
+  color: #fff;
+  background-color: #0275d8;
+  border-color: #0275d8;
+}
+
+.btn.createUser:hover{
+  background-color: #025aa5;
+  border-color: #01549b;
+}
+
 h1{
   text-align: center;
 }
 
-h3{
+.formBox > h3{
   margin-left: 52px;
   margin-bottom: 6px;
   margin-top: 4px;
 }
 
-h4{
+.formBox > h4{
   margin-bottom: 2px;
   margin-top: 6px;
   display: inline-block;
@@ -177,4 +256,69 @@ h4{
   margin-top: -7px !important;
   width: 14px !important;
   height: 14px !important;
+}
+
+.user-loader {
+  display: none;
+  font-size: 10px;
+  margin: 50px auto;
+  text-indent: -9999em;
+  width: 11em;
+  height: 11em;
+  border-radius: 50%;
+  background: #ffffff;
+  background: -moz-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: -webkit-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: -o-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: -ms-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: linear-gradient(to right, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  position: relative;
+  -webkit-animation: load3 1.4s infinite linear;
+  animation: load3 1.4s infinite linear;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.user-loader:before {
+  width: 50%;
+  height: 50%;
+  background: #ffffff;
+  border-radius: 100% 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+}
+.user-loader:after {
+  background: #222224;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  content: '';
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+@-webkit-keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }

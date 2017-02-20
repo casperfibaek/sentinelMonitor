@@ -7,7 +7,7 @@ const cors = require('cors')
 const users = require('./users/connection')
 const nrs = require('./methods/baseAPI')
 const connectionString = users.connectionString
-const credentials = users.credentials
+const credentials = users.credentials.main
 const app = express()
 
 // Allow any crossOrigin
@@ -41,9 +41,13 @@ app.listen(3000, function () {
  * ---------------------------------
  */
 app.post('/account', function (req, res) {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.username) {
     return res.send({
-      'status': 'error', 'message': 'missing a parameter'
+      'status': 'error', 'message': 'Invalid username'
+    })
+  } else if (!req.body.password) {
+    return res.send({
+      'status': 'error', 'message': 'Invalid password'
     })
   } else {
     let user = {

@@ -1,8 +1,7 @@
 const SunCalc = require('./suncalc.js')
 const wicket = require('./wicket.js')
-// const turf = require('@turf/turf')
+const turf = require('@turf/turf')
 const gp = require('geojson-precision')
-const simplify = require('simplify-geojson')
 
 const SentinelAPI = (function () {
   // Internal Constructor
@@ -85,11 +84,19 @@ const SentinelAPI = (function () {
 
         let wkt = new wicket.Wkt()
         wkt.read(image.information.footprint)
-        image.footprint = gp.parse(simplify(
-          wkt.toJson(), 1), 3)
+        let json = wkt.toJson()
+        let center = {
+          'geom': gp.parse(turf.centerOfMass(json), 4)
+        }
 
+        let simple = turf.simplify(json, 100, false)
+        image.footprint = gp.parse(simple, 4)
+        image.footprint.area = turf.area(image.footprint)
+
+        center.lat = center.geom.geometry.coordinates[1]
+        center.lng = center.geom.geometry.coordinates[0]
         image.sunAngle = SunCalc.getPosition(
-          new Date(image.date.beginposition), 55.40, 10.40
+          new Date(image.date.beginposition), center.lat, center.lng
         )
         image.sunAngle.azimuth *= 180 / Math.PI
         image.sunAngle.altitude *= 180 / Math.PI
