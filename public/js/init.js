@@ -30,6 +30,11 @@ let globalContainer = new function () {
     draggable: true
   })
 
+  this.addProject = function (obj) {
+    let str = `<div class="project"><p>${obj.title}</p></div>`
+    $('.projects').append(str)
+  }
+
   this.validateForm = function () {
     let cloudsFrom = Number($("input[name='clouds-from']").val())
     let cloudsTo = Number($("input[name='clouds-to']").val())
@@ -95,8 +100,9 @@ $('.getSat').click(function () {
     wkt.read(JSON.stringify(globalContainer.defaultLayer.toGeoJSON()))
 
     let push = {
-      form: formData,
-      geom: wkt.write()
+      'form': formData,
+      'geom': wkt.write(),
+      'user': globalContainer.user
     }
     $.ajax({
       type: 'POST',
@@ -107,6 +113,7 @@ $('.getSat').click(function () {
     })
       .done(function (res) {
         console.log(res)
+        bob = res
       })
       .fail(function (xhr, status, error) {
         console.log('AJAX call failed: ', xhr)
@@ -120,6 +127,7 @@ $('.getLogin').click(function () {
     username: $('.login-input[name="username"]').val(),
     password: $('.login-input[name="password"]').val()
   }
+  globalContainer.user = user
 
   $.ajax({
     type: 'POST',

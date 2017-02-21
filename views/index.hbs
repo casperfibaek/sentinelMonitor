@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- SITE ONE (LOGIN) -->
 <div class="overlay">
   <div class="loginScreen">
     <form class="loginForm">
@@ -7,9 +8,9 @@
       <h3>Password: </h3>
       <input type="password" class="login-input" name="password">
       <div class="btnHolder">
-          <input type="button" class="getLogin btn" value="Login">
-          <input type="button" class="createUser btn" value="Create User">
-          <input type="reset" class="btn reset" value="Reset">
+          <input type="button" class="getLogin btn green" value="Login">
+          <input type="button" class="createUser btn blue" value="Create User">
+          <input type="reset" class="reset btn red" value="Reset">
       </div>
     </form>
     <div class="serverMessage"><p></p></div>
@@ -17,6 +18,31 @@
   </div>
 </div>
 
+<!-- SITE TWO (SELECT MONITORING SITE) -->
+<div class="projectsContainer">
+  <div class="projectsBackground">
+    <div class="projectsTitle"><h1>Monitoring Sites</h1></div>
+    <div class="projects">
+      <div class="project"><p>project 1</p></div>
+      <div class="project"><p>project 2</p></div>
+      <div class="project"><p>project 3</p></div>
+      <div class="project"><p>project 4</p></div>
+      <div class="project"><p>project 5</p></div>
+      <div class="project"><p>project 6</p></div>
+      <div class="project"><p>project 7</p></div>
+      <div class="project"><p>project 8</p></div>
+      <div class="project"><p>project 9</p></div>
+      <div class="project"><p>project 10</p></div>
+    </div>
+    <div class="projects-buttonContainer">
+        <input type="button" class="refresh btn green" value="Refresh">
+        <input type="button" class="createSite btn blue" value="Create New">
+        <input type="reset" class="deleteSite btn red" value="Delete Site">
+    </div>
+  </div>
+</div>
+
+<!-- SITE THREE (CREATE NEW MONITORING SITE) -->
 <div class="formContainer">
   <div class="header">
     <h1>Create New Monitoring Site</h1>
@@ -48,8 +74,8 @@
       <div id="map"></div>
     </div>
     <div class="btnHolder">
-        <input type="button" class="getSat btn" value="Find images">
-        <input type="reset" class="btn reset" value="Reset">
+        <input type="button" class="getSat btn blue" value="Find images">
+        <input type="reset" class="reset btn red" value="Reset">
     </div>
   </form>
 </div>

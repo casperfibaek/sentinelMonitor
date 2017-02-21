@@ -1,0 +1,113 @@
+* {
+  font-family: 'Open Sans Light', 'Open Sans Regular', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #42464e;
+  margin: 0;
+}
+
+#map {
+  height: 300px;
+  width: 100%;
+  margin-top: 6px;
+  background: #c9ccc8;
+}
+/* OBS this is for testing */
+.overlay{
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #222224;
+  margin: 0;
+  z-index: 901;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .10s ease-in-out;
+}
+/*.formContainer, */
+.overlay, .projectsContainer{
+  display: none !important;
+}
+
+input {
+  border: none;
+  padding: 4px;
+  padding-left: 8px;
+}
+
+.btnHolder{
+  margin-top: 30px;
+}
+
+.btn{
+  cursor: pointer;
+  float: right;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .5rem 1rem;
+  font-size: 1rem;
+  border-radius: 2px;
+  transition: all .12s ease-in-out;
+}
+
+.btn.green{
+  margin-right: 18px;
+  color: #fff;
+  background-color: #2fa73a;
+  border-color: #2fa73a;
+}
+
+.btn.green:hover{
+  background-color: #318c45;
+  border-color: #317d41;
+}
+
+.btn.blue{
+  margin-right: 10px;
+  color: #fff;
+  background-color: #0275d8;
+  border-color: #0275d8;
+}
+
+.btn.blue:hover{
+  background-color: #025aa5;
+  border-color: #01549b;
+}
+
+.btn.red{
+  margin-right: 10px;
+  color: #fff;
+  background-color: #db4c0e;
+  border-color: #db4c0e;
+}
+
+.btn.red:hover{
+  background-color: #c64b16;
+  border-color: #ba4c1d;
+}
+
+h1{
+  text-align: center;
+}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive{
+  border-radius: 50% !important;
+  margin-left: -7px !important;
+  margin-top: -7px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
