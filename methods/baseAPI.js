@@ -68,7 +68,7 @@ const SentinelAPI = (function () {
       let geomArea = turf.area(geom) * 0.000001 // km2
 
       for (let i = 0; i < metaData.amount; i++) {
-        var curr = m.entry[i]
+        let curr = m.entry[i]
 
         let image = {
           'date': {},
@@ -120,6 +120,10 @@ const SentinelAPI = (function () {
       }
 
       return metaData
+    }
+
+    this.toTable = function (arr) {
+
     }
 
     var round = function (num, roundTo) {

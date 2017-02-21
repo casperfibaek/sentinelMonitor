@@ -8,7 +8,7 @@ const cors = require('cors')
 const users = require('./users/connection')
 const nrs = require('./methods/baseAPI')
 const connectionString = users.connectionString
-const credentials = users.credentials.main
+const credentials = users.credentials.secondary
 const app = express()
 
 // Allow any crossOrigin
@@ -30,8 +30,6 @@ app.get('/', function (req, res, next) {
     title: 'Sentinel-Monitor'
   })
 })
-
-console.log(nrs.test())
 
 app.listen(3000, function () {
   console.log('The Sentinel Monitor API has been started')
@@ -94,22 +92,27 @@ app.post('/ESA_Request', function (req, res) {
   let params = nrs.getParamObj(body.form, body.geom)
   let esaString = nrs.getESAString(params)
 
-  request.get(esaString, {auth: credentials}, function (error, response, result) {
+  request.get(esaString, {
+    'auth': credentials,
+    'timeout': 900000,
+    'gzip': true
+  }, function (error, response, result) {
     if (!error && response.statusCode === 200) {
       let ESAreply = JSON.parse(result) // STRING --> json
       let aoi = nrs.toGeoJSON(body.geom) // WKT --> GeoJSON0
+
+      // Format the ESA reply to Humanreadable JSON
       let sense = nrs.makeSense(ESAreply, aoi)
 
       for (let i = 0; i < sense.images.length; i++) {
         let thumb = sense.images[i].thumbnail.href
         let imgID = sense.images[i].information.identifier + '-ql'
 
-        request
-          .get(thumb, {auth: credentials})
+        request.get(thumb, {auth: credentials})
           .on('error', function (err) {
             console.log(err)
           })
-          .pipe(fs.createWriteStream(`./thumbs/${imgID}.jpeg`))
+          .pipe(fs.createWriteStream(`./public/thumbs/${imgID}.jpeg`))
       }
 
       return res.status(200).json(sense)
@@ -128,5 +131,5 @@ app.post('/ESA_Request', function (req, res) {
  */
 app.get('/images/:imageID', function (req, res) {
   let imgID = req.param('imageID')
-  res.sendFile(`./thumbs/${imgID}.jpeg`)
+  res.sendFile(`./public/thumbs/${imgID}.jpeg`)
 })
