@@ -5,28 +5,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="favIcon/favicon.png"/>
-  <title>Sentinel Data</title>
-
-  <!-- external -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-
-  <!-- internal -->
-  <script src="js/Leaflet.Editable.js"></script>
-  <script src="js/Path.Drag.js"></script>
-  <script src="js/wicket.js"></script>
-  <script src="js/userTest.js"></script>
+  <title>{{title}}</title>
 
   <!-- stylesheets -->
+  {{{block "stylesheets"}}}
   <link rel="stylesheet" type="text/css" href="css/fonts.css">
   <link rel="stylesheet" type="text/css" href="css/loaders.css">
   <link rel="stylesheet" type="text/css" href="css/general.css">
-  <link rel="stylesheet" type="text/css" href="css/page1-login.css">
-  <link rel="stylesheet" type="text/css" href="css/page2-siteSelect.css">
-  <link rel="stylesheet" type="text/css" href="css/page3-createSite.css">
-  <link rel="stylesheet" type="text/css" href="css/page4-monitorSite.css">
 
+  <!-- external -->
+  {{{block "scripts"}}}
+  <script async src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
     {{{body}}}
 </html>

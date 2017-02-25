@@ -113,7 +113,7 @@ $('.getSat').click(function () {
     })
       .done(function (res) {
         console.log(res)
-        bob = res
+        // bob = res
       })
       .fail(function (xhr, status, error) {
         console.log('AJAX call failed: ', xhr)

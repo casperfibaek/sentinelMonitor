@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <!-- SITE ONE (LOGIN) -->
+
+{{#extend "stylesheets"}}
+  <link rel="stylesheet" type="text/css" href="css/page1-login.css">
+{{/extend}}
+
+{{#extend "scripts"}}
+  <script>console.log('Hello!')</script>
+{{/extend}}
+
 <div class="overlay">
   <div class="loginScreen">
     <form class="loginForm">
@@ -17,66 +26,3 @@
     <div class="user-loader">Loading...</div>
   </div>
 </div>
-
-<!-- SITE TWO (SELECT MONITORING SITE) -->
-<div class="projectsContainer">
-  <div class="projectsBackground">
-    <div class="projectsTitle"><h1>Monitoring Sites</h1></div>
-    <div class="projects">
-      <div class="project"><p>project 1</p></div>
-      <div class="project"><p>project 2</p></div>
-      <div class="project"><p>project 3</p></div>
-      <div class="project"><p>project 4</p></div>
-      <div class="project"><p>project 5</p></div>
-      <div class="project"><p>project 6</p></div>
-      <div class="project"><p>project 7</p></div>
-      <div class="project"><p>project 8</p></div>
-      <div class="project"><p>project 9</p></div>
-      <div class="project"><p>project 10</p></div>
-    </div>
-    <div class="projects-buttonContainer">
-        <input type="button" class="refresh btn green" value="Refresh">
-        <input type="button" class="createSite btn blue" value="Create New">
-        <input type="reset" class="deleteSite btn red" value="Delete Site">
-    </div>
-  </div>
-</div>
-
-<!-- SITE THREE (CREATE NEW MONITORING SITE) -->
-<div class="formContainer">
-  <div class="header">
-    <h1>Create New Monitoring Site</h1>
-  </div>
-  <form class="paramForm">
-    <div class="formBox satellite">
-      <h3>Satellite</h3>
-      <input type="radio" name="satellite" value="Sentinel-1"><p>Sentinel-1</p>
-      <input type="radio" name="satellite" value="Sentinel-2" checked><p>Sentinel-2</p>
-      <input type="radio" name="satellite" value="Sentinel-3"><p>Sentinel-3</p>
-    </div>
-    <div class="formBox cloud">
-      <h3>Cloud Cover (%)</h3>
-      <h4>From: </h4>
-      <input type="number" name="clouds-from" min="0" max="100" value="0">
-      <br>
-      <h4>To: </h4>
-      <input type="number" name="clouds-to" min="0" max="100" value="15">
-    </div>
-    <div class="formBox timeline">
-      <h3>Timeline</h3>
-      <h4>From:</h4>
-      <input type="date" name="date-from" value="2016-04-01">
-      <br>
-      <h4>To:</h4>
-      <input type="date" name="date-to" value="2016-09-01">
-    </div>
-    <div class="formBox map">
-      <div id="map"></div>
-    </div>
-    <div class="btnHolder">
-        <input type="button" class="getSat btn blue" value="Find images">
-        <input type="reset" class="reset btn red" value="Reset">
-    </div>
-  </form>
-</div>
-<script src="js/init.js"></script>

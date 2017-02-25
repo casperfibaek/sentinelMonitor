@@ -47,6 +47,6 @@ Temporary Items
 .apdisk
 
 # Custom
-users/connection.js
 node_modules/
+routes/database.js
 thumbs/

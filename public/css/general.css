@@ -30,10 +30,6 @@ html, body {
   align-items: center;
   transition: all .10s ease-in-out;
 }
-/*.formContainer, */
-.overlay, .projectsContainer{
-  display: none !important;
-}
 
 input {
   border: none;
