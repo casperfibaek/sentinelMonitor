@@ -10,62 +10,13 @@ const credentials = database.credentials.secondary
 const router = express.Router()
 
 /* ---------------------------------
- * END POINT FOR USER AUTHENTICATION
- * ---------------------------------
- */
-router.post('/account', function (req, res) {
-  if (!req.body.username) {
-    return res.send({
-      'status': 'error', 'message': 'Invalid username'
-    })
-  } else if (!req.body.password) {
-    return res.send({
-      'status': 'error', 'message': 'Invalid password'
-    })
-  } else {
-    let user = {
-      username: req.body.username,
-      password: req.body.password
-    }
-
-    // Open a connection to the user database
-    let client = new pg.Client(connectionString)
-    // SQL Request for the database
-    var dbRequest = `SELECT * FROM trigusers WHERE username = '${user.username}' AND password = '${user.password}'`
-
-    // Connect to our database
-    client.connect(function (err) {
-      if (err) throw err
-
-      // Query the database
-      client.query(dbRequest, function (err, result) {
-        if (err) throw err
-
-        // Disconnect the client
-        client.end(function (err) {
-          if (err) throw err
-        })
-
-        // Check if any rows are returned
-        if (result.rows.length > 0) {
-          return res.send(result.rows[0])
-        } else {
-          return res.send({'status': 'error', 'message': 'User not found'})
-        }
-      })
-    })
-  }
-})
-
-/* ---------------------------------
  * END POINT ESA DATA REQUEST
  * ---------------------------------
  */
-router.post('/ESA_Request', function (req, res) {
+router.post('/api/esa', function (req, res) {
   let body = req.body
   let params = nrs.getParamObj(body.form, body.geom)
   let esaString = nrs.getESAString(params)
-  // let login = body.user
 
   request.get(esaString, {
     'auth': credentials,

@@ -2,9 +2,15 @@
   "name": "sentinel_monitor",
   "version": "0.1.0",
   "description": "A tool to monitor areas using the ESA Copernicus Programme",
-  "scripts": {"start": "node app.js"},
+  "scripts": {
+    "start": "node app.js"
+  },
   "author": "Casper Samsø Fibæk - NIRAS",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/casperfibaek/sentinelMonitor.git"
+  },
   "dependencies": {
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
@@ -14,6 +20,15 @@
 	  "@turf/turf": "^3.10.2",
     "geojson-precision": "^0.4.0",
     "simplify-geometry": "^0.0.2",
-    "simplify-geojson": "^1.0.3"
+    "simplify-geojson": "^1.0.3",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "express-session": "^1.15.1",
+    "cookie-parser": "^1.4.3",
+    "connect-flash": "^0.1.1",
+    "morgan": "^1.8.1",
+    "bcrypt-nodejs": "^0.0.3",
+    "connect-redis": "^3.2.0",
+    "uuid": "^3.0.1"
   }
 }
