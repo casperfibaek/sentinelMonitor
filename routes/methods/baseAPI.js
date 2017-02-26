@@ -24,17 +24,8 @@ const SentinelAPI = (function () {
           case 'satellite':
             returnObj.satellite = val
             break
-          case 'clouds-from':
-            returnObj.clouds.from = val
-            break
-          case 'clouds-to':
-            returnObj.clouds.to = val
-            break
           case 'date-from':
             returnObj.timeline.from = val + 'T00:00:00.000Z'
-            break
-          case 'date-to':
-            returnObj.timeline.to = val + 'T00:00:00.000Z'
             break
           default:
             returnObj[name] = val
@@ -45,7 +36,7 @@ const SentinelAPI = (function () {
 
     this.getESAString = function (obj) {
       const baseUrl = 'https://scihub.copernicus.eu/dhus/search?q='
-      return `${baseUrl}footprint:"Intersects(${obj.footprint})" AND platformname:${obj.satellite} AND cloudcoverpercentage:[${obj.clouds.from} TO ${obj.clouds.to}] AND beginposition:[${obj.timeline.from} TO ${obj.timeline.to}]&start=0&rows=100&format=json`
+      return `${baseUrl}footprint:"Intersects(${obj.footprint})" AND platformname:${obj.satellite} AND beginposition:[${obj.timeline.from} TO NOW]&start=0&rows=100&format=json`
     }
 
     this.test = function () {
@@ -65,7 +56,6 @@ const SentinelAPI = (function () {
         'searchParam': m.id,
         'images': []
       }
-      let geomArea = turf.area(geom) * 0.000001 // km2
 
       for (let i = 0; i < metaData.amount; i++) {
         let curr = m.entry[i]
@@ -110,20 +100,10 @@ const SentinelAPI = (function () {
         image.sunAngle.azimuth = round(image.sunAngle.azimuth * 180 / Math.PI, 2)
         image.sunAngle.altitude = round(image.sunAngle.altitude * 180 / Math.PI, 2)
 
-        image.intersection = {
-          'geom': gp.parse(turf.intersect(image.footprint, geom), 5)
-        }
-        image.intersection.area = round(turf.area(image.intersection.geom) * 0.000001, 2) // km2
-        image.cover = round((image.intersection.area / geomArea) * 100, 2)
-
         metaData.images.push(image)
       }
 
       return metaData
-    }
-
-    this.toTable = function (arr) {
-
     }
 
     var round = function (num, roundTo) {

@@ -1,4 +1,4 @@
-/* globals $ L Wkt */
+/* globals location window $ L Wkt */
 let map = L.map('map', {
   center: [ 55.3322691334024, 10.3491210937499 ],
   zoom: 6,
@@ -17,6 +17,15 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map)
 
 let globalContainer = new function () {
+  this.getParam = function (name) {
+    var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href)
+    if (results == null) {
+      return null
+    } else {
+      return results[1] || 0
+    }
+  }
+
   this.defaultGeometry = [
     [54.575245800783310, 9.52514648437500],
     [54.575245800783310, 11.1126708984375],
@@ -30,32 +39,7 @@ let globalContainer = new function () {
     draggable: true
   })
 
-  this.addProject = function (obj) {
-    let str = `<div class="project"><p>${obj.title}</p></div>`
-    $('.projects').append(str)
-  }
-
   this.validateForm = function () {
-    let cloudsFrom = Number($("input[name='clouds-from']").val())
-    let cloudsTo = Number($("input[name='clouds-to']").val())
-    if (cloudsFrom >= cloudsTo) {
-      alert('Clouds cover from >= to')
-      return false
-    }
-    let dateFrom = new Date($("input[name='date-from']").val()).getTime()
-    let dateTo = new Date($("input[name='date-to']").val()).getTime()
-    let dateToday = new Date().getTime()
-    let dateSentinel = new Date('2015-06-23').getTime()
-    if (dateFrom >= dateTo) {
-      alert('Start date before end date')
-      return false
-    } else if (dateFrom > dateToday || dateTo > dateToday) {
-      alert("You've selected a date in the future.")
-      return false
-    } else if (dateFrom < dateSentinel || dateTo < dateSentinel) {
-      alert('Sentinel-2A was launced the 23rd of June 2015')
-      return false
-    }
     return true
   }
 }()
@@ -73,6 +57,11 @@ $('.formBox.satellite > p').click(function () {
   $(this).prev().click()
 })
 
+$('.goback').click(function () {
+  var uuid = globalContainer.getParam('uuid')
+  $(location).attr('href', `/?uuid=${uuid}`)
+})
+
 $('.reset').click(function () {
   map.panTo([55.33226, 10.34912])
   globalContainer.defaultLayer
@@ -80,16 +69,6 @@ $('.reset').click(function () {
      .redraw()
      .toggleEdit()
   globalContainer.defaultLayer.toggleEdit()
-})
-
-$(document).keypress(function (e) {
-  if (e.which === 13) {
-    if ($('.getLogin').length > 0) {
-      $('.getLogin').click()
-    } else {
-      $('.getSat').click()
-    }
-  }
 })
 
 // Request Sentinel API Hub for SAT information
@@ -101,53 +80,23 @@ $('.getSat').click(function () {
 
     let push = {
       'form': formData,
-      'geom': wkt.write(),
-      'user': globalContainer.user
+      'name': $('.sitename > input').val(),
+      'uuid': globalContainer.getParam('uuid'),
+      'geom': wkt.write()
     }
+
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/esa',
+      url: 'http://127.0.0.1:3000/api/createSite',
       dataType: 'json',
       timeout: 90000,
       data: push
     })
       .done(function (res) {
-        console.log(res)
-        // bob = res
+        $(location).attr('href', `/?uuid=${globalContainer.getParam('uuid')}`)
       })
       .fail(function (xhr, status, error) {
         console.log('AJAX call failed: ', xhr)
       })
   }
-})
-
-// Request login from user database
-$('.getLogin').click(function () {
-  let user = {
-    username: $('.login-input[name="username"]').val(),
-    password: $('.login-input[name="password"]').val()
-  }
-  globalContainer.user = user
-
-  $.ajax({
-    type: 'POST',
-    url: 'http://127.0.0.1:3000/account',
-    dataType: 'json',
-    timeout: 10000,
-    data: user
-  })
-    .done(function (res) {
-      if (res.status === 'error') {
-        $('.serverMessage > p').text(res.message)
-        $('.serverMessage').show()
-      } else {
-        $('.user-loader').show()
-        setTimeout(function () {
-          $('.overlay').remove()
-        }, 2000)
-      }
-    })
-    .fail(function (jqXHR, status, error) {
-      console.log('AJAX call failed: ', jqXHR, status, error)
-    })
 })

@@ -25,8 +25,9 @@ var getSitesIDs = function (str) {
         `)
       }
 
-      $('.project').on('click', function () {
-        console.log($(this).attr('siteid'))
+      $('.project').click(function () {
+        var clicked = $(this).attr('siteid')
+        $(location).attr('href', `/monitor?uuid=${uuid}&site=${clicked}`)
       })
     })
     .fail(function (jqXHR, status, error) {
@@ -35,7 +36,6 @@ var getSitesIDs = function (str) {
 }
 
 const uuid = $.urlParam('uuid')
-
 getSitesIDs(uuid)
 
 $('.createSite').on('click', function () {

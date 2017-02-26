@@ -112,6 +112,19 @@ app.get('/create', function (req, res, next) {
   })
 })
 
+app.get('/monitor', function (req, res, next) {
+  var param = {
+    'uuid': req.query.uuid,
+    'site': req.query.site
+  }
+
+  console.log(JSON.stringify(param))
+
+  res.render('monitor', {
+    title: 'Sentinel-Monitor (monitor)'
+  })
+})
+
 app.use(function (req, res, next) {
   res.status(404).render('error', {
     title: 'Page not found'

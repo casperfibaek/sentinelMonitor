@@ -66,6 +66,60 @@ router.post('/api/getSites', function (req, res) {
   }
 })
 
-// create site: INSERT INTO trigsites (sitename, geom, created_on, images) VALUES ('København', 'coordinates{}', NOW(), '[]')
+router.post('/api/getImagesFromSite', function (req, res) {
+  var client = new pg.Client(connectionString)
+  // var uuid = req.body.uuid
+  var site = req.body.site
+
+  client.connect(function (err) {
+    if (err) console.log(err)
+
+    // Query the database
+    var imgSQL = `SELECT * FROM trigsites WHERE siteid = ${site}`
+    client.query(imgSQL, function (err, result) {
+      if (err) console.log(err)
+      var siteResult = {
+        'geom': result.rows[0].geom,
+        'images': result.rows[0].images
+      }
+
+      client.end(function (err) {
+        if (err) console.log(err)
+      })
+
+      return res.status(200).json({
+        'status': 'success',
+        'images': siteResult.images,
+        'geom': siteResult.geom
+      })
+    })
+  })
+})
+
+router.post('/api/getImage', function (req, res) {
+  var client = new pg.Client(connectionString)
+  var imageuuid = req.body.imageuuid
+
+  client.connect(function (err) {
+    if (err) console.log(err)
+
+    // Query the database
+    // TODO: CHANGE TO trigimages
+    var imgSQL = `SELECT * FROM trigprojects WHERE imageuuid = '${imageuuid}'`
+    console.log(imgSQL)
+    client.query(imgSQL, function (err, result) {
+      if (err) console.log(err)
+
+      client.end(function (err) {
+        if (err) console.log(err)
+      })
+
+      return res.status(200).json({
+        'status': 'success',
+        'message': result
+      })
+    })
+  })
+})
 
 module.exports = router
