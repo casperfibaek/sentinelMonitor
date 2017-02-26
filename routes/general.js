@@ -5,7 +5,20 @@ const database = require('./database.js')
 const connectionString = database.connectionString
 const router = express.Router()
 
-router.post('/api/sites', function (req, res) {
+var arr2sql = function (arr) {
+  var rstr = ''
+  for (var i = 0; i < arr.length; i++) {
+    if (i === arr.length - 1) {
+      rstr += `(siteid = ${arr[i]})`
+    } else {
+      rstr += `(siteid = ${arr[i]}) OR `
+    }
+  }
+  return rstr
+}
+
+// Get all the sites of a user
+router.post('/api/getSites', function (req, res) {
   if (!req.body.uuid) {
     return res.status(500).json({'status': 'error', 'message': 'uuid not found'})
   } else {
@@ -22,16 +35,26 @@ router.post('/api/sites', function (req, res) {
 
         var sites = JSON.parse(result.rows[0].sites)
 
-        client.end(function (err) {
-          if (err) console.log(err)
-        })
-
         if (sites.length !== 0) {
-          return res.status(200).json({
-            'status': 'success',
-            'sites': sites
+          var findSite = `SELECT * FROM trigsites WHERE ${arr2sql(sites)}`
+
+          client.query(findSite, function (err, result) {
+            if (err) console.log(err)
+
+            return res.status(200).json({
+              'status': 'success',
+              'sites': result.rows
+            })
+          })
+
+          client.end(function (err) {
+            if (err) console.log(err)
           })
         } else {
+          client.end(function (err) {
+            if (err) console.log(err)
+          })
+
           return res.status(200).json({
             'status': 'success',
             'sites': sites,
@@ -42,5 +65,7 @@ router.post('/api/sites', function (req, res) {
     })
   }
 })
+
+// create site: INSERT INTO trigsites (sitename, geom, created_on, images) VALUES ('København', 'coordinates{}', NOW(), '[]')
 
 module.exports = router

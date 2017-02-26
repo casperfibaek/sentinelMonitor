@@ -63,7 +63,7 @@ app.get('/', function (req, res, next) {
 
   // check if uuid is in the database
   var findUser = `SELECT * FROM trigusers WHERE user_uuid = '${suppliedUUID}'`
-  var createUser = `INSERT INTO trigusers (user_uuid, sites, created_on, last_login) VALUES ('${generatedUUID}', '[2, 6, "bob"]', NOW(), NOW())`
+  var createUser = `INSERT INTO trigusers (user_uuid, sites, created_on, last_login) VALUES ('${generatedUUID}', '[4, 5, 6]', NOW(), NOW())`
 
   client.connect(function (err) {
     if (err) console.log(err)
@@ -107,7 +107,7 @@ app.get('/', function (req, res, next) {
 })
 
 app.get('/create', function (req, res, next) {
-  res.render('createSite', {
+  res.render('create', {
     title: 'Sentinel-Monitor (create)'
   })
 })
