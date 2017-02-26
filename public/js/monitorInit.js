@@ -21,7 +21,7 @@ $.ajax({
     var geom = JSON.parse(res.geom)
     console.log(images)
     console.log(geom)
-    console.log('firstImage: ', getImage(images[0]))
+    getImage(images[0])
   })
   .fail(function (xhr, status, error) {
     console.log('AJAX call failed: ', xhr)
