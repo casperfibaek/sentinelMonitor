@@ -20,17 +20,16 @@ var createUser = function (obj) {
     })
 }
 
-var authUser = function (obj) {
+var site = {uuid: '7c5b16c0-fc26-11e6-8a72-fb7ec6b2881b'}
+var getSites = function (obj) {
   $.ajax({
     type: 'POST',
-    url: 'http://127.0.0.1:3000/api/auth',
+    url: 'http://127.0.0.1:3000/api/sites',
     dataType: 'json',
     data: obj
   })
     .done(function (res) {
-      $(location).attr('href', '/uuid=' + res.message)
       console.log(res)
-      bob = res
     })
     .fail(function (jqXHR, status, error) {
       console.log('AJAX call failed: ' + status + ', ' + error)

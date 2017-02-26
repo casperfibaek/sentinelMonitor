@@ -5,12 +5,13 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const hbs = require('hbs')
 const morgan = require('morgan')
-const myRoutes = require('./routes/index')
-const myAuths = require('./routes/auth')
-const pg = require('pg')
-const database = require('./routes/database.js')
-const connectionString = database.connectionString
+const esaRoute = require('./routes/esa')
+const routes = require('./routes/general')
 const app = express()
+const database = require('./routes/database')
+const connectionString = database.connectionString
+const pg = require('pg')
+const uuid = require('uuid/v1')
 
 // LOG EVERYTHING
 app.use(morgan('dev'))
@@ -28,35 +29,13 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // use routes
-app.use('/', myRoutes)
+app.use('/', esaRoute)
 
 // use auth routes
-app.use('/', myAuths)
+app.use('/', routes)
 
 // changed from jade(default) to HBS
 app.set('view engine', 'hbs')
-
-var checkSessions = function () {
-  let client = new pg.Client(connectionString)
-  let userRequest = `DELETE from trigsessions WHERE created_on < NOW() - INTERVAL '60 minutes'`
-  client.connect(function (err) {
-    if (err) console.log(err)
-
-      // Query the database
-    client.query(userRequest, function (err, result) {
-      if (err) console.log(err)
-
-      console.log('checked old sessions')
-
-        // Disconnect the client
-      client.end(function (err) {
-        if (err) console.log(err)
-      })
-    })
-  })
-}
-setInterval(checkSessions, 5 * 60000)
-checkSessions()
 
 // extend the hbs templates
 var blocks = {}
@@ -77,22 +56,53 @@ hbs.registerHelper('block', function (name) {
   return val
 })
 
-app.get('/:uuid', function (req, res, next) {
-  res.render('index', {
-    title: 'Sentinel-Monitor'
-  })
-  console.log(req.params.uuid)
-})
+app.get('/', function (req, res, next) {
+  var client = new pg.Client(connectionString)
+  var suppliedUUID = req.query.uuid
+  var generatedUUID = uuid()
 
-app.get('/login', function (req, res, next) {
-  res.render('login', {
-    title: 'Sentinel-Monitor (login)'
-  })
-})
+  // check if uuid is in the database
+  var findUser = `SELECT * FROM trigusers WHERE user_uuid = '${suppliedUUID}'`
+  var createUser = `INSERT INTO trigusers (user_uuid, sites, created_on, last_login) VALUES ('${generatedUUID}', '[2, 6, "bob"]', NOW(), NOW())`
 
-app.get('/signup', function (req, res, next) {
-  res.render('signup', {
-    title: 'Sentinel-Monitor (signup)'
+  client.connect(function (err) {
+    if (err) console.log(err)
+
+    // Query the database
+    client.query(findUser, function (err, result) {
+      if (err) console.log(err)
+
+      if (result.rows.length !== 0) {
+        if (result.rows[0].user_uuid === suppliedUUID) {
+          var sites = JSON.parse(result.rows[0].sites)
+          console.log('uuid found')
+
+          client.end(function (err) {
+            if (err) console.log(err)
+          })
+
+          if (sites.length === 0) {
+            console.log('user has no sites')
+          }
+
+          res.render('index', {
+            title: 'Sentinel-Monitor'
+          })
+        }
+      } else {
+        client.query(createUser, function (err, result) {
+          if (err) console.log(err)
+
+          console.log('created uuid')
+
+          client.end(function (err) {
+            if (err) console.log(err)
+          })
+
+          return res.redirect('/?uuid=' + encodeURIComponent(generatedUUID))
+        })
+      }
+    })
   })
 })
 
