@@ -47,6 +47,8 @@ app.render.signup = function (user) {
           $('.loggedInAs > a').html(`${user.username}<i class="fa fa-user" aria-hidden="true"></i>`)
           $('.loggedInAs').attr('login', 'true')
 
+          app.database.fetchSites(cookies, function (res) { console.log(res) })
+
           setTimeout(function () { app.render.sites() }, 500)
         } else {
           app.render.signup(user)

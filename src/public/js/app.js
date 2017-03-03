@@ -42,5 +42,6 @@ var app = { // eslint-disable-line
     return true
   },
   render: {},
-  database: {}
+  database: {},
+  userdata: {}
 }

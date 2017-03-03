@@ -46,6 +46,8 @@ app.render.login = function () {
 
           cookies.username = user.username
 
+          app.database.fetchSites(cookies, function (res) { console.log(res) })
+
           setTimeout(function () {
             app.render.sites()
           }, 500)

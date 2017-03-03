@@ -146,7 +146,10 @@ app.render.createScreen = function (user) {
         },
         'user': cookies
       }
-      console.log(post)
+      app.database.create(post, function (res) {
+        console.log(res)
+        bob = res
+      })
     }
   })
 
