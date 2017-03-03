@@ -1,5 +1,5 @@
 /* globals $ app L cookies */
-app.render.createScreen = function (user) {
+app.render.create = function (user) {
   var setup = `
   <div class='createScreen'>
       <div class='formHolder'>
@@ -146,9 +146,23 @@ app.render.createScreen = function (user) {
         },
         'user': cookies
       }
-      app.database.create(post, function (res) {
-        console.log(res)
-        bob = res
+      app.render.loading()
+      app.database.createUserSite(post, function (res) {
+        if (res.status === 'success') {
+          console.log('created user site: ', res)
+          app.database.fetchEsaImages(post, function (res) {
+            if (res.status === 'success') {
+              app.render.sites()
+              console.log(res)
+            } else {
+              app.render.create()
+              console.log(res)
+            }
+          })
+        } else {
+          app.render.create()
+          console.log(res)
+        }
       })
     }
   })

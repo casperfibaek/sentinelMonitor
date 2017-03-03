@@ -12,14 +12,18 @@
     "url": "git+https://github.com/casperfibaek/sentinelMonitor.git"
   },
   "dependencies": {
+    "@turf/turf": "^3.11.2",
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.16.1",
+    "cors": "^2.8.1",
     "express": "^4.14.1",
     "express-session": "^1.15.1",
-    "body-parser": "^1.16.1",
-    "bcrypt": "^1.0.2",
+    "geojson-precision": "^0.4.0",
     "hbs": "^4.0.1",
+    "morgan": "^1.8.1",
     "pg": "^6.1.2",
-    "cors": "^2.8.1",
-    "morgan": "^1.8.1"
+    "suncalc": "^1.8.0",
+    "wicket": "^1.3.2"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",

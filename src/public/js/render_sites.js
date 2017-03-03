@@ -20,7 +20,7 @@ app.render.sites = function () {
   $('.sitesScreen > .buttonHolder > input[name="create"]').on('click', function () {
     app.render.loading()
     setTimeout(function () {
-      app.render.createScreen()
+      app.render.create()
     }, 500)
   })
 }

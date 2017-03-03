@@ -200,8 +200,6 @@ router.post('/api/signup', function (req, res) {
 
 router.post('/api/session', function (req, res) {
   var session = req.body.session
-  var client = new pg.Client(connectionString)
-
   if (session === 'undefined' || session === 'NULL') {
     return res.status(200).json({
       'status': 'error',
@@ -209,6 +207,7 @@ router.post('/api/session', function (req, res) {
     })
   }
 
+  var client = new pg.Client(connectionString)
   client.connect(function (err) {
     if (err) {
       return res.status(500).json({
@@ -218,7 +217,7 @@ router.post('/api/session', function (req, res) {
     }
 
     var request = `
-    SELECT * FROM trig_users WHERE session_id = '${session}'`
+    SELECT * FROM trig_users WHERE session_id = '${session}';`
 
     client.query(request, function (err, result) {
       if (err) {
@@ -252,22 +251,23 @@ router.post('/api/session', function (req, res) {
   })
 })
 
-router.post('/api/siteOverview', function (req, res) {
+router.post('/api/fetchUserSites', function (req, res) {
   var cookie = req.body.cookie
   var user = {
     username: cookie.username,
     session: cookie.session
   }
 
-  var client = new pg.Client(connectionString)
-
-  if (user.session === 'undefined' || user.username === 'NULL') {
+  if (
+    user.session === 'undefined' ||
+    user.username === 'undefined') {
     return res.status(200).json({
       'status': 'error',
       'message': 'session key or username invalid'
     })
   }
 
+  var client = new pg.Client(connectionString)
   client.connect(function (err) {
     if (err) {
       return res.status(500).json({
@@ -278,7 +278,7 @@ router.post('/api/siteOverview', function (req, res) {
 
     var request = `
     SELECT UNNEST(sites) FROM trig_users
-    WHERE username = '${user.username}' AND session_id = '${user.session}'`
+    WHERE username = '${user.username}' AND session_id = '${user.session}';`
 
     client.query(request, function (err, result) {
       if (err) {
@@ -309,12 +309,158 @@ router.post('/api/siteOverview', function (req, res) {
           'message': result,
           'sites': arr
         })
-      } else {
-        return res.status(200).json({'status': 'error', 'message': result})
+      } else if (result.rowCount === 0) {
+        return res.status(200).json({'status': 'error', 'message': 'User has no sites'})
       }
     })
   })
 })
+
+router.post('/api/createUserSite', function (req, res) {
+  var project = req.body
+
+  if (
+    project.projectname === 'undefined' ||
+    project.startdate === 'undefined' ||
+    project.geom === 'undefined' ||
+    project.satellites === 'undefined' ||
+    project.user === 'undefined') {
+    return res.status(200).json({
+      'status': 'error',
+      'message': 'session key or username invalid (here)'
+    })
+  }
+
+  // first we verify the user
+  var client = new pg.Client(connectionString)
+  client.connect(function (err) {
+    if (err) {
+      console.log(err)
+      return res.status(500).json({
+        'status': 'error',
+        'message': err
+      })
+    }
+
+    var request = `
+    SELECT * FROM trig_users WHERE session_id = '${project.user.session}';`
+
+    client.query(request, function (err, result) {
+      if (err) {
+        console.log(err)
+        return res.status(500).json({
+          'status': 'error',
+          'message': err
+        })
+      }
+
+      if (result.rowCount > 0) {
+        checkUnique()
+      } else {
+        client.end(function (err) {
+          if (err) {
+            console.log(err)
+            return res.status(500).json({
+              'status': 'error',
+              'message': err
+            })
+          }
+        })
+
+        return res.status(200).json({'status': 'error', 'message': result})
+      }
+    })
+  })
+
+  var checkUnique = function (callback) {
+    var request = `
+      SELECT * FROM trig_sites
+      WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
+    `
+    client.query(request, function (err, result) {
+      if (err) {
+        console.log(err)
+
+        return res.status(500).json({
+          'status': 'error',
+          'message': err
+        })
+      }
+
+      if (result.rowCount > 0) {
+        client.end(function (err) {
+          if (err) {
+            console.log(err)
+            return res.status(500).json({
+              'status': 'error',
+              'message': err
+            })
+          }
+        })
+
+        return res.status(200).json({
+          'status': 'error',
+          'message': 'please choose a unique name'
+        })
+      } else {
+        userVerified()
+      }
+    })
+  }
+
+  var userVerified = function () {
+    var request = `
+    INSERT INTO trig_sites (
+      sitename,
+      geom,
+      platform,
+      username,
+      startdate,
+      created_on
+    ) VALUES (
+      '${project.projectname}',
+      '${project.geom}',
+      'Sentinel-2',
+      '${project.user.username}',
+      '${project.startdate}',
+      NOW()
+    );
+
+    UPDATE trig_users SET sites = array_append(sites, '${project.projectname}')
+    WHERE username = '${project.user.username}' AND session_id = '${project.user.session}';
+
+    SELECT * FROM trig_sites
+    WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
+    `
+    client.query(request, function (err, result) {
+      if (err) {
+        console.log(err)
+        return res.status(500).json({
+          'status': 'error',
+          'message': err
+        })
+      }
+
+      client.end(function (err) {
+        if (err) {
+          console.log(err)
+          return res.status(500).json({
+            'status': 'error',
+            'message': err
+          })
+        }
+      })
+
+      return res.status(200).json({
+        'status': 'success',
+        'message': result
+      })
+    })
+  }
+})
+
+  // Create array
+  // text[]
 
   // SELECT UNNEST(sites) FROM trig_users WHERE username = 'casperfibaek' AND session_id = '82h-1X0HQQWX_cKL99DKZ1XVa127a83G'
 

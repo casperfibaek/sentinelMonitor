@@ -54,10 +54,10 @@ app.database = {
         })
       })
   },
-  'fetchSites': function (cookie, callback) {
+  'fetchUserSites': function (cookie, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/siteOverview',
+      url: 'http://127.0.0.1:3000/api/fetchUserSites',
       dataType: 'json',
       data: {'cookie': cookie}
     })
@@ -72,10 +72,28 @@ app.database = {
         })
       })
   },
-  'create': function (request, callback) {
+  'createUserSite': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/create',
+      url: 'http://127.0.0.1:3000/api/createUserSite',
+      dataType: 'json',
+      data: request
+    })
+      .done(function (response) {
+        callback(response)
+      })
+      .fail(function (xhr, status, error) {
+        callback({
+          'status': status,
+          'message': error,
+          'total': xhr
+        })
+      })
+  },
+  'fetchEsaImages': function (request, callback) {
+    $.ajax({
+      type: 'POST',
+      url: 'http://127.0.0.1:3000/api/fetchEsaImages',
       dataType: 'json',
       data: request
     })
