@@ -1,0 +1,447 @@
+html, body{
+  margin: 0;
+  font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
+  overflow: hidden;
+}
+
+h2{
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+#mainContent{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: url('images/alaska.jpg');
+  /*background-image: url('images/california_small.jpg');*/
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-color: #317696;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+#app{
+  background: rgba(18, 31, 40, 0.90);
+  color: white;
+  max-width: 1200px;
+  max-height: 700px;
+  min-height: 160px;
+  min-width: 300px;
+  border-radius: 2px;
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
+  transition: all .10s ease-in-out;
+}
+
+.loader {
+  margin-top: 46px !important;
+  text-align: center;
+  transition: all .10s ease-in-out;
+}
+
+.button {
+  color: #fff;
+  width: 90px;
+  cursor: pointer;
+  float: right;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .5rem 1rem;
+  font-size: 1rem;
+  border-radius: 2px;
+  transition: all .12s ease-in-out;
+}
+
+/***************************************
+      Messages
+****************************************/
+.logoutMessage {
+  position: fixed;
+  top: 50px;
+  right: 0;
+  background: #f44336;
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
+  color: white;
+  width: 152px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.logoutMessage:hover{
+  background-color: #cd4136;
+}
+
+.logoutMessage > p {
+  margin-left: 16px;
+}
+
+.logoutMessage > p > i{
+  float: right;
+  margin-right: 14px;
+  font-size: 1.2em;
+}
+
+/***************************************
+      loginScreen & signupScreen
+****************************************/
+.loginScreen,
+.signupScreen {
+  padding-top: 30px;
+  padding-bottom: 60px;
+  padding-left: 48px;
+  padding-right: 30px;
+}
+
+.loginScreen > form,
+.signupScreen > form {
+  width: 200px;
+}
+
+.loginScreen > form > .message,
+.signupScreen > form > .message {
+  position: absolute;
+  margin-top: 20px;
+  text-align: center;
+  opacity: 0;
+}
+
+.loginScreen > form > p,
+.signupScreen > form > p {
+  margin-bottom: 3px;
+}
+
+.loginScreen > form > input,
+.signupScreen > form > input {
+  width: 190px;
+}
+
+.loginScreen > form > .buttonHolder,
+.signupScreen > form > .buttonHolder {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  margin-top: 30px;
+}
+
+input[name="login"]{
+  background-color: #099c59;
+}
+
+input[name="login"]:hover{
+  background-color: #0d746a;
+}
+
+input[name="create"]{
+  background-color: #099c59;
+}
+
+input[name="create"]:hover{
+  background-color: #0d746a;
+}
+
+input[name="signup"]{
+  background-color: #247fcd;
+}
+
+input[name="signup"]:hover{
+  background-color: #1c5f99;
+}
+
+input[name="back"]{
+  background-color: #f44336;
+}
+
+input[name="back"]:hover{
+  background-color: #cd4136;
+}
+
+input[type="text"],
+input[type="username"],
+input[type="password"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 16px;
+  box-shadow: none;
+  border-radius: 0px;
+  padding-right: 0;
+  padding-left: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+input[type="text"]:focus,
+input[type="username"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-radius: 2px;
+  border: solid 1px #707070;
+  box-shadow: 0 0 3px 0px #969696;
+}
+
+/***************************************
+          Monitor Site
+****************************************/
+.sitesScreen{
+  height: 100%;
+  width: 100%;
+  padding-top: 30px;
+  padding-bottom: 60px;
+}
+
+.sitesScreen > .buttonHolder{
+  display: flex;
+  justify-content: center;
+  height: 38px;
+  width: auto;
+  margin-top: 30px;
+}
+
+.sitesScreen > .buttonHolder > input[name="create"]{
+  width: 140px;
+}
+
+/***************************************
+          Create Site
+****************************************/
+.createScreen {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  min-height: 460px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.createScreen > .formHolder {
+  order: 1;
+  flex: 1 100%;
+  margin-right: 10px;
+  padding-right: 10px;
+  margin-left: 20px;
+  height: 200px;
+}
+
+#map {
+  order: 2;
+  border-radius: 2px;
+  margin-right: 40px;
+  margin-top: 20px;
+  margin-left: 10px;
+  padding-left: 10px;
+  height: 400px;
+  width: 100%;
+  min-width: 300px;
+  flex: 1 100%;
+}
+
+.createScreen > .formHolder > form {
+  width: 200px;
+  margin-left: 30px;
+}
+
+.createScreen > .formHolder > form > .message {
+  position: absolute;
+  margin-top: 24px;
+  text-align: left;
+  opacity: 0;
+}
+
+.createScreen > .formHolder > form > .satelliteHolder > .checkbox {
+  width: 100px;
+  padding: 6px;
+  border-radius: 2px;
+  background: #7459b3;
+  margin-top: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.3s;
+}
+
+.createScreen > .formHolder > form > .satelliteHolder {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: auto;
+  width: auto;
+  margin-top: -6px;
+}
+
+.createScreen > .formHolder > form > .satelliteHolder > .checkbox:hover {
+  background: #634f93;
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
+}
+
+.createScreen > .formHolder > form > .satelliteHolder > .checkbox > p {
+  margin: 0;
+  display: inline;
+}
+
+.createScreen > .formHolder > form > input[type="text"],
+.createScreen > .formHolder > form > input[type="date"]{
+  width: 180px;
+  padding-left: 10px;
+}
+
+.createScreen > .formHolder > form > p {
+  margin-bottom: 3px;
+}
+
+.createScreen > .formHolder > form > .buttonHolder{
+  display: flex;
+  justify-content: center;
+  height: 38px;
+  width: auto;
+  margin-top: 30px;
+}
+
+.createScreen > .formHolder > form > .buttonHolder > .button{
+  width: 120px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.createScreen > .formHolder > form > .buttonHolder > input[name="back"] {
+  margin-right: 0;
+}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive{
+  border-radius: 50% !important;
+  margin-left: -7px !important;
+  margin-top: -7px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/***************************************
+          HEADER & FOOTER
+****************************************/
+.fa{
+  color: white;
+}
+
+.fa-user{
+  margin-left: 10px;
+  margin-top: -6px;
+  margin-bottom: 0;
+  font-size: 1.4em !important;
+}
+
+footer{
+  position: fixed;
+  background: rgba(64, 137, 157, 0.85);
+  color: white;
+  width: 100%;
+  height: 28px;
+  bottom: 0;
+  z-index: 100;
+  box-shadow: 0px -2px 3px 0px rgba(0, 0, 0, 0.15);
+}
+footer > p{
+  margin-top: 7px;
+  margin-bottom: 0;
+  margin-left: 20px;
+  font-size: 0.8em;
+  vertical-align: middle;
+}
+
+header{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
+
+.logo{
+  position: fixed;
+  top: 0;
+  left: 20px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+.logo > img {
+  height: 40px;
+  margin-top: 4px;
+}
+
+.logo > p {
+  position: fixed;
+  top: 12px;
+  left: 80px;
+  margin: 0;
+  font-family: 'Open Sans', 'Arial';
+  font-weight: lighter;
+  font-size: 1.25em;
+  color: white;
+}
+
+.navigation {
+  list-style: none;
+  margin: 0;
+  background: rgba(64, 137, 157, 0.85);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.4);
+}
+
+.navigation a {
+  text-decoration: none;
+  display: block;
+  padding: 1em;
+  color: white;
+}
+
+.navigation a:hover {
+  background: #00b7f5;
+}
+
+/* Medium small */
+@media all and (max-width: 800px) {
+  .navigation {
+    justify-content: space-around;
+  }
+  #app{
+    max-width: 700px;
+    max-height: 600px;
+  }
+  .logo{
+    display: none;
+  }
+}
+
+/* Small Screens */
+@media all and (max-width: 500px) {
+  .navigation {
+    -webkit-flex-flow: column wrap;
+    flex-flow: column wrap;
+    padding: 0;
+  }
+
+  .navigation a {
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .navigation li:last-of-type a {
+    border-bottom: none;
+  }
+}

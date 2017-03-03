@@ -48,5 +48,6 @@ Temporary Items
 
 # Custom
 node_modules/
-routes/database.js
-thumbs/
+dist/
+src/routes/database.js
+src/thumbs/
