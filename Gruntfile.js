@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         configFile: 'node_modules/eslint-config-standard/eslintrc.json',
         rulePaths: ['node_modules/eslint-plugin-standard/rules']
       },
-      src: ['src/**/*.js', '!leaflet.js']
+      src: ['src/**/*.js']
     },
 
     babel: {
@@ -35,11 +35,19 @@ module.exports = function (grunt) {
       build: {
         files: {
           'dist/public/js/app.min.js': [
-            'dist/public/js/leaflet.js',
-            'dist/public/js/editable.js',
-            'dist/public/js/path.js',
-            'dist/public/js/db.js',
-            'dist/public/js/app.js'
+            'dist/public/js/ext_jquery.js',
+            'dist/public/js/ext_leaflet.js',
+            'dist/public/js/ext_editable.js',
+            'dist/public/js/ext_path.js',
+            'dist/public/js/app.js',
+            'dist/public/js/database.js',
+            'dist/public/js/render_loading.js',
+            'dist/public/js/render_login.js',
+            'dist/public/js/render_logout.js',
+            'dist/public/js/render_signup.js',
+            'dist/public/js/render_sites.js',
+            'dist/public/js/render_create.js',
+            'dist/public/js/init.js'
           ]
         }
       }
@@ -66,7 +74,7 @@ module.exports = function (grunt) {
       main: {
         files: [
           {expand: true, cwd: 'src/', src: ['**'], dest: 'dist/'},
-          {expand: true, cwd: 'test/', src: ['**'], dest: 'dist/views/'}
+          {expand: true, cwd: 'src/views/deploy', src: ['layout.hbs'], dest: 'dist/views/'}
         ]
       }
     },
@@ -84,5 +92,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin')
   grunt.loadNpmTasks('grunt-contrib-clean')
 
-  grunt.registerTask('default', ['clean:contents', 'eslint', 'babel', 'uglify', 'cssmin', 'copy', 'clean:js', 'clean:css'])
+  grunt.registerTask('build', ['clean:contents', 'eslint', 'babel', 'uglify', 'cssmin', 'copy', 'clean:js', 'clean:css'])
 }

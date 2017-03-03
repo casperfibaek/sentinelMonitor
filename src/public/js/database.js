@@ -1,6 +1,5 @@
-/* global $ */
-/* eslint-disable no-unused-vars */
-var db = {
+/* global $ app */
+app.database = {
   'login': function (user, callback) {
     $.ajax({
       type: 'POST',
@@ -37,7 +36,7 @@ var db = {
         })
       })
   },
-  'session': function (str, callback) {
+  'validateSession': function (str, callback) {
     $.ajax({
       type: 'POST',
       url: 'http://127.0.0.1:3000/api/session',

@@ -116,8 +116,9 @@ router.post('/api/signup', function (req, res) {
       })
     }
 
-    var request = `SELECT * FROM trig_users
-      WHERE username = '${user.username}' OR email = '${user.email}'`
+    var request = `
+    SELECT * FROM trig_users
+    WHERE username = '${user.username}' OR email = '${user.email}'`
 
     client.query(request, function (err, result) {
       if (err) {
@@ -209,7 +210,9 @@ router.post('/api/session', function (req, res) {
       })
     }
 
-    var request = `SELECT * FROM trig_users WHERE session_id = '${session}'`
+    var request = `
+    SELECT * FROM trig_users WHERE session_id = '${session}'`
+
     client.query(request, function (err, result) {
       if (err) {
         return res.status(500).json({
