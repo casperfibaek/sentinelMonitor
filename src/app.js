@@ -11,8 +11,16 @@ const app = express()
 
 app.use(cors()) // Allow crossOrigin (remove after testing)
 app.use(morgan('dev')) // Logs (remove after testing)
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({
+  extended: true,
+  parameterLimit: 10000,
+  limit: 1024 * 1024 * 10 // 10mb
+}))
+app.use(bodyParser.json({
+  extended: true,
+  parameterLimit: 10000,
+  limit: 1024 * 1024 * 10 // 10mb
+}))
 app.use(session({
   secret: 'un vie de file dleau',
   saveUninitialized: true,

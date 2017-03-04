@@ -54,12 +54,12 @@ app.database = {
         })
       })
   },
-  'fetchUserSites': function (cookie, callback) {
+  'fetchUserSites': function (request, callback) {
     $.ajax({
       type: 'POST',
       url: 'http://127.0.0.1:3000/api/fetchUserSites',
       dataType: 'json',
-      data: {'cookie': cookie}
+      data: request
     })
       .done(function (response) {
         callback(response)

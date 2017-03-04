@@ -72,6 +72,7 @@ router.post('/api/fetchEsaImages', function (req, res) {
               message.entries = message.entries.concat(JSON.parse(result).feed.entry)
               if (completed === nrSearches) {
                 message.entries = makeSense(message.entries)
+                insertImages(message.entries, function (res) { console.log(res) })
                 return res.status(200).json({
                   'status': 'success',
                   'message': message
@@ -95,6 +96,29 @@ router.post('/api/fetchEsaImages', function (req, res) {
   })
 })
 
+var insertImages = function (arr, callback) {   // TODO: ADD VALUES
+  var request = `
+  INSERT INTO trig_images VALUES (
+    uuid,
+    link_main,
+    link_alt,
+    link_thumb,
+    clouds,
+    footprint,
+    sun_altitude,
+    sun_azimuth,
+    identifier,
+    platformname,
+    platform_id,
+    time_begin,
+    time_end,
+    time_ingestion
+  ) VALUES (
+
+  )
+  `
+}
+
 var round = function (num, roundTo) {
   return Math.round(num * Math.pow(10, roundTo)) / Math.pow(10, roundTo)
 }
@@ -117,7 +141,11 @@ var makeSense = function (arr) {
     }
 
     for (let w = 0; w < curr.date.length; w++) {
-      image.date[curr.date[w].name] = curr.date[w].content
+      image.date[curr.date[w].name] = {
+        'full': curr.date[w].content.replace('T', ' ').replace('Z', '').slice(0, -5),
+        'day': curr.date[w].content.slice(0, -14),
+        'hour': curr.date[w].content.slice(11, -5)
+      }
     }
 
     for (let j = 0; j < curr.str.length; j++) {

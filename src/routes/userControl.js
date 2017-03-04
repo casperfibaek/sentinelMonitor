@@ -21,12 +21,7 @@ router.post('/api/login', function (req, res) {
   }
 
   client.connect(function (err) {
-    if (err) {
-      return res.status(500).json({
-        'status': 'error',
-        'message': err
-      })
-    }
+    if (err) { db.serverError(err, res) }
 
     // Query the database
     var request = `
@@ -34,22 +29,10 @@ router.post('/api/login', function (req, res) {
       WHERE username = '${user.username}';`
 
     client.query(request, function (err, result) {
-      if (err) {
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
       if (result.rowCount === 0) {
-        client.end(function (err) {
-          if (err) {
-            return res.status(500).json({
-              'status': 'error',
-              'message': err
-            })
-          }
-        })
+        db.endConnection(client, err, res)
 
         return res.status(200).json({
           'status': 'error',
@@ -76,12 +59,7 @@ router.post('/api/login', function (req, res) {
             WHERE username = '${user.username}';`
 
             client.query(request, function (err, result) {
-              if (err) {
-                return res.status(500).json({
-                  'status': 'error',
-                  'message': err
-                })
-              }
+              if (err) { db.serverError(err, res) }
 
               return res.status(200).json({
                 'status': 'success',
@@ -199,10 +177,9 @@ router.post('/api/session', function (req, res) {
 })
 
 router.post('/api/fetchUserSites', function (req, res) {
-  var cookie = req.body.cookie
   var user = {
-    username: cookie.username || 'undefined',
-    session: cookie.session || 'undefined'
+    username: req.body.username || 'undefined',
+    session: req.body.session || 'undefined'
   }
 
   if (user.session === 'undefined' || user.username === 'undefined') {
@@ -265,7 +242,7 @@ router.post('/api/createUserSite', function (req, res) {
       if (err) { db.serverError(err, res) }
 
       if (result.rowCount > 0) {
-        checkUnique(function () { userVerified() })
+        checkUnique(function () { createSites() })
       } else {
         db.endConnection(client, err, res)
         return res.status(200).json({'status': 'error', 'message': result})
@@ -294,7 +271,7 @@ router.post('/api/createUserSite', function (req, res) {
     })
   }
 
-  var userVerified = function () {
+  var createSites = function () {
     var request = `
     INSERT INTO trig_sites (
       sitename,
