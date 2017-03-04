@@ -1,5 +1,6 @@
 /* globals $ app cookies */
 app.render.login = function () {
+  console.log('rendered: login')
   var setup = `
   <div class='loginScreen'>
     <form>
@@ -55,7 +56,6 @@ app.render.login = function () {
           app.render.login(user)
 
           message('User not found')
-          // console.log(result)
         }
       })
     }

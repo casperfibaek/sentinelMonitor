@@ -1,6 +1,7 @@
 /* globals $ app location */
 app.render.logout = {
   'addMessage': function () {
+    console.log('rendered: logoutMessage')
     var setup = `
     <div class='logoutMessage'>
       <p>Signout<i class="fa fa-sign-out" aria-hidden="true"></i></p>

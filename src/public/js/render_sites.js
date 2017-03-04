@@ -1,5 +1,6 @@
 /* globals $ app */
 app.render.sites = function () {
+  console.log('rendered: sites')
   var setup = `
     <div class='sitesScreen'>
       <h2>Monitoring</h2>

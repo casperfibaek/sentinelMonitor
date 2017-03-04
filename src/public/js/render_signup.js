@@ -1,5 +1,6 @@
 /* globals $ app cookies */
 app.render.signup = function (user) {
+  console.log('rendered: signup')
   var setup = `
   <div class='signupScreen'>
     <form>

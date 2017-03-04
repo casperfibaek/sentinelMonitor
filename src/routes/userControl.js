@@ -301,13 +301,13 @@ router.post('/api/fetchUserSites', function (req, res) {
       if (result.rowCount > 0) {
         var arr = []
         for (var i = 0; i < result.rows.length; i += 1) {
-          arr.push(Number(result.rows[i].unnest))
+          arr.push(result.rows[i].unnest)
         }
 
         return res.status(200).json({
           'status': 'success',
-          'message': result,
-          'sites': arr
+          'message': arr,
+          'total': arr
         })
       } else if (result.rowCount === 0) {
         return res.status(200).json({'status': 'error', 'message': 'User has no sites'})

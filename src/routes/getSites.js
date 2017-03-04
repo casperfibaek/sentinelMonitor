@@ -135,7 +135,9 @@ var makeSense = function (arr) {
 
     var simple = turf.simplify(json, 300, false)
     image.footprint = geojson_precision.parse(simple, 6)
-    image.footprint.area = round(turf.area(image.footprint) * 0.000001, 2) // km2
+    image.footprint.properties = {
+      area: round(turf.area(image.footprint) * 0.000001, 2) // km2
+    }
 
     center.lat = center.geom.geometry.coordinates[1]
     center.lng = center.geom.geometry.coordinates[0]

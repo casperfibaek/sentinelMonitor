@@ -1,5 +1,6 @@
 /* globals $ app L cookies */
 app.render.create = function (user) {
+  console.log('rendered: create')
   var setup = `
   <div class='createScreen'>
       <div class='formHolder'>
