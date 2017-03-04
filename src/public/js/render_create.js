@@ -153,6 +153,13 @@ app.render.create = function (user) {
           console.log('created user site: ', res)
           app.database.fetchEsaImages(post, function (res) {
             if (res.status === 'success') {
+              app.database.postEsaImages({
+                'images': res.message,
+                'cookie': cookies
+              },
+                function (res) {
+                  console.log('recieved: ', res)
+                })
               app.render.sites()
               console.log(res)
             } else {

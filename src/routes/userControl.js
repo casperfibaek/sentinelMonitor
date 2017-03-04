@@ -8,9 +8,16 @@ const pg = require('pg')
 router.post('/api/login', function (req, res) {
   var client = new pg.Client(connectionString)
   var user = {
-    'username': req.body.username,
-    'password': req.body.password,
-    'session': req.body.session
+    'username': req.body.username || 'undefined',
+    'password': req.body.password || 'undefined',
+    'session': req.body.session || 'undefined'
+  }
+
+  if (user.username === 'undefined' || user.password === 'undefined' || user.session === 'undefined') {
+    return res.status(200).json({
+      'status': 'error',
+      'message': 'session key or username invalid (here)'
+    })
   }
 
   client.connect(function (err) {
@@ -96,8 +103,16 @@ router.post('/api/login', function (req, res) {
 router.post('/api/signup', function (req, res) {
   var client = new pg.Client(connectionString)
   var user = {
-    'username': req.body.username,
-    'email': req.body.email
+    'username': req.body.username || 'undefined',
+    'email': req.body.email || 'undefined',
+    'session': req.body.session || 'undefined'
+  }
+
+  if (user.projectname === 'undefined' || user.startdate === 'undefined' || user.geom === 'undefined') {
+    return res.status(200).json({
+      'status': 'error',
+      'message': 'session key or username invalid (here)'
+    })
   }
 
   bcrypt.hash(req.body.password, 8, function (err, hash) {
@@ -109,36 +124,17 @@ router.post('/api/signup', function (req, res) {
   })
 
   client.connect(function (err) {
-    if (err) {
-      return res.status(500).json({
-        'status': 'error',
-        'message': err
-      })
-    }
+    if (err) { db.serverError(err, res) }
 
     var request = `
     SELECT * FROM trig_users
-    WHERE username = '${user.username}' OR email = '${user.email}'`
+    WHERE username = '${user.username}' OR email = '${user.email}';`
 
     client.query(request, function (err, result) {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
       if (result.rowCount > 0) {
-        client.end(function (err) {
-          if (err) {
-            console.log(err)
-            return res.status(500).json({
-              'status': 'error',
-              'message': err
-            })
-          }
-        })
+        db.endConnection(client, err, res)
 
         return res.status(200).json({
           'status': 'error',
@@ -147,46 +143,16 @@ router.post('/api/signup', function (req, res) {
         })
       } else {
         var request = `
-        INSERT INTO trig_users (
-          username,
-          password,
-          email,
-          created_on,
-          last_login,
-          session_id,
-          session_created,
-          session_expires)
-        VALUES (
-          '${user.username}',
-          '${user.password}',
-          '${user.email}',
-          NOW(),
-          NOW(),
-          '${user.session}',
-          NOW(),
-          TIMESTAMP 'tomorrow');
+        INSERT INTO trig_users (username, password, email, created_on, last_login, session_id, session_created, session_expires)
+        VALUES ('${user.username}', '${user.password}', '${user.email}', NOW(), NOW(), '${user.session}', NOW(), TIMESTAMP 'tomorrow');
 
         SELECT * FROM trig_users
         WHERE username = '${user.username}' AND password = '${user.password}';`
 
         client.query(request, function (err, result) {
-          if (err) {
-            console.log(err)
-            return res.status(500).json({
-              'status': 'error',
-              'message': err
-            })
-          }
+          if (err) { db.serverError(err, res) }
 
-          client.end(function (err) {
-            if (err) {
-              console.log(err)
-              return res.status(500).json({
-                'status': 'error',
-                'message': err
-              })
-            }
-          })
+          db.endConnection(client, err, res)
 
           return res.status(200).json({
             'status': 'success',
@@ -199,7 +165,7 @@ router.post('/api/signup', function (req, res) {
 })
 
 router.post('/api/session', function (req, res) {
-  var session = req.body.session
+  var session = req.body.session || 'undefined'
   if (session === 'undefined' || session === 'NULL') {
     return res.status(200).json({
       'status': 'error',
@@ -209,33 +175,14 @@ router.post('/api/session', function (req, res) {
 
   var client = new pg.Client(connectionString)
   client.connect(function (err) {
-    if (err) {
-      return res.status(500).json({
-        'status': 'error',
-        'message': err
-      })
-    }
+    if (err) { db.serverError(err, res) }
 
-    var request = `
-    SELECT * FROM trig_users WHERE session_id = '${session}';`
+    var request = `SELECT * FROM trig_users WHERE session_id = '${session}';`
 
     client.query(request, function (err, result) {
-      if (err) {
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
-      client.end(function (err) {
-        if (err) {
-          console.log(err)
-          return res.status(500).json({
-            'status': 'error',
-            'message': err
-          })
-        }
-      })
+      db.endConnection(client, err, res)
 
       if (result.rowCount > 0) {
         return res.status(200).json({
@@ -254,13 +201,11 @@ router.post('/api/session', function (req, res) {
 router.post('/api/fetchUserSites', function (req, res) {
   var cookie = req.body.cookie
   var user = {
-    username: cookie.username,
-    session: cookie.session
+    username: cookie.username || 'undefined',
+    session: cookie.session || 'undefined'
   }
 
-  if (
-    user.session === 'undefined' ||
-    user.username === 'undefined') {
+  if (user.session === 'undefined' || user.username === 'undefined') {
     return res.status(200).json({
       'status': 'error',
       'message': 'session key or username invalid'
@@ -269,34 +214,16 @@ router.post('/api/fetchUserSites', function (req, res) {
 
   var client = new pg.Client(connectionString)
   client.connect(function (err) {
-    if (err) {
-      return res.status(500).json({
-        'status': 'error',
-        'message': err
-      })
-    }
+    if (err) { db.serverError(err, res) }
 
     var request = `
     SELECT UNNEST(sites) FROM trig_users
-    WHERE username = '${user.username}' AND session_id = '${user.session}';`
+    WHERE username = '${user.username}'  AND session_id = '${user.session}';`
 
     client.query(request, function (err, result) {
-      if (err) {
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
-      client.end(function (err) {
-        if (err) {
-          console.log(err)
-          return res.status(500).json({
-            'status': 'error',
-            'message': err
-          })
-        }
-      })
+      db.endConnection(client, err, res)
 
       if (result.rowCount > 0) {
         var arr = []
@@ -319,12 +246,8 @@ router.post('/api/fetchUserSites', function (req, res) {
 router.post('/api/createUserSite', function (req, res) {
   var project = req.body
 
-  if (
-    project.projectname === 'undefined' ||
-    project.startdate === 'undefined' ||
-    project.geom === 'undefined' ||
-    project.satellites === 'undefined' ||
-    project.user === 'undefined') {
+  if (project.projectname === 'undefined' || project.startdate === 'undefined' || project.geom === 'undefined' ||
+      project.satellites === 'undefined' || project.user === 'undefined') {
     return res.status(200).json({
       'status': 'error',
       'message': 'session key or username invalid (here)'
@@ -334,39 +257,17 @@ router.post('/api/createUserSite', function (req, res) {
   // first we verify the user
   var client = new pg.Client(connectionString)
   client.connect(function (err) {
-    if (err) {
-      console.log(err)
-      return res.status(500).json({
-        'status': 'error',
-        'message': err
-      })
-    }
+    if (err) { db.serverError(err, res) }
 
-    var request = `
-    SELECT * FROM trig_users WHERE session_id = '${project.user.session}';`
+    var request = `SELECT * FROM trig_users WHERE session_id = '${project.user.session}';`
 
     client.query(request, function (err, result) {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
       if (result.rowCount > 0) {
-        checkUnique()
+        checkUnique(function () { userVerified() })
       } else {
-        client.end(function (err) {
-          if (err) {
-            console.log(err)
-            return res.status(500).json({
-              'status': 'error',
-              'message': err
-            })
-          }
-        })
-
+        db.endConnection(client, err, res)
         return res.status(200).json({'status': 'error', 'message': result})
       }
     })
@@ -378,32 +279,17 @@ router.post('/api/createUserSite', function (req, res) {
       WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
     `
     client.query(request, function (err, result) {
-      if (err) {
-        console.log(err)
-
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
       if (result.rowCount > 0) {
-        client.end(function (err) {
-          if (err) {
-            console.log(err)
-            return res.status(500).json({
-              'status': 'error',
-              'message': err
-            })
-          }
-        })
+        db.endConnection(client, err, res)
 
         return res.status(200).json({
           'status': 'error',
           'message': 'please choose a unique name'
         })
       } else {
-        userVerified()
+        callback()
       }
     })
   }
@@ -433,23 +319,9 @@ router.post('/api/createUserSite', function (req, res) {
     WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
     `
     client.query(request, function (err, result) {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({
-          'status': 'error',
-          'message': err
-        })
-      }
+      if (err) { db.serverError(err, res) }
 
-      client.end(function (err) {
-        if (err) {
-          console.log(err)
-          return res.status(500).json({
-            'status': 'error',
-            'message': err
-          })
-        }
-      })
+      db.endConnection(client, err, res)
 
       return res.status(200).json({
         'status': 'success',
@@ -458,6 +330,75 @@ router.post('/api/createUserSite', function (req, res) {
     })
   }
 })
+
+router.post('/api/postEsaImages', function (req, res) {
+  var cookie = req.body.cookie
+  var user = {
+    username: cookie.username || 'undefined',
+    session: cookie.session || 'undefined'
+  }
+
+  var images = req.body.images || 'undefined'
+
+  if (user.session === 'undefined' || user.username === 'undefined') {
+    return res.status(200).json({
+      'status': 'error',
+      'message': 'session key or username invalid'
+    })
+  }
+
+  if (images === 'undefined') {
+    return res.status(200).json({
+      'status': 'error',
+      'message': 'Image array invalid'
+    })
+  }
+
+  var client = new pg.Client(connectionString)
+  client.connect(function (err) {
+    if (err) { db.serverError(err, res) }
+
+    var request = `
+    SELECT * FROM trig_users
+    WHERE username = '${user.username}' AND session_id = '${user.session}';`
+
+    client.query(request, function (err, result) {
+      if (err) { db.serverError(err, res) }
+
+      db.endConnection(client, err, res)
+
+      if (result.rowCount > 0) {
+        return res.status(200).json({
+          'status': 'success',
+          'message': images
+        })
+      } else if (result.rowCount === 0) {
+        return res.status(200).json({'status': 'error', 'message': 'User has no sites'})
+      }
+    })
+  })
+})
+
+var db = {
+  endConnection: function (client, err, res) {
+    client.end(function (err) {
+      if (err) {
+        console.log(err)
+        return res.status(500).json({
+          'status': 'error',
+          'message': err
+        })
+      }
+    })
+  },
+  serverError: function (err, res) {
+    console.log(err)
+    return res.status(500).json({
+      'status': 'error',
+      'message': err
+    })
+  }
+}
 
   // Create array
   // text[]
