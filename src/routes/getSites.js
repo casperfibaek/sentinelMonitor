@@ -1,4 +1,3 @@
-const fs = require('fs')
 const express = require('express')
 const request = require('request')
 const database = require('./database.js')
@@ -97,38 +96,6 @@ var insertImages = function (res, arr, siteRequest) {
   var count = 0
   var latest = 0
   var latestUuid = ''
-  var imagesDownloaded = 0
-  var partlyDone = false
-
-  // DOWNLOAD THUMBNAILS
-  console.log('Started downloading thumbnails')
-  for (var j = 0; j < arr.length; j += 1) {
-    var imageID = arr[j].info.identifier
-
-    request.get(arr[j].thumbnail, {
-      'auth': credentials,
-      'timeout': 900000,
-      'gzip': true
-    })
-      .on('error', function (err) {
-        console.log(err)
-      })
-      .on('response', function (response) {
-        imagesDownloaded += 1
-        if (imagesDownloaded === imageCount) {
-          console.log('All thumbnails downloaded')
-          if (partlyDone === true) {
-            return res.status(200).json({
-              'status': 'success',
-              'message': `Downloaded all images and prepared database`
-            })
-          } else {
-            partlyDone = true
-          }
-        }
-      })
-      .pipe(fs.createWriteStream(`./public/thumbnails/${imageID}.jpeg`))
-  }
 
   client.connect(function (err) {
     if (err) { db.serverError(client, err, res) }
@@ -200,14 +167,10 @@ var insertImages = function (res, arr, siteRequest) {
 
         if (count === imageCount) {
           db.endConnection(client, err, res)
-          if (partlyDone === true) {
-            return res.status(200).json({
-              'status': 'success',
-              'message': `Downloaded all images and prepared database`
-            })
-          } else {
-            partlyDone = true
-          }
+          return res.status(200).json({
+            'status': 'success',
+            'message': `Prepared database`
+          })
         }
       })
     }
