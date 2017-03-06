@@ -3,6 +3,9 @@ const express = require('express')
 const port = process.env.PORT || 3000
 const session = require('express-session')
 const routes = require('./routes/userControl')
+const database = require('./routes/database.js')
+const credentials = database.credentials.main
+const request = require('request')
 const esaRoute = require('./routes/getSites')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
@@ -46,6 +49,23 @@ app.get('/logout', function (req, res, next) {
   req.session.destroy()
   res.redirect('/')
   console.log('session destroyed')
+})
+
+app.get('/image', function (req, res, next) {
+  if (req.query.link) {
+    var link = encodeURI(req.query.link)
+    request(link, {
+      'auth': credentials,
+      'timeout': 900000,
+      'gzip': true
+    })
+      .on('error', function (err) {
+        console.log(err)
+      })
+      .pipe(res)
+  } else {
+    return res.status(200).json({status: 'success', message: 'bad link'})
+  }
 })
 
 app.use(function (req, res, next) {

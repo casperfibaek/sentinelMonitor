@@ -194,7 +194,7 @@ router.post('/api/fetchUserSites', function (req, res) {
     if (err) { db.serverError(err, res) }
 
     var request = `
-    SELECT sitename, latest_image, latest_image_uuid, identifier
+    SELECT sitename, latest_image, latest_image_uuid, identifier, thumbnail
     FROM (
       SELECT
         UNNEST(trig_users.sites) AS arr_sitename,
@@ -204,6 +204,7 @@ router.post('/api/fetchUserSites', function (req, res) {
         trig_users.username AS username,
         trig_users.session_id AS session_id,
         trig_images.identifier as identifier,
+        trig_images.link_thumb as thumbnail,
         trig_images.image_uuid as image_uuid
       FROM trig_sites, trig_users, trig_images
     ) AS b
