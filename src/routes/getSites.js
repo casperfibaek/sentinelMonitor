@@ -1,3 +1,4 @@
+const fs = require('fs')
 const express = require('express')
 const request = require('request')
 const database = require('./database.js')
@@ -55,10 +56,6 @@ router.post('/api/fetchEsaImages', function (req, res) {
       if (nrSearches === 0) {
         message.entries = makeSense(message.entries)
         insertImages(res, message.entries, siteRequest)
-        // return res.status(200).json({
-        //   'status': 'success',
-        //   'message': message
-        // })
       } else {
         for (var i = 0; i < nrSearches; i += 1) {
           startRow = (i + 1) * 100
@@ -75,10 +72,6 @@ router.post('/api/fetchEsaImages', function (req, res) {
               if (completed === nrSearches) {
                 message.entries = makeSense(message.entries)
                 insertImages(res, message.entries, siteRequest)
-                // return res.status(200).json({
-                //   'status': 'success',
-                //   'message': message
-                // })
               }
             } else {
               return res.status(200).json({
@@ -98,15 +91,56 @@ router.post('/api/fetchEsaImages', function (req, res) {
   })
 })
 
-var insertImages = function (res, arr, siteRequest) {   // TODO: ADD VALUES
+var insertImages = function (res, arr, siteRequest) {
   var client = new pg.Client(connectionString)
   var imageCount = arr.length
   var count = 0
+  var latest = 0
+  var latestUuid = ''
+  var imagesDownloaded = 0
+  var partlyDone = false
+
+  // DOWNLOAD THUMBNAILS
+  console.log('Started downloading thumbnails')
+  for (var j = 0; j < arr.length; j += 1) {
+    var imageID = arr[j].info.identifier
+
+    request.get(arr[j].thumbnail, {
+      'auth': credentials,
+      'timeout': 900000,
+      'gzip': true
+    })
+      .on('error', function (err) {
+        console.log(err)
+      })
+      .on('response', function (response) {
+        imagesDownloaded += 1
+        if (imagesDownloaded === imageCount) {
+          console.log('All thumbnails downloaded')
+          if (partlyDone === true) {
+            return res.status(200).json({
+              'status': 'success',
+              'message': `Downloaded all images and prepared database`
+            })
+          } else {
+            partlyDone = true
+          }
+        }
+      })
+      .pipe(fs.createWriteStream(`./public/thumbnails/${imageID}.jpeg`))
+  }
+
   client.connect(function (err) {
     if (err) { db.serverError(client, err, res) }
 
     for (var i = 0; i < imageCount; i += 1) {
       var image = arr[i]
+      var beginTime = arr[i].date.beginposition.after
+      var imageTime = new Date(Date.parse(beginTime + '+00:00')).getTime()
+      if (imageTime > latest) {
+        latest = imageTime
+        latestUuid = arr[i].info.uuid
+      }
       var request = `
       DO LANGUAGE plpgsql
       $$
@@ -143,8 +177,10 @@ var insertImages = function (res, arr, siteRequest) {   // TODO: ADD VALUES
             '${image.date.ingestiondate.after}'
         );
 
-        UPDATE trig_sites
-        SET images = array_append(images, '${image.info.uuid}')
+        UPDATE trig_sites SET
+          images = array_append(images, '${image.info.uuid}'),
+          latest_image = '${new Date(latest).toISOString().replace('T', ' ').replace('Z', '')}',
+          latest_image_uuid = '${latestUuid}'
         WHERE username = '${siteRequest.user.username}' AND sitename = '${siteRequest.projectname}';
 
       EXCEPTION
@@ -162,12 +198,16 @@ var insertImages = function (res, arr, siteRequest) {   // TODO: ADD VALUES
 
         count += 1
 
-        if (count === (imageCount - 1)) {
+        if (count === imageCount) {
           db.endConnection(client, err, res)
-          return res.status(200).json({
-            'status': 'success',
-            'message': 'uploaded all images and updated session'
-          })
+          if (partlyDone === true) {
+            return res.status(200).json({
+              'status': 'success',
+              'message': `Downloaded all images and prepared database`
+            })
+          } else {
+            partlyDone = true
+          }
         }
       })
     }

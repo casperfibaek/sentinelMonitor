@@ -50,4 +50,4 @@ Temporary Items
 node_modules/
 dist/
 src/routes/database.js
-src/thumbs/
+src/thumbnails/

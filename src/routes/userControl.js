@@ -49,10 +49,10 @@ router.post('/api/login', function (req, res) {
           if (check === true) {
             var request = `
             UPDATE trig_users SET
-            session_created = NOW(),
-            session_expires = TIMESTAMP 'tomorrow',
-            session_id = '${user.session}',
-            last_login = NOW()
+              session_created = NOW(),
+              session_expires = TIMESTAMP 'tomorrow',
+              session_id = '${user.session}',
+              last_login = NOW()
             WHERE username = '${user.username}';
 
             SELECT * FROM trig_users
@@ -194,23 +194,33 @@ router.post('/api/fetchUserSites', function (req, res) {
     if (err) { db.serverError(err, res) }
 
     var request = `
-    SELECT UNNEST(sites) FROM trig_users
-    WHERE username = '${user.username}'  AND session_id = '${user.session}';`
+    SELECT sitename, latest_image, latest_image_uuid, identifier
+    FROM (
+      SELECT
+        UNNEST(trig_users.sites) AS arr_sitename,
+        trig_sites.latest_image AS latest_image,
+        trig_sites.latest_image_uuid AS latest_image_uuid,
+        trig_sites.sitename AS sitename,
+        trig_users.username AS username,
+        trig_users.session_id AS session_id,
+        trig_images.identifier as identifier,
+        trig_images.image_uuid as image_uuid
+      FROM trig_sites, trig_users, trig_images
+    ) AS b
+    WHERE arr_sitename = sitename
+    AND latest_image_uuid = image_uuid
+    AND username = '${user.username}'
+    AND session_id = '${user.session}';`
 
     client.query(request, function (err, result) {
       if (err) { db.queryError(err, res) }
 
       db.endConnection(client, err, res)
 
-      if (result.rowCount > 0) {
-        var arr = []
-        for (var i = 0; i < result.rows.length; i += 1) {
-          arr.push(result.rows[i].unnest)
-        }
-
+      if (result || result.rowCount > 0) {
         return res.status(200).json({
           'status': 'success',
-          'message': arr
+          'message': result.rows
         })
       } else if (result.rowCount === 0) {
         return res.status(200).json({'status': 'error', 'message': 'User has no sites'})
@@ -416,5 +426,11 @@ var db = {
 
   // EMPTY ARRAY
   // UPDATE trig_users SET sites = '{}' WHERE username = 'casperfibaek'
+
+  // DELETE all
+  // UPDATE trig_users SET sites = '{}' WHERE username = 'casperfibaek';
+  // DELETE FROM trig_sites WHERE username = 'casperfibaek';
+  // DELETE FROM trig_images;
+  // DELETE FROM trig_users WHERE username != 'casperfibaek';
 
 module.exports = router
