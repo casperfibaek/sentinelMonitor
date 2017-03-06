@@ -83,13 +83,9 @@ app.render.create = function (user) {
     var height = 80
     var xDifference = width / 2
     var yDifference = height / 2
-    var southWest = L.point(
-      (currentPoint.x - xDifference), (currentPoint.y - yDifference))
-    var northEast = L.point(
-      (currentPoint.x + xDifference), (currentPoint.y + yDifference))
-    var bounds = L.latLngBounds(
-      map.containerPointToLatLng(southWest),
-      map.containerPointToLatLng(northEast))
+    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference))
+    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference))
+    var bounds = L.latLngBounds(map.containerPointToLatLng(southWest), map.containerPointToLatLng(northEast))
 
     map.removeLayer(defaultLayer)
 
@@ -110,11 +106,11 @@ app.render.create = function (user) {
   })
 
   $('input[name="back"]').on('click', function () {
-    app.render.loading()
+    app.render.loading('Initializing..')
 
     setTimeout(function () {
       app.render.sites()
-    }, 500)
+    }, 300)
   })
 
   var message = function (str) {
@@ -147,20 +143,13 @@ app.render.create = function (user) {
         },
         'user': cookies
       }
-      app.render.loading()
+      app.render.loading('Creating user site..')
       app.database.createUserSite(post, function (res) {
         if (res.status === 'success') {
+          app.render.loading('Fetching images from ESA..')
           console.log('created user site: ', res)
           app.database.fetchEsaImages(post, function (res) {
             if (res.status === 'success') {
-              var postImages = {
-                'images': res.message,
-                'cookie': cookies
-              }
-              app.database.postEsaImages(postImages,
-                function (res) {
-                  console.log('recieved: ', res)
-                })
               app.render.sites()
               console.log(res)
             } else {

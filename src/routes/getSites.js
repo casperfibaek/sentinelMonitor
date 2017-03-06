@@ -1,13 +1,14 @@
-/* eslint-disable */
 const express = require('express')
 const request = require('request')
 const database = require('./database.js')
 const credentials = database.credentials.main
+const connectionString = database.connectionString
 const router = express.Router()
-const geojson_precision = require('geojson-precision')
+const geojsonPrecision = require('geojson-precision')
 const wicket = require('../../node_modules/wicket/wicket')
 const sunCalc = require('suncalc')
 const turf = require('@turf/turf')
+const pg = require('pg')
 
 router.post('/api/fetchEsaImages', function (req, res) {
   var siteRequest = req.body
@@ -53,10 +54,11 @@ router.post('/api/fetchEsaImages', function (req, res) {
 
       if (nrSearches === 0) {
         message.entries = makeSense(message.entries)
-        return res.status(200).json({
-          'status': 'success',
-          'message': message
-        })
+        insertImages(res, message.entries, siteRequest)
+        // return res.status(200).json({
+        //   'status': 'success',
+        //   'message': message
+        // })
       } else {
         for (var i = 0; i < nrSearches; i += 1) {
           startRow = (i + 1) * 100
@@ -72,11 +74,11 @@ router.post('/api/fetchEsaImages', function (req, res) {
               message.entries = message.entries.concat(JSON.parse(result).feed.entry)
               if (completed === nrSearches) {
                 message.entries = makeSense(message.entries)
-                insertImages(message.entries, function (res) { console.log(res) })
-                return res.status(200).json({
-                  'status': 'success',
-                  'message': message
-                })
+                insertImages(res, message.entries, siteRequest)
+                // return res.status(200).json({
+                //   'status': 'success',
+                //   'message': message
+                // })
               }
             } else {
               return res.status(200).json({
@@ -96,27 +98,110 @@ router.post('/api/fetchEsaImages', function (req, res) {
   })
 })
 
-var insertImages = function (arr, callback) {   // TODO: ADD VALUES
-  var request = `
-  INSERT INTO trig_images VALUES (
-    uuid,
-    link_main,
-    link_alt,
-    link_thumb,
-    clouds,
-    footprint,
-    sun_altitude,
-    sun_azimuth,
-    identifier,
-    platformname,
-    platform_id,
-    time_begin,
-    time_end,
-    time_ingestion
-  ) VALUES (
+var insertImages = function (res, arr, siteRequest) {   // TODO: ADD VALUES
+  var client = new pg.Client(connectionString)
+  var imageCount = arr.length
+  var count = 0
+  client.connect(function (err) {
+    if (err) { db.serverError(client, err, res) }
 
-  )
-  `
+    for (var i = 0; i < imageCount; i += 1) {
+      var image = arr[i]
+      var request = `
+      DO LANGUAGE plpgsql
+      $$
+      BEGIN
+        INSERT INTO trig_images (
+            image_uuid,
+            link_main,
+            link_alt,
+            link_thumb,
+            clouds,
+            footprint,
+            sun_altitude,
+            sun_azimuth,
+            identifier,
+            platformname,
+            platform_id,
+            time_begin,
+            time_end,
+            time_ingestion
+        ) VALUES (
+            '${image.info.uuid}',
+            '${image.link.replace(/'/g, "''")}',
+            '${image.altLink.replace(/'/g, "''")}',
+            '${image.thumbnail.replace(/'/g, "''")}',
+             ${image.clouds},
+            '${JSON.stringify(image.footprint)}',
+             ${image.sun.altitude},
+             ${image.sun.azimuth},
+            '${image.info.identifier}',
+            '${image.info.platformname}',
+            '${image.info.platformserialidentifier}',
+            '${image.date.beginposition.after}',
+            '${image.date.endposition.after}',
+            '${image.date.ingestiondate.after}'
+        );
+
+        UPDATE trig_sites
+        SET images = array_append(images, '${image.info.uuid}')
+        WHERE username = '${siteRequest.user.username}' AND sitename = '${siteRequest.projectname}';
+
+      EXCEPTION
+        WHEN unique_violation THEN
+        UPDATE trig_images SET image_uuid = '${image.info.uuid}' WHERE image_uuid = '${image.info.uuid}';
+
+      END;
+      $$;
+      `
+
+      client.query(request, function (err, result) {
+        if (err) {
+          db.queryError(client, err, res)
+        }
+
+        count += 1
+
+        if (count === (imageCount - 1)) {
+          db.endConnection(client, err, res)
+          return res.status(200).json({
+            'status': 'success',
+            'message': 'uploaded all images and updated session'
+          })
+        }
+      })
+    }
+  })
+}
+
+var db = {
+  endConnection: function (client, err, res) {
+    client.end(function (err) {
+      if (err) {
+        console.log(err)
+        return res.status(500).json({
+          'status': 'error',
+          'message': err
+        })
+      }
+    })
+  },
+  queryError: function (client, err, res) {
+    console.log('Error while querying database: ', err)
+    this.endConnection(client, err, res)
+    return res.status(500).json({
+      'status': 'error',
+      'message': err
+    })
+  },
+  serverError: function (client, err, res) {
+    console.log('Error while connecting to database: ', err)
+    this.endConnection(client, err, res)
+    return res.status(500).json({
+      'status': 'error',
+      'message': err
+    })
+  }
 }
 
 var round = function (num, roundTo) {
@@ -133,47 +218,46 @@ var makeSense = function (arr) {
       'date': {},
       'clouds': round(Number(curr.double.content), 2),
       'footprint': {},
-      'information': {},
-      'sunAngle': {},
+      'info': {},
+      'sun': {},
       'link': curr.link[0].href,
-      'alternativeLink': curr.link[1].href,
+      'altLink': curr.link[1].href,
       'thumbnail': curr.link[2].href
     }
 
     for (let w = 0; w < curr.date.length; w++) {
       image.date[curr.date[w].name] = {
-        'full': curr.date[w].content.replace('T', ' ').replace('Z', '').slice(0, -5),
-        'day': curr.date[w].content.slice(0, -14),
-        'hour': curr.date[w].content.slice(11, -5)
+        'after': curr.date[w].content.replace('T', ' ').replace('Z', ''),
+        'before': curr.date[w].content
       }
     }
 
     for (let j = 0; j < curr.str.length; j++) {
       if (curr.str[j].name === 'gmlfootprint') { continue }
-      image.information[curr.str[j].name] = curr.str[j].content
+      image.info[curr.str[j].name] = curr.str[j].content
     }
 
     var wkt = new wicket.Wkt()
-    wkt.read(image.information.footprint)
+    wkt.read(image.info.footprint)
     var json = wkt.toJson()
-    delete image.information.footprint
+    delete image.info.footprint
     var center = {
-      'geom': geojson_precision.parse(turf.centerOfMass(json), 6)
+      'geom': geojsonPrecision.parse(turf.centerOfMass(json), 6)
     }
 
     var simple = turf.simplify(json, 300, false)
-    image.footprint = geojson_precision.parse(simple, 6)
+    image.footprint = geojsonPrecision.parse(simple, 6)
     image.footprint.properties = {
       area: round(turf.area(image.footprint) * 0.000001, 2) // km2
     }
 
     center.lat = center.geom.geometry.coordinates[1]
     center.lng = center.geom.geometry.coordinates[0]
-    image.sunAngle = sunCalc.getPosition(
-      new Date(image.date.beginposition), center.lat, center.lng
+    image.sun = sunCalc.getPosition(
+      new Date(image.date.beginposition.before), center.lat, center.lng
     )
-    image.sunAngle.azimuth = round(image.sunAngle.azimuth * 180 / Math.PI, 2)
-    image.sunAngle.altitude = round(image.sunAngle.altitude * 180 / Math.PI, 2)
+    image.sun.azimuth = round(image.sun.azimuth * 180 / Math.PI, 2)
+    image.sun.altitude = round(image.sun.altitude * 180 / Math.PI, 2)
 
     returnArr.push(image)
   }

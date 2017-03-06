@@ -39,15 +39,12 @@ app.render.login = function () {
     }
 
     if (app.validateUser(user)) {
-      app.render.loading()
+      app.render.loading('Validating User')
       app.database.login(user, function (result) {
         if (result.status === 'success') {
           $('.loggedInAs > a').html(`${user.username}<i class="fa fa-user" aria-hidden="true"></i>`)
           $('.loggedInAs').attr('login', 'true')
-
           cookies.username = user.username
-
-          app.database.fetchUserSites(cookies, function (res) { console.log(res) })
 
           setTimeout(function () {
             app.render.sites()
@@ -68,11 +65,11 @@ app.render.login = function () {
       'email': ''
     }
 
-    app.render.loading()
+    app.render.loading('Initializing..')
 
     setTimeout(function () {
       app.render.signup(user)
-    }, 500)
+    }, 300)
   })
 
   $(document).on('keypress', function (event) {

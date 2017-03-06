@@ -40,15 +40,13 @@ app.render.signup = function (user) {
     }
 
     if (app.validateUser(user) === true) {
-      app.render.loading()
+      app.render.loading('Validating user..')
       app.database.signup(user, function (result) {
         if (result.status === 'success') {
           cookies.username = user.username
 
           $('.loggedInAs > a').html(`${user.username}<i class="fa fa-user" aria-hidden="true"></i>`)
           $('.loggedInAs').attr('login', 'true')
-
-          app.database.fetchUserSites(cookies, function (res) { console.log(res) })
 
           setTimeout(function () { app.render.sites() }, 500)
         } else {

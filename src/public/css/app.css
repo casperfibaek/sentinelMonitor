@@ -31,7 +31,6 @@ h2{
   color: white;
   max-width: 1200px;
   max-height: 700px;
-  min-height: 160px;
   min-width: 300px;
   border-radius: 2px;
   box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
@@ -42,6 +41,13 @@ h2{
   margin-top: 46px !important;
   text-align: center;
   transition: all .10s ease-in-out;
+}
+
+.loadingMessage{
+  margin: 0;
+  text-align: center;
+  margin-top: -24px;
+  padding-bottom: 24px;
 }
 
 .button {

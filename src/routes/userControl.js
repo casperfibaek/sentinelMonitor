@@ -29,7 +29,7 @@ router.post('/api/login', function (req, res) {
       WHERE username = '${user.username}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       if (result.rowCount === 0) {
         db.endConnection(client, err, res)
@@ -59,7 +59,7 @@ router.post('/api/login', function (req, res) {
             WHERE username = '${user.username}';`
 
             client.query(request, function (err, result) {
-              if (err) { db.serverError(err, res) }
+              if (err) { db.queryError(err, res) }
 
               return res.status(200).json({
                 'status': 'success',
@@ -109,7 +109,7 @@ router.post('/api/signup', function (req, res) {
     WHERE username = '${user.username}' OR email = '${user.email}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       if (result.rowCount > 0) {
         db.endConnection(client, err, res)
@@ -128,7 +128,7 @@ router.post('/api/signup', function (req, res) {
         WHERE username = '${user.username}' AND password = '${user.password}';`
 
         client.query(request, function (err, result) {
-          if (err) { db.serverError(err, res) }
+          if (err) { db.queryError(err, res) }
 
           db.endConnection(client, err, res)
 
@@ -158,7 +158,7 @@ router.post('/api/session', function (req, res) {
     var request = `SELECT * FROM trig_users WHERE session_id = '${session}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       db.endConnection(client, err, res)
 
@@ -198,7 +198,7 @@ router.post('/api/fetchUserSites', function (req, res) {
     WHERE username = '${user.username}'  AND session_id = '${user.session}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       db.endConnection(client, err, res)
 
@@ -210,8 +210,7 @@ router.post('/api/fetchUserSites', function (req, res) {
 
         return res.status(200).json({
           'status': 'success',
-          'message': arr,
-          'total': arr
+          'message': arr
         })
       } else if (result.rowCount === 0) {
         return res.status(200).json({'status': 'error', 'message': 'User has no sites'})
@@ -239,7 +238,7 @@ router.post('/api/createUserSite', function (req, res) {
     var request = `SELECT * FROM trig_users WHERE session_id = '${project.user.session}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       if (result.rowCount > 0) {
         checkUnique(function () { createSites() })
@@ -256,7 +255,7 @@ router.post('/api/createUserSite', function (req, res) {
       WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
     `
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       if (result.rowCount > 0) {
         db.endConnection(client, err, res)
@@ -296,7 +295,7 @@ router.post('/api/createUserSite', function (req, res) {
     WHERE sitename = '${project.projectname}' AND username = '${project.user.username}';
     `
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       db.endConnection(client, err, res)
 
@@ -340,7 +339,7 @@ router.post('/api/postEsaImages', function (req, res) {
     WHERE username = '${user.username}' AND session_id = '${user.session}';`
 
     client.query(request, function (err, result) {
-      if (err) { db.serverError(err, res) }
+      if (err) { db.queryError(err, res) }
 
       db.endConnection(client, err, res)
 
@@ -368,8 +367,15 @@ var db = {
       }
     })
   },
+  queryError: function (err, res) {
+    console.log('Error while querying database: ', err)
+    return res.status(500).json({
+      'status': 'error',
+      'message': err
+    })
+  },
   serverError: function (err, res) {
-    console.log(err)
+    console.log('Error while connecting to database: ', err)
     return res.status(500).json({
       'status': 'error',
       'message': err
@@ -379,6 +385,10 @@ var db = {
 
   // Create array
   // text[]
+
+  // NEWEST ENTRY
+  // SELECT * FROM trig_images
+  // ORDER BY time_begin DESC LIMIT 1
 
   // SELECT UNNEST(sites) FROM trig_users WHERE username = 'casperfibaek' AND session_id = '82h-1X0HQQWX_cKL99DKZ1XVa127a83G'
 
@@ -403,5 +413,8 @@ var db = {
 
   // REMOVE FROM ARRAY =
   // UPDATE trig_users SET sites = array_remove(sites, '9') WHERE username = 'casperfibaek'
+
+  // EMPTY ARRAY
+  // UPDATE trig_users SET sites = '{}' WHERE username = 'casperfibaek'
 
 module.exports = router

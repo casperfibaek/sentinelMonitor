@@ -3,7 +3,7 @@
                 INITIALIZE
  **************************************************/
 $(document).ready(function () {
-  app.render.loading()
+  app.render.loading('Checking for sessions')
   app.database.validateSession(cookies.session, function (res) {
     if (res.status === 'success') {
       $('.navigation > .loggedInAs > a').html(`${res.username}<i class="fa fa-user" aria-hidden="true"></i>`)

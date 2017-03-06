@@ -1,4 +1,4 @@
-/* globals $ app */
+/* globals $ app cookies */
 app.render.sites = function () {
   console.log('rendered: sites')
   var setup = `
@@ -12,6 +12,8 @@ app.render.sites = function () {
   $('#app').empty().append(setup)
   window.location.hash = 'sites'
 
+  app.database.fetchUserSites(cookies, function (res) { console.log(res) })
+
   $(document).on('keypress', function (event) {
     if (event.keyCode === 13) {
       $('input[name="create"]').click()
@@ -19,9 +21,9 @@ app.render.sites = function () {
   })
 
   $('.sitesScreen > .buttonHolder > input[name="create"]').on('click', function () {
-    app.render.loading()
+    app.render.loading('Initializing..')
     setTimeout(function () {
       app.render.create()
-    }, 500)
+    }, 300)
   })
 }
