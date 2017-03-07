@@ -36,13 +36,13 @@ h2{
   padding-left: 20px;
   border-radius: 2px;
   box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.2);
-  transition: all .10s ease-in-out;
+  /*transition: all .10s ease-in-out;*/
 }
 
 .loader {
   margin-top: 46px !important;
   text-align: center;
-  transition: all .10s ease-in-out;
+  /*transition: all .10s ease-in-out;*/
 }
 
 .loadingMessage{
@@ -68,7 +68,15 @@ h2{
   padding: .5rem 1rem;
   font-size: 1rem;
   border-radius: 2px;
-  transition: all .12s ease-in-out;
+  transition: background .12s ease-in-out;
+}
+
+.overlay {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  width: 100%;
+  z-index: 900;
 }
 
 /***************************************
@@ -158,11 +166,13 @@ input[name="create"]:hover{
   background-color: #0d746a;
 }
 
-input[name="signup"]{
+input[name="signup"],
+input[name="delete"]{
   background-color: #247fcd;
 }
 
-input[name="signup"]:hover{
+input[name="signup"]:hover,
+input[name="delete"]:hover{
   background-color: #1c5f99;
 }
 
@@ -207,7 +217,7 @@ input[type="password"]:focus {
   height: 100%;
   width: 100%;
   padding-top: 30px;
-  padding-bottom: 60px;
+  padding-bottom: 30px;
 }
 
 .sitesScreen > .buttonHolder {
@@ -237,37 +247,51 @@ input[type="password"]:focus {
   margin: 6px;
   overflow:hidden;
   cursor: pointer;
+  background: transparent;
   box-shadow: 0px -2px 3px 0px rgba(0, 0, 0, 0.15);
+  z-index: 2;
 }
 
 .site > img {
-  height: 204px;
   position: relative;
-  transition: all .12s ease-in-out;
-  filter: saturate(90%) contrast(90%) brightness(100%);
+  transition: width 0.15s, height 0.15s, top 0.15s, left 0.15s, filter 0.35s;
+  filter: brightness(95%) saturate(100%) contrast(95%);
+  background-repeat: no-repeat;
+  background-position-x: 50%;
+  background-position-y: 45px;
+  background-image: url(images/rolling.svg);
+  height: 204px;
   width: 204px;
   left: -2px;
   top: -2px;
+  z-index: 1;
 }
 
-.site > img:hover {
-  filter: saturate(110%) contrast(110%) brightness(120%);
+.site > img:hover{
+  filter: brightness(110%) saturate(110%) contrast(105%);
+  height: 212px;
+  width: 212px;
+  left: -6px;
+  top: -6px;
 }
 
 .site > .head {
   width: 200px;
   z-index:901;
+  margin-top: 133px;
+  pointer-events: none;
   position: absolute;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
   background: rgba(0,0,0,0.65);
 }
 
 .site > .head > .name{
   padding-top: 6px;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
   text-align: center;
   margin: 0;
+  font-size: 1em;
 }
 
 .site > .head > .date_top{
@@ -275,6 +299,7 @@ input[type="password"]:focus {
   padding-bottom: 2px;
   text-align: center;
   margin: 0;
+  font-size: 0.8em;
 }
 
 .site > .head > .date_bottom{
@@ -282,46 +307,47 @@ input[type="password"]:focus {
   padding-bottom: 6px;
   text-align: center;
   margin: 0;
+  font-size: 0.8em;
 }
 
 .site > .foot {
   display: block;
   opacity: 0;
-  position: relative;
+  transition: opacity .15s ease-in-out;
+  position: absolute;
   z-index: 901;
-  margin-top: -36px;
   height: 0px;
-  top: 190px;
 }
 
-.site > .foot > .remove{
-  float: left;
-  margin-left:10px;
-  background: #F42841;
+.site > .foot > .remove,
+.site > .foot > .options{
+  margin-left: 165px;
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  box-shadow: 0px -2px 3px 0px rgba(0, 0, 0, 0.25);
-  border-radius: 2px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   cursor: pointer;
 }
 
+.site > .foot > .remove > i,
+.site > .foot > .options > i{
+  height: 15px;
+  width: 15px;
+}
+
+.site > .foot > .remove {
+  background: #F42841;
+  border-top-right-radius: 2px;
+  box-shadow: -2px 0px 3px 0px rgba(0, 0, 0, 0.25);
+}
 .site > .foot > .remove:hover{
   background: #D62728;
 }
 
 .site > .foot > .options{
-  float: right;
-  margin-right: 10px;
   background: #099c59;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  box-shadow: 0px -2px 3px 0px rgba(0, 0, 0, 0.25);
-  border-radius: 2px;
-  cursor:pointer;
+  border-bottom-left-radius: 2px;
+  box-shadow: -2px 2px 3px 0px rgba(0, 0, 0, 0.25);
 }
 
 .site > .foot > .options:hover{
@@ -441,6 +467,42 @@ input[type="password"]:focus {
   margin-top: -7px !important;
   width: 14px !important;
   height: 14px !important;
+}
+
+/***************************************
+          Popup
+****************************************/
+.popup {
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 160px;
+  width: 400px;
+  background: rgba(226, 242, 247, 0.95);
+  z-index: 1000;
+  text-align: center;
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.popup > h4 {
+  margin-top: 4px;
+}
+
+.popup > .buttonHolder {
+  display: flex;
+  justify-content: center;
+}
+
+.popup > .buttonHolder > .button {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 /***************************************

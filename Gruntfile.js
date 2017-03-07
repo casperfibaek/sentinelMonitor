@@ -47,6 +47,8 @@ module.exports = function (grunt) {
             'dist/public/js/render_signup.js',
             'dist/public/js/render_sites.js',
             'dist/public/js/render_create.js',
+            'dist/public/js/render_popups.js',
+            'dist/public/js/render_table.js',
             'dist/public/js/init.js'
           ]
         }

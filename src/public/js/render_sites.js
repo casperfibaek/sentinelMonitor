@@ -27,19 +27,36 @@ app.render.sites = function () {
               <p class="date_bottom">${site.latest_image.slice(11, 16)} GMT</p>
             </div>
             <div class="foot">
-              <div class="options"><i class="fa fa-cog" aria-hidden="true"></i></div>
               <div class="remove"><i class="fa fa-trash" aria-hidden="true"></i></div>
+              <div class="options"><i class="fa fa-cog" aria-hidden="true"></i></div>
             </div>
-            <img src="/image?link=${site.thumbnail}" />
+            <img src="/image?uuid=${site.latest_image_uuid}" />
           </div>
           `)
       }
       $('.site').hover(function () {
         $(this).children('.foot').css('opacity', 1)
-        $(this).children('img').css('filter', 'saturate(110%) contrast(105%) brightness(105%)')
       }, function () {
         $(this).children('.foot').css('opacity', 0)
-        $(this).children('img').css('filter', 'saturate(100%) contrast(95%) brightness(100%)')
+      })
+
+      $('.site').click(function () {
+        app.render.loading('Loading site..')
+        app.database.getSite({
+          'username': cookies.username,
+          'site': `${$(this).attr('name')}`
+        }, function (res) {
+          if (res.status === 'success') {
+            app.render.table(res)
+          } else {
+            app.render.sites()
+          }
+        })
+        // console.log(`You clicked: ${$(this).attr('name')}`)
+      })
+
+      $('.site > .foot > .remove').on('click', function () {
+        app.render.popup.deleteSite($(this).parent().parent().attr('name'))
       })
     } else {
       console.log('error!')

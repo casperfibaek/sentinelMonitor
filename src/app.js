@@ -52,8 +52,8 @@ app.get('/logout', function (req, res, next) {
 })
 
 app.get('/image', function (req, res, next) {
-  if (req.query.link) {
-    var link = encodeURI(req.query.link)
+  if (req.query.uuid) {
+    var link = `https://scihub.copernicus.eu/dhus/odata/v1/Products('${encodeURI(req.query.uuid)}')/Products('Quicklook')/$value`
     request(link, {
       'auth': credentials,
       'timeout': 900000,
