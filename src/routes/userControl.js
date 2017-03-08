@@ -1,5 +1,7 @@
 const express = require('express')
-const database = require('./database.js')
+const database = require('./database')
+const turf = require('turf')
+const utc = require('./utc')
 const connectionString = database.connectionString
 const bcrypt = require('bcrypt')
 const router = express.Router()
@@ -194,13 +196,14 @@ router.post('/api/fetchUserSites', function (req, res) {
     if (err) { db.serverError(err, res) }
 
     var request = `
-    SELECT sitename, latest_image, latest_image_uuid, identifier, thumbnail
+    SELECT sitename, latest_image, latest_image_uuid, identifier, thumbnail, timezone
     FROM (
       SELECT
         UNNEST(trig_users.sites) AS arr_sitename,
         trig_sites.latest_image AS latest_image,
         trig_sites.latest_image_uuid AS latest_image_uuid,
         trig_sites.sitename AS sitename,
+        trig_sites.timezone AS timezone,
         trig_users.username AS username,
         trig_users.session_id AS session_id,
         trig_images.identifier as identifier,
@@ -239,6 +242,14 @@ router.post('/api/createUserSite', function (req, res) {
       'status': 'error',
       'message': 'session key or username invalid (here)'
     })
+  }
+
+  var center = turf.centroid(JSON.parse(project.geom))
+  var timezone
+  for (var i = 0; i < utc.features.length; i += 1) {
+    if (turf.inside(center, utc.features[i]) === true) {
+      timezone = utc.features[i].properties.zone
+    }
   }
 
   // first we verify the user
@@ -289,14 +300,16 @@ router.post('/api/createUserSite', function (req, res) {
       platform,
       username,
       startdate,
-      created_on
+      created_on,
+      timezone
     ) VALUES (
       '${project.projectname}',
       '${project.geom}',
       'Sentinel-2',
       '${project.user.username}',
       '${project.startdate}',
-      NOW()
+      NOW(),
+      ${timezone}
     );
 
     UPDATE trig_users SET sites = array_append(sites, '${project.projectname}')

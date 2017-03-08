@@ -3,6 +3,10 @@ app.render.create = function (user) {
   console.log('rendered: create')
   var setup = `
   <div class='createScreen'>
+    <div class="geocode">
+      <input class="search" type="text" name="search" placeholder="Search.." value=""/>
+      <input type="button" name="searchClick" class="button" value="Search">
+    </div>
       <div class='formHolder'>
         <h2>Create new site</h2>
         <form>
@@ -15,6 +19,7 @@ app.render.create = function (user) {
             <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-1" value="sentinel-1"><p>Sentinel 1</p></div>
             <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-2" value="sentinel-2" checked><p>Sentinel 2</p></div>
             <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-3" value="sentinel-3"><p>Sentinel 3</p></div>
+            <div class="checkbox"><input class="checkButton" type="checkbox" name="Landsat 8" value="Landsat 8"><p>Landsat 8</p></div>
           </div>
           <div class="buttonHolder">
               <input type="button" name="back" class="button" value="Back">
@@ -23,7 +28,8 @@ app.render.create = function (user) {
           <div class="message"><p></p></div>
         </form>
       </div>
-      <div id='map'></div>
+      <div id='map'>
+      </div>
     </div>`
 
   $('#app').empty().append(setup)
@@ -79,8 +85,7 @@ app.render.create = function (user) {
 
     return new L.polygon(latlngs) // eslint-disable-line
   }
-
-  map.on('click', function (e) {
+  var click = function (e) {
     var location = e.latlng
     var currentPoint = map.latLngToContainerPoint(location)
     var width = 60
@@ -99,6 +104,54 @@ app.render.create = function (user) {
     defaultLayer
         .on('dblclick', L.DomEvent.stop)
         .on('dblclick', defaultLayer.toggleEdit)
+
+    map.panTo(location)
+
+    var lat = location.lat
+    var lon = location.lng
+
+    $.ajax({
+      type: 'GET',
+      url: `http://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=0`,
+      dataType: 'json'
+    })
+      .done(function (response) {
+        var display = response.display_name || 'undefined'
+        if (typeof (display) !== 'undefined') {
+          var concice = `${display.split(',').slice(-2)[0].slice(1)}, ${display.split(',').slice(-1)[0].slice(1)}`
+          $('input[name="projectname"]').val(concice)
+        }
+      })
+      .fail(function (xhr, status, error) {
+        console.log(xhr)
+      })
+  }
+
+  map.on('click', function (e) {
+    click(e)
+  })
+
+  $('input[name="searchClick"]').click(function () {
+    var field = $('input[name="search"]').val()
+    if (field !== '') {
+      $.ajax({
+        type: 'GET',
+        url: `http://nominatim.openstreetmap.org/search?q=${field}&format=json&polygon=0&addressdetails=0`,
+        dataType: 'json'
+      })
+        .done(function (response) {
+          var top = response[0]
+          var lat = top.lat
+          var lng = top.lon
+          var display = top.display_name
+          $('input[name="projectname"]').val(display)
+          map.setView([lat, lng], 11)
+        })
+        .fail(function (xhr, status, error) {
+          console.log(xhr)
+        })
+    }
+    console.log($('input[name="search"]').val())
   })
 
   $('.satelliteHolder > .checkbox').on('click', function () {

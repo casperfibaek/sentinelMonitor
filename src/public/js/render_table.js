@@ -39,7 +39,7 @@ app.render.table = function (info) {
     $('#app').empty().append(setup)
     $('#app').prepend(`
     <div class='mouseFollow'>
-      <img/>
+      <img name="default"/>
     </div>
     `)
     window.location.hash = info.sitename
@@ -47,10 +47,17 @@ app.render.table = function (info) {
     var addRows = function (obj) {
       for (var i = 0; i < obj.length; i += 1) {
         var image = obj[i]
+
+        var time = new Date(image.time_begin)
+        time = new Date(time.getTime() + (1000 * 60 * 60 * Number(info.timezone)))
+        time = time.toISOString()
+        var day = time.slice(0, 10)
+        var hours = time.slice(11, 16)
+
         var row = `
         <tr type="info" uuid="${image.image_uuid}">
-          <td name="date" align="center">${image.time_begin.slice(0, 10)}</td>
-          <td name="time" align="center">${image.time_begin.slice(11, 16)}</td>
+          <td name="date" align="center">${day}</td>
+          <td name="time" align="center">${hours}</td>
           <td name="clouds" align="right">${image.clouds}</td>
           <td name="sun_alt" align="right">${image.sun_altitude}</td>
           <td name="sun_azi" align="right">${image.sun_azimuth}</td>
@@ -102,16 +109,44 @@ app.render.table = function (info) {
       })
     })
 
+    $(document).on('keydown', function (event) {
+      if (event.keyCode === 17) {
+        $('.mouseFollow').css({
+          height: '400px',
+          width: '400px'
+        })
+        $('.mouseFollow > img').css({
+          height: '406px',
+          width: '406px',
+          filter: 'saturate(105%) contrast(110%)'
+        })
+      }
+    })
+
+    $(document).on('keyup', function (event) {
+      if (event.keyCode === 17) {
+        $('.mouseFollow').css({
+          height: '200px',
+          width: '200px'
+        })
+        $('.mouseFollow > img').css({
+          height: '206px',
+          width: '206px',
+          filter: 'saturate(100%) contrast(100%)'
+        })
+      }
+    })
+
     var timeout
     $('tr[type="info"]').hover(function () {
       var rowUUID = $(this).attr('uuid')
       timeout = setTimeout(function () {
         $('.mouseFollow > img').attr('src', `/image?uuid=${rowUUID}`)
         $('.mouseFollow').show()
-      }, 500)
+      }, 250)
     }, function () {
       clearTimeout(timeout)
-      $('.mouseFollow > img').removeAttr('src')
+      $('.mouseFollow > img[name="default"]').removeAttr('src')
       $('.mouseFollow').hide()
     })
   }

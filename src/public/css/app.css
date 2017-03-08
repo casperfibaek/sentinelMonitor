@@ -163,6 +163,7 @@ input[name="create"]:hover{
 }
 
 input[name="signup"],
+input[name="searchClick"],
 input[name="export"],
 input[name="apply"],
 input[name="delete"]{
@@ -170,6 +171,7 @@ input[name="delete"]{
 }
 
 input[name="signup"]:hover,
+input[name="searchClick"]:hover,
 input[name="export"]:hover,
 input[name="apply"]:hover,
 input[name="delete"]:hover{
@@ -199,7 +201,7 @@ input[type="password"] {
   margin: 0;
   width: 100%;
   font-family: sans-serif;
-  font-size: 16px;
+  font-size: 0.9em;
   box-shadow: none;
   border-radius: 0px;
   padding-right: 0;
@@ -262,8 +264,8 @@ input[type="password"]:focus {
 
 .site > img {
   position: relative;
-  transition: width 0.15s, height 0.15s, top 0.15s, left 0.15s, filter 0.35s;
-  filter: brightness(95%) saturate(100%) contrast(95%);
+  transition: background-position-y 0.15s, width 0.15s, height 0.15s, top 0.15s, left 0.15s, filter 0.35s;
+  filter: brightness(100%) saturate(100%) contrast(100%);
   background-repeat: no-repeat;
   background-position-x: 50%;
   background-position-y: 45px;
@@ -277,6 +279,7 @@ input[type="password"]:focus {
 
 .site > img:hover{
   filter: brightness(110%) saturate(110%) contrast(105%);
+  background-position-y: 49px;
   height: 212px;
   width: 212px;
   left: -6px;
@@ -379,20 +382,20 @@ input[type="password"]:focus {
   flex: 1 100%;
   margin-right: 10px;
   padding-right: 10px;
-  margin-left: 20px;
+  margin-left: -10px;
   height: 200px;
 }
 
 #map {
   order: 2;
   border-radius: 2px;
-  margin-right: 40px;
+  margin-right: 20px;
   margin-top: 20px;
   margin-left: 10px;
   padding-left: 10px;
-  height: 400px;
+  height: 420px;
   width: 100%;
-  min-width: 300px;
+  min-width: 350px;
   flex: 1 100%;
 }
 
@@ -409,8 +412,9 @@ input[type="password"]:focus {
 }
 
 .createScreen > .formHolder > form > .satelliteHolder > .checkbox {
-  width: 100px;
+  width: 85px;
   padding: 6px;
+  font-size: 0.9em;
   border-radius: 2px;
   background: #7459b3;
   margin-top: 10px;
@@ -454,7 +458,7 @@ input[type="password"]:focus {
   justify-content: center;
   height: 38px;
   width: auto;
-  margin-top: 30px;
+  margin-top: 93px;
 }
 
 .createScreen > .formHolder > form > .buttonHolder > .button{
@@ -475,6 +479,25 @@ input[type="password"]:focus {
   margin-top: -7px !important;
   width: 14px !important;
   height: 14px !important;
+}
+
+.geocode {
+  z-index: 1001;
+  position: absolute;
+  margin-left: 280px;
+  margin-top: 26px;
+  width: 200px;
+}
+
+.geocode > input[name="searchClick"] {
+  outline: none;
+  margin-top: -29px;
+  width: 80px;
+  font-size: 1em;
+  padding: 2px;
+  height: 28px;
+  position: absolute;
+  right: -100px;
 }
 
 /***************************************
@@ -615,7 +638,7 @@ tr:not(.tableHeaders):hover {
 }
 
 .fixed_headers {
-  width: 700px;
+  width: 704px;
   height: 400px;
   table-layout: fixed;
   border-collapse: collapse;
@@ -637,6 +660,7 @@ tr:not(.tableHeaders):hover {
 .mouseFollow {
   display: none;
   position: fixed;
+  transition: height 0.15s ease-in-out, width 0.15s ease-in-out, filter 0.3s ease-in-out;
   overflow:hidden !important;
   height: 200px;
   width: 200px;
@@ -648,7 +672,7 @@ tr:not(.tableHeaders):hover {
   background-position-x: 10px;
   background-position-y: 10px;
   background-image: url(images/rolling.svg);
-  filter: saturate(105%) contrast(110%);
+  transition: opacity 0.1s ease-in, height 0.15s ease-in-out, width 0.15s ease-in-out, filter 0.3s ease-in-out;
   height: 206px;
   width: 206px;
   left: -3px;
@@ -660,8 +684,6 @@ tr:not(.tableHeaders):hover {
 .header-fixed {
     position: absolute;
     top: 0px;
-    /*display:none;*/
-    background-color:red;
 }
 
 /***************************************
