@@ -31,6 +31,10 @@ app.render.create = function (user) {
   window.location.hash = 'create'
 
   $('input[name="projectname"]').focus()
+// Reverse
+// http://nominatim.openstreetmap.org/reverse?format=json&lat=52.80&lon=11.12&zoom=10&addressdetails=0
+// Normal
+// http://nominatim.openstreetmap.org/search?q=Palmyra+Syria&format=json&polygon=0&addressdetails=0
 
   var map = L.map('map', {
     center: [ 55.3322691334024, 10.3491210937499 ],

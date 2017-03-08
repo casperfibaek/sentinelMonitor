@@ -150,28 +150,28 @@ h2{
   margin-top: 30px;
 }
 
-input[name="login"]{
-  background-color: #099c59;
-}
-
-input[name="login"]:hover{
-  background-color: #0d746a;
-}
-
+input[name="login"],
+input[name="edit"],
 input[name="create"]{
   background-color: #099c59;
 }
 
+input[name="login"]:hover,
+input[name="edit"]:hover,
 input[name="create"]:hover{
   background-color: #0d746a;
 }
 
 input[name="signup"],
+input[name="export"],
+input[name="apply"],
 input[name="delete"]{
   background-color: #247fcd;
 }
 
 input[name="signup"]:hover,
+input[name="export"]:hover,
+input[name="apply"]:hover,
 input[name="delete"]:hover{
   background-color: #1c5f99;
 }
@@ -182,6 +182,14 @@ input[name="back"]{
 
 input[name="back"]:hover{
   background-color: #cd4136;
+}
+
+input[name='filter']{
+  background-color: #a001ba;
+}
+
+input[name='filter']:hover{
+  background-color: #7d108f;
 }
 
 input[type="text"],
@@ -491,6 +499,35 @@ input[type="password"]:focus {
   flex-wrap: wrap;
 }
 
+.popup.filter{
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 425px;
+  width: 300px;
+  background: rgba(226, 242, 247, 0.95);
+  z-index: 1000;
+  border-radius: 2px;
+  text-align: left;
+  display: block;
+}
+
+.filter > .container > .buttonHolder {
+  margin-top: 20px;
+  margin-right: 10px;
+}
+
+.filter > .container > .buttonHolder > .button {
+  margin-left: 10px;
+}
+
+.filter > .container {
+  margin-left: 10px;
+}
+
 .popup > h4 {
   margin-top: 4px;
 }
@@ -503,6 +540,128 @@ input[type="password"]:focus {
 .popup > .buttonHolder > .button {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+/***************************************
+          TABLES
+****************************************/
+.tableScreen {
+  padding-bottom: 60px;
+}
+
+.tableScreen h2 {
+  padding-bottom: 0;
+}
+
+.tableScreen > .buttonHolder {
+    padding-top: 20px;
+}
+
+.tableScreen > .buttonHolder > input {
+  margin-left: 10px;
+}
+
+.tableScreen > .buttonHolder > input[name='filter'] {
+  float: left;
+}
+
+.tableHolder {
+  max-height: 550px;
+}
+
+th {
+  text-align: center;
+  font-size: 1em;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  border-width: 0px;
+  margin: 0px;
+  cursor: pointer;
+}
+
+th:hover {
+  background: #18526c;
+}
+
+td {
+  font-size: 13px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-width: 0px;
+  min-width: 30px;
+  margin: 0px;
+  cursor: default;
+}
+
+tbody > tr {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+}
+
+td > a > i:hover{
+  font-size: 15px;
+  margin-top: -1px;
+  margin-right: -2px;
+}
+
+tr:not(.tableHeaders):hover {
+  background: #0e3b50;
+}
+
+.fixed_headers {
+  width: 700px;
+  height: 400px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 0px;
+  border-spacing: 0px;
+}
+
+.fixed_headers thead tr {
+  display: block;
+  position: relative;
+}
+.fixed_headers tbody {
+  display: block;
+  overflow: auto;
+  width: 100%;
+  height: 500px;
+}
+
+.mouseFollow {
+  display: none;
+  position: fixed;
+  overflow:hidden !important;
+  height: 200px;
+  width: 200px;
+  z-index: 11;
+}
+
+.mouseFollow > img {
+  background-repeat: no-repeat;
+  background-position-x: 10px;
+  background-position-y: 10px;
+  background-image: url(images/rolling.svg);
+  filter: saturate(105%) contrast(110%);
+  height: 206px;
+  width: 206px;
+  left: -3px;
+  top: -3px;
+  z-index: 10;
+  position: absolute;
+}
+
+.header-fixed {
+    position: absolute;
+    top: 0px;
+    /*display:none;*/
+    background-color:red;
 }
 
 /***************************************

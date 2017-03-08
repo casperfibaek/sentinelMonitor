@@ -40,19 +40,22 @@ app.render.sites = function () {
         $(this).children('.foot').css('opacity', 0)
       })
 
-      $('.site').click(function () {
+      $('.site > .head, .site > img').click(function () {
+        var sitename = `${$(this).parent().attr('name')}`
         app.render.loading('Loading site..')
         app.database.getSite({
           'username': cookies.username,
-          'site': `${$(this).attr('name')}`
+          'site': sitename
         }, function (res) {
           if (res.status === 'success') {
-            app.render.table(res)
+            app.render.table({
+              'sitename': sitename,
+              'images': res.message
+            })
           } else {
             app.render.sites()
           }
         })
-        // console.log(`You clicked: ${$(this).attr('name')}`)
       })
 
       $('.site > .foot > .remove').on('click', function () {
