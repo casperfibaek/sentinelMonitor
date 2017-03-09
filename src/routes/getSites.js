@@ -46,6 +46,7 @@ router.post('/api/fetchEsaImages', function (req, res) {
     'gzip': true
   }, function (error, response, result) {
     if (!error && response.statusCode === 200) {
+      // console.log(result)
       var esa = JSON.parse(result).feed
       var nrEntries = esa['opensearch:totalResults']
       var nrSearches = getSearches(nrEntries) - 1

@@ -13,7 +13,7 @@ app.render.create = function (user) {
           <p>Project Name</p>
           <input class="text" type="text" name="projectname" value="" autofocus/>
           <p>Start date</p>
-          <input class="date" type="date" name="startdate" value="2016-06-01"/>
+          <input class="date" type="date" name="startdate" value="2016-10-01"/>
           <p>Satellites</p>
           <div class="satelliteHolder">
             <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-1" value="sentinel-1"><p>Sentinel 1</p></div>
