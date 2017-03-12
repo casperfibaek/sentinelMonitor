@@ -3,6 +3,7 @@ const express = require('express')
 const port = process.env.PORT || 3000
 const session = require('express-session')
 const routes = require('./routes/userControl')
+const landsat = require('./routes/landsat')
 const database = require('./routes/database')
 const credentials = database.credentials.secondary
 const request = require('request')
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
 app.use('/', routes)
+app.use('/', landsat)
 app.use('/', esaRoute)
 
 app.get('/', function (req, res, next) {
