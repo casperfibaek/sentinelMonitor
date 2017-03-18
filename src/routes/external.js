@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const sunCalc = require('suncalc')
 const turf = require('@turf/turf')
 const xmldoc = require('xmldoc')
-const utc = require('./utc')
+const utc = require('./geom/utc')
 const helper = require('./helpers')
 
 var external = function (obj, callback) {
@@ -143,12 +143,21 @@ var external = function (obj, callback) {
                 var UTCTime = preFormat.PRODUCT_METADATA.DATE_ACQUIRED + 'T' + preFormat.PRODUCT_METADATA.SCENE_CENTER_TIME
                 var localTime = helper.toLocaltime(UTCTime, params.geometry.timezone)
 
+                var S_PM = preFormat.PRODUCT_METADATA
+
+                var NW = [Number(S_PM.CORNER_UL_LON_PRODUCT), Number(S_PM.CORNER_UL_LAT_PRODUCT)]
+                var NE = [Number(S_PM.CORNER_UR_LON_PRODUCT), Number(S_PM.CORNER_UR_LAT_PRODUCT)]
+                var SW = [Number(S_PM.CORNER_LL_LON_PRODUCT), Number(S_PM.CORNER_LL_LAT_PRODUCT)]
+                var SE = [Number(S_PM.CORNER_LR_LON_PRODUCT), Number(S_PM.CORNER_LR_LAT_PRODUCT)]
+                var polygon = turf.polygon([[NW, NE, SE, SW, NW]]) // GeoJSON always repeats first and last entry
+
                 var replyLandsat = helper.cloneObject(helper.defaultReply)
                 replyLandsat.id = _id
                 replyLandsat.satellite.name = 'Landsat-8'
                 replyLandsat.satellite.sensor = 'OLI'
                 replyLandsat.date.UTC = UTCTime
                 replyLandsat.date.local = localTime
+                replyLandsat.footprint = turf.truncate(turf.convex(polygon), 5, 2) // precision 5, no z-coordinates
                 replyLandsat.clouds.radar = false
                 replyLandsat.clouds.cover = preFormat.IMAGE_ATTRIBUTES.CLOUD_COVER
                 replyLandsat.sun.altitude = preFormat.IMAGE_ATTRIBUTES.SUN_ELEVATION
@@ -215,7 +224,7 @@ var external = function (obj, callback) {
             returnArray.push(entries[i])
           }
 
-          console.log('Sentinel-2 request finished')
+          console.log('Sentinel request finished')
           finishCheck()
         } else {
           for (var j = 0; j < nrSearches; j += 1) {

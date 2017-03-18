@@ -37,10 +37,6 @@ app.render.create = function (user) {
   window.location.hash = 'create'
 
   $('input[name="projectname"]').focus()
-// Reverse
-// http://nominatim.openstreetmap.org/reverse?format=json&lat=52.80&lon=11.12&zoom=10&addressdetails=0
-// Normal
-// http://nominatim.openstreetmap.org/search?q=Palmyra+Syria&format=json&polygon=0&addressdetails=0
 
   var map = L.map('map', {
     center: [ 55.3322691334024, 10.3491210937499 ],
@@ -203,11 +199,11 @@ app.render.create = function (user) {
         'user': cookies
       }
 
-      app.database.fetch(post, function (res) { console.log(res) })
+      app.database.fetch(post, function (res) { console.log(res); bob = res }) // eslint-disable-line
       // app.render.loading('Creating user site..')
       // app.database.createUserSite(post, function (res) {
       //   if (res.status === 'success') {
-      //     app.render.loading('Fetching images from ESA..')
+      //     app.render.loading('Fetching images..')
       //     console.log('created user site: ', res)
       //     app.database.fetchEsaImages(post, function (res) {
       //       if (res.status === 'success') {

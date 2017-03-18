@@ -8,9 +8,13 @@ const external = require('./external.js')
 
 router.post('/api/fetch', function (req, res) {
   var post = req.body
-  external(post, function (result) { res.status(200).json(result) })
-
-  // console.log(external(post))
+  external(post, function (result) {
+    if (result.status === 'success') {
+      res.status(200).json(result)
+    } else {
+      res.status(200).json({status: 'error', 'message': 'Error getting image metadata'})
+    }
+  })
 })
 
 // var insertImages = function (res, arr, siteRequest) {

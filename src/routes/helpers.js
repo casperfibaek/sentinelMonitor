@@ -13,9 +13,10 @@ helpers.defaultReply = {
     'UTC': 'ISO-String',
     'local': 'ISO-String'
   },
+  'footprint': {},
   'clouds': {
     'radar': 'boolean',
-    'cover': 'number'
+    'cover': 'NA'
   },
   'sun': {
     'altitude': 'number',
@@ -130,6 +131,7 @@ helpers.parseXML = function (arr, params) {
       if (entry[j].attr && entry[j].attr.name === 'producttype') { reply.satellite.producttype = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'sensoroperationalmode') { reply.satellite.sensormode = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'polarisationmode') { reply.satellite.polarisation = entry[j].val }
+
       if (entry[j].attr && entry[j].attr.name === 'beginposition') {
         reply.date.UTC = entry[j].val
         reply.date.local = helpers.toLocaltime(entry[j].val, params.geometry.timezone)
@@ -141,6 +143,7 @@ helpers.parseXML = function (arr, params) {
       if (entry[j].attr && entry[j].attr.name === 'footprint') {
         polygon = turf.polygon([helpers.wkt2arr(entry[j].val)])
         center = turf.center(polygon)
+        reply.footprint = turf.truncate(turf.convex(polygon), 5, 2) // precision 5, no z-coordinates
       }
     }
 
