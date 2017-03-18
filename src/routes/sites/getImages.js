@@ -26,44 +26,42 @@ router.post('/api/getImages', function (req, res) {
     SELECT
       sitename,
       image_uuid,
-      link_main,
-      link_alt,
-      link_thumb,
-      clouds,
+      sat_name
+      sat_sensor,
+      sat_producttype,
+      sat_sensormode,
+      sat_polarisation,
+      time_utc,
+      time_local,
       footprint,
+      clouds,
+      radar,
       sun_altitude,
-      sun_azimuth,
-      identifier,
-      platformname,
-      platform_id,
-      time_begin,
-      time_end,
-      time_ingestion
+      sun_azimuth
     FROM (
       SELECT
         trig_sites.sitename AS sitename,
         trig_sites.username AS username,
         UNNEST(trig_sites.images) AS sites_images,
         trig_images.image_uuid AS image_uuid,
-        trig_images.link_main AS link_main,
-        trig_images.link_alt AS link_alt,
-        trig_images.link_thumb AS link_thumb,
-        trig_images.clouds AS clouds,
+        trig_images.sat_name AS sat_name,
+        trig_images.sat_sensor AS sat_sensor,
+        trig_images.sat_producttype AS sat_producttype,
+        trig_images.sat_sensormode AS sat_sensor,
+        trig_images.sat_polarisation AS sat_polarisation,
+        trig_images.time_utc AS time_utc,
+        trig_images.time_local AS time_local,
         trig_images.footprint AS footprint,
+        trig_images.clouds AS clouds,
+        trig_images.radar AS radar,
         trig_images.sun_altitude AS sun_altitude,
         trig_images.sun_azimuth AS sun_azimuth,
-        trig_images.identifier AS identifier,
-        trig_images.platformname AS platformname,
-        trig_images.platform_id AS platform_id,
-        trig_images.time_begin AS time_begin,
-        trig_images.time_end AS time_end,
-        trig_images.time_ingestion AS time_ingestion
       FROM trig_sites, trig_images
     ) AS b
     WHERE sites_images = image_uuid
     AND username = '${userRequest.username}'
     AND sitename = '${userRequest.site}'
-    ORDER BY time_begin DESC
+    ORDER BY time_utc DESC
     `
 
     client.query(request, function (err, result) {

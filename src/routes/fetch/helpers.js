@@ -125,9 +125,6 @@ helpers.parseXML = function (arr, params) {
     var center
 
     for (var j = 0; j < entry.length; j += 1) {
-      // if (entry[j].name === 'link' && entry[j].attr && !entry[j].attr.rel) { reply.links.main = entry[j].attr.href }
-      // if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'alternative') { reply.links.alternative = entry[j].attr.href }
-      // if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'icon') { reply.links.thumbnail = entry[j].attr.href }
       if (entry[j].attr && entry[j].attr.name === 'uuid') { reply.id = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'platformname') { reply.satellite.name = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'cloudcoverpercentage') { reply.clouds.cover = Number(entry[j].val) }

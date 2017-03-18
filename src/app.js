@@ -9,7 +9,6 @@ const getSites = require('./routes/sites/getSites')
 const createSite = require('./routes/sites/createSite')
 const deleteSite = require('./routes/sites/deleteSite')
 const getImages = require('./routes/sites/getImages')
-const fetch = require('./routes/fetch/fetch')
 
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -41,7 +40,6 @@ app.use('/', getSites)
 app.use('/', createSite)
 app.use('/', deleteSite)
 app.use('/', getImages)
-app.use('/', fetch)
 app.use(function (req, res, next) {
   res.status(404).render('error', {
     title: 'Page not found'

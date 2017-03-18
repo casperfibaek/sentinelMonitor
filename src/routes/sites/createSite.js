@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const pg = require('pg')
-const turf = require('turf')
+const turf = require('@turf/turf')
 const utc = require('../geom/utc')
-const database = require('./database.js')
+const database = require('../database.js')
 const connectionString = database.connectionString
 const errMsg = require('../errorMessages')
 const external = require('../fetch/external')
+const jsonminify = require('jsonminify')
 
 /*
   Recieves data like this:
@@ -26,6 +27,20 @@ const external = require('../fetch/external')
     }
   }
 */
+
+function str2num (arr) {
+  var newArr = []
+  var i = arr.length
+  while (i--) { newArr[i] = arr[i] }
+  for (var j = 0; j < arr.length; j++) {
+    if (arr[j] instanceof Array) {
+      str2num(arr[j])
+    } else {
+      if (!isNaN(arr[j])) { arr[j] = Number(arr[j]) }
+    }
+  }
+  return newArr
+}
 
 router.post('/api/createSite', function (req, res) {
   var post = req.body
@@ -54,7 +69,7 @@ router.post('/api/createSite', function (req, res) {
       if (result.rowCount > 0) {
         checkUnique(function () {                 // check if the sitename is unique for that user
           createSite(function () {                // if successfull run this function
-            insertImages(client, err, res)        // download images
+            insertImages(client, res)        // download images
           })
         })
       } else {
@@ -88,8 +103,10 @@ router.post('/api/createSite', function (req, res) {
 
   var createSite = function (callback) {
     // Calculate the timezone of the posted siteGeometry
-    var center = turf.centroid(JSON.parse(post.geometry))
-    var timezone // eslint-disable-line
+    // The coordinates array gets parsed wrong, this is a work around, hack.
+    post.geometry.geometry.coordinates = str2num(post.geometry.geometry.coordinates)
+    var center = turf.centroid(post.geometry)
+    var timezone
     for (var i = 0; i < utc.features.length; i += 1) {
       if (turf.inside(center, utc.features[i]) === true) {
         timezone = utc.features[i].properties.zone
@@ -97,10 +114,10 @@ router.post('/api/createSite', function (req, res) {
     }
 
     var sat = []
-    if (post.options.sentinel1 === true) { sat.push('s1') }
-    if (post.options.sentinel2 === true) { sat.push('s2') }
-    if (post.options.sentinel3 === true) { sat.push('s3') }
-    if (post.options.landsat8 === true) { sat.push('l8') }
+    if (post.options.sentinel1 === 'true') { sat.push('s1') }
+    if (post.options.sentinel2 === 'true') { sat.push('s2') }
+    if (post.options.sentinel3 === 'true') { sat.push('s3') }
+    if (post.options.landsat8 === 'true') { sat.push('l8') }
     sat = `{${sat.toString()}}`
 
     var request = `
@@ -114,7 +131,7 @@ router.post('/api/createSite', function (req, res) {
       timezone
     ) VALUES (
       '${post.projectname}',
-      '${post.geometry}',
+      '${jsonminify(JSON.stringify(turf.truncate(post.geometry), 6, 2))}',
       '${sat}',
       '${post.user.username}',
       '${post.options.date}',
@@ -125,7 +142,7 @@ router.post('/api/createSite', function (req, res) {
     UPDATE trig_users SET sites = array_append(sites, '${post.projectname}')
     WHERE username = '${post.user.username}' AND session_id = '${post.user.session}';
     `
-
+    console.log(request)
     client.query(request, function (err, result) {
       if (err) { errMsg.queryError(err, res) }
 
@@ -133,7 +150,7 @@ router.post('/api/createSite', function (req, res) {
     })
   }
 
-  var insertImages = function (client) {
+  var insertImages = function (client, res) {
     external(post, function (result) {
       if (result.status === 'success') {
         var imgArray = result.message
@@ -176,9 +193,9 @@ router.post('/api/createSite', function (req, res) {
               '${img.satellite.producttype}',
               '${img.satellite.sensormode}',
               '${img.satellite.polarisation}',
-              '${img.date.utc}',
+              '${img.date.UTC}',
               '${img.date.local}',
-              '${JSON.stringify(img.footprint)}',
+              '${jsonminify(JSON.stringify(img.footprint))}',
               '${img.clouds.radar}',
                ${img.clouds.cover},
                ${img.sun.altitude},
@@ -198,6 +215,7 @@ router.post('/api/createSite', function (req, res) {
         END;
         $$;
         `
+        console.log(request)
         client.query(request, function (err, result) {
           if (err) { errMsg.queryError(client, err, res) }
 
