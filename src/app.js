@@ -4,6 +4,7 @@ const port = process.env.PORT || 3000
 const session = require('express-session')
 const routes = require('./routes/index')
 const fetch = require('./routes/fetch')
+const userControl = require('./routes/userControl')
 const database = require('./routes/database')
 const credentials = database.credentials.secondary
 const request = require('request')
@@ -35,6 +36,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
 app.use('/', routes)
 app.use('/', fetch)
+app.use('/', userControl)
 
 app.get('/', function (req, res, next) {
   req.session.cookie.expires = new Date(Date.now() + 3600000) // 1 hour

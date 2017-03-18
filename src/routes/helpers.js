@@ -4,29 +4,32 @@ const turf = require('@turf/turf')
 var helpers = {}
 
 helpers.defaultReply = {
-  'id': 'string',
+  'id': 'na',
   'satellite': {
-    'name': 'string',
-    'sensor': 'string'
+    'name': 'na',             // String
+    'sensor': 'na',           // String
+    'producttype': 'na',      // String
+    'sensormode': 'na',       // String
+    'polarisation': 'na'      // String
   },
   'date': {
-    'UTC': 'ISO-String',
-    'local': 'ISO-String'
+    'UTC': 'na',              // ISO-String
+    'local': 'na'             // ISO-String
   },
-  'footprint': {},
+  'footprint': 'na',          // Stringified GeoJSON
   'clouds': {
-    'radar': 'boolean',
-    'cover': 'NA'
+    'radar': 'na',            // Boolean
+    'cover': 'na'             // Number
   },
   'sun': {
-    'altitude': 'number',
-    'azimuth': 'number'
-  },
-  'links': {
-    'main': 'string',
-    'alternative': 'string',
-    'thumbnail': 'string'
+    'altitude': 'na',         // Number
+    'azimuth': 'na'           // Number
   }
+  // 'links': {
+  //   'main': 'string',
+  //   'alternative': 'string',
+  //   'thumbnail': 'string'
+  // }
 }
 
 helpers.arr2wkt = function (arr) {
@@ -122,9 +125,9 @@ helpers.parseXML = function (arr, params) {
     var center
 
     for (var j = 0; j < entry.length; j += 1) {
-      if (entry[j].name === 'link' && entry[j].attr && !entry[j].attr.rel) { reply.links.main = entry[j].attr.href }
-      if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'alternative') { reply.links.alternative = entry[j].attr.href }
-      if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'icon') { reply.links.thumbnail = entry[j].attr.href }
+      // if (entry[j].name === 'link' && entry[j].attr && !entry[j].attr.rel) { reply.links.main = entry[j].attr.href }
+      // if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'alternative') { reply.links.alternative = entry[j].attr.href }
+      // if (entry[j].name === 'link' && entry[j].attr && entry[j].attr.rel === 'icon') { reply.links.thumbnail = entry[j].attr.href }
       if (entry[j].attr && entry[j].attr.name === 'uuid') { reply.id = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'platformname') { reply.satellite.name = entry[j].val }
       if (entry[j].attr && entry[j].attr.name === 'cloudcoverpercentage') { reply.clouds.cover = Number(entry[j].val) }

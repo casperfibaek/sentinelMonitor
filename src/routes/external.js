@@ -11,6 +11,13 @@ const utc = require('./geom/utc')
 const helper = require('./helpers')
 
 var external = function (obj, callback) {
+  var timeOut = setTimeout(function () {
+    callback({
+      'status': 'error',
+      'message': 'Waiting for images took too long..'
+    })
+  }, 1000 * 60 * 2) // Two minutes
+
   var returnArray = []
   var key = NASAkey
   var params = {
@@ -26,6 +33,7 @@ var external = function (obj, callback) {
   if (obj && obj.geometry) {
     params.geometry.geojson = obj.geometry
   } else {
+    clearTimeout(timeOut)
     callback({
       'status': 'error',
       'message': 'geometry invalid'
@@ -75,7 +83,13 @@ var external = function (obj, callback) {
     finished += 1
     console.log('finished: ' + finished)
     console.log('totalSatellites: ' + totalSatellites)
-    if (finished === totalSatellites) { callback({'status': 'success', 'message': returnArray}) }
+    if (finished === totalSatellites) {
+      clearTimeout(timeOut)
+      callback({
+        'status': 'success',
+        'message': returnArray
+      })
+    }
   }
 
   /*****************
@@ -162,9 +176,9 @@ var external = function (obj, callback) {
                 replyLandsat.clouds.cover = preFormat.IMAGE_ATTRIBUTES.CLOUD_COVER
                 replyLandsat.sun.altitude = preFormat.IMAGE_ATTRIBUTES.SUN_ELEVATION
                 replyLandsat.sun.azimuth = preFormat.IMAGE_ATTRIBUTES.SUN_AZIMUTH
-                replyLandsat.links.main = main
-                replyLandsat.links.alternative = main
-                replyLandsat.links.thumbnail = thumbnail
+                // replyLandsat.links.main = main
+                // replyLandsat.links.alternative = main
+                // replyLandsat.links.thumbnail = thumbnail
 
                 returnArray.push(replyLandsat)
               } else {

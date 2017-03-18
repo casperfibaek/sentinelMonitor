@@ -126,24 +126,6 @@ app.database = {
         })
       })
   },
-  'postEsaImages': function (request, callback) {
-    $.ajax({
-      type: 'POST',
-      url: 'http://127.0.0.1:3000/api/postEsaImages',
-      dataType: 'json',
-      data: request
-    })
-      .done(function (response) {
-        callback(response)
-      })
-      .fail(function (xhr, status, error) {
-        callback({
-          'status': status,
-          'message': error,
-          'total': xhr
-        })
-      })
-  },
   'deleteSite': function (request, callback) {
     $.ajax({
       type: 'POST',
