@@ -1,8 +1,8 @@
-/* globals $ app cookies location */
+/* globals $ app cookies */
 app.render.sites = function () {
   window.location.hash = 'sites'
   app.render.loading('Loading sites..')
-  app.database.fetchUserSites(cookies, function (res) {
+  app.database.getSites(cookies, function (res) {
     console.log('rendered: sites')
     var setup = `
       <div class='sitesScreen'>
@@ -16,7 +16,7 @@ app.render.sites = function () {
     $('#app').empty().append(setup)
 
     // console.log(res)
-    if (res.status === 'success') {
+    if (res.status === 'success' && res.message.length !== 0) {
       var allSites = res.message
       for (var i = 0; i < allSites.length; i += 1) {
         var site = allSites[i]
@@ -24,8 +24,8 @@ app.render.sites = function () {
           <div class="site" name="${site.sitename}" timezone="${site.timezone}">
             <div class="head">
               <p class="name">${site.sitename}</p>
-              <p class="date_top">${site.latest_image.slice(0, 10)}</p>
-              <p class="date_bottom">${site.latest_image.slice(11, 16)} GMT</p>
+              <p class="date_top">${site.latest_image_time.slice(0, 10)}</p>
+              <p class="date_bottom">${site.latest_image_time.slice(11, 16)} GMT</p>
             </div>
             <div class="foot">
               <div class="remove"><i class="fa fa-trash" aria-hidden="true"></i></div>
@@ -35,6 +35,7 @@ app.render.sites = function () {
           </div>
           `)
       }
+
       $('.site').hover(function () {
         $(this).children('.foot').css('opacity', 1)
       }, function () {
@@ -78,10 +79,7 @@ app.render.sites = function () {
         }, 300)
       })
     } else {
-      console.log('error!')
-      $('.loggedInAs > a').html(`Not logged in<i class="fa fa-user" aria-hidden="true"></i>`)
-      $('.loggedInAs').attr('login', 'false')
-      $(location).attr('href', 'http://127.0.0.1:3000/logout')
+      app.render.create()
     }
   })
 }

@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
-const database = require('./database.js')
-const credentials = database.credentials
-const NASAkey = database.NASAkey
 const request = require('request')
 const bodyParser = require('body-parser')
 const sunCalc = require('suncalc')
 const turf = require('@turf/turf')
 const xmldoc = require('xmldoc')
-const utc = require('./geom/utc')
+const database = require('../database.js')
+const credentials = database.credentials
+const NASAkey = database.NASAkey
+const utc = require('../geom/utc')
 const helper = require('./helpers')
 
 var external = function (obj, callback) {

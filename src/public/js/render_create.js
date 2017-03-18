@@ -199,7 +199,7 @@ app.render.create = function (user) {
         'user': cookies
       }
 
-      app.database.fetch(post, function (res) { console.log(res); bob = res }) // eslint-disable-line
+      app.database.createSite(post, function (res) { console.log(res); bob = res }) // eslint-disable-line
       // app.render.loading('Creating user site..')
       // app.database.createUserSite(post, function (res) {
       //   if (res.status === 'success') {

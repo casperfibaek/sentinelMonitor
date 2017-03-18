@@ -3,7 +3,7 @@ app.database = {
   'login': function (user, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/login',
+      url: 'http://127.0.0.1:3000/auth/login',
       dataType: 'json',
       data: user
     })
@@ -21,7 +21,7 @@ app.database = {
   'signup': function (user, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/signup',
+      url: 'http://127.0.0.1:3000/auth/signup',
       dataType: 'json',
       data: user
     })
@@ -39,7 +39,7 @@ app.database = {
   'validateSession': function (str, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/session',
+      url: 'http://127.0.0.1:3000/auth/session',
       dataType: 'json',
       data: {'session': str}
     })
@@ -54,10 +54,10 @@ app.database = {
         })
       })
   },
-  'fetchUserSites': function (request, callback) {
+  'getImages': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/fetchUserSites',
+      url: 'http://127.0.0.1:3000/api/getImages',
       dataType: 'json',
       data: request
     })
@@ -72,46 +72,10 @@ app.database = {
         })
       })
   },
-  'fetch': function (request, callback) {
+  'createSite': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/fetch',
-      dataType: 'json',
-      data: request
-    })
-      .done(function (response) {
-        callback(response)
-      })
-      .fail(function (xhr, status, error) {
-        callback({
-          'status': status,
-          'message': error,
-          'total': xhr
-        })
-      })
-  },
-  'createUserSite': function (request, callback) {
-    $.ajax({
-      type: 'POST',
-      url: 'http://127.0.0.1:3000/api/createUserSite',
-      dataType: 'json',
-      data: request
-    })
-      .done(function (response) {
-        callback(response)
-      })
-      .fail(function (xhr, status, error) {
-        callback({
-          'status': status,
-          'message': error,
-          'total': xhr
-        })
-      })
-  },
-  'fetchEsaImages': function (request, callback) {
-    $.ajax({
-      type: 'POST',
-      url: 'http://127.0.0.1:3000/api/fetchEsaImages',
+      url: 'http://127.0.0.1:3000/api/createSite',
       dataType: 'json',
       data: request
     })
@@ -144,10 +108,10 @@ app.database = {
         })
       })
   },
-  'getSite': function (request, callback) {
+  'getSites': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/getSite',
+      url: 'http://127.0.0.1:3000/api/getSites',
       dataType: 'json',
       data: request
     })

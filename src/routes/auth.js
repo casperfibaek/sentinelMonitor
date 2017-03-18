@@ -6,7 +6,13 @@ const bcrypt = require('bcrypt')
 const router = express.Router()
 const pg = require('pg')
 
-router.post('/api/login', function (req, res) {
+router.get('/auth/logout', function (req, res, next) {
+  req.session.destroy()
+  res.redirect('/')
+  console.log('session destroyed')
+})
+
+router.post('/auth/login', function (req, res) {
   var client = new pg.Client(connectionString)
   var user = {
     'username': req.body.username || 'undefined',
@@ -77,7 +83,7 @@ router.post('/api/login', function (req, res) {
   })
 })
 
-router.post('/api/signup', function (req, res) {
+router.post('/auth/signup', function (req, res) {
   var client = new pg.Client(connectionString)
   var user = {
     'username': req.body.username || 'undefined',
@@ -141,7 +147,7 @@ router.post('/api/signup', function (req, res) {
   })
 })
 
-router.post('/api/session', function (req, res) {
+router.post('/auth/session', function (req, res) {
   var session = req.body.session || 'undefined'
   if (session === 'undefined' || session === 'NULL') {
     return res.status(200).json({

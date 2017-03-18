@@ -2,19 +2,20 @@ const path = require('path')
 const express = require('express')
 const port = process.env.PORT || 3000
 const session = require('express-session')
-const routes = require('./routes/index')
-const fetch = require('./routes/fetch')
-const userControl = require('./routes/userControl')
-const database = require('./routes/database')
-const credentials = database.credentials.secondary
-const request = require('request')
+
+const basic = require('./routes/index')
+const auth = require('./routes/auth')
+const getSites = require('./routes/sites/getSites')
+const createSite = require('./routes/sites/createSite')
+const deleteSite = require('./routes/sites/deleteSite')
+const getImages = require('./routes/sites/getImages')
+const fetch = require('./routes/fetch/fetch')
+
 const bodyParser = require('body-parser')
-const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
 app.use(cors()) // Allow crossOrigin (remove after testing)
-app.use(morgan('dev')) // Logs (remove after testing)
 app.use(bodyParser.urlencoded({
   extended: true,
   parameterLimit: 10000,
@@ -34,42 +35,13 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
-app.use('/', routes)
+app.use('/', basic)
+app.use('/', auth)
+app.use('/', getSites)
+app.use('/', createSite)
+app.use('/', deleteSite)
+app.use('/', getImages)
 app.use('/', fetch)
-app.use('/', userControl)
-
-app.get('/', function (req, res, next) {
-  req.session.cookie.expires = new Date(Date.now() + 3600000) // 1 hour
-  req.session.cookie.maxAge = 3600000 // 1 hour
-  res.render('index', {
-    session: req.session.id
-  })
-  console.log('sessionID: ' + req.session.id)
-})
-
-app.get('/logout', function (req, res, next) {
-  req.session.destroy()
-  res.redirect('/')
-  console.log('session destroyed')
-})
-
-app.get('/image', function (req, res, next) {
-  if (req.query.uuid) {
-    var link = `https://scihub.copernicus.eu/dhus/odata/v1/Products('${encodeURI(req.query.uuid)}')/Products('Quicklook')/$value`
-    request(link, {
-      'auth': credentials,
-      'timeout': 900000,
-      'gzip': true
-    })
-      .on('error', function (err) {
-        console.log(err)
-      })
-      .pipe(res)
-  } else {
-    return res.status(200).json({status: 'success', message: 'bad link'})
-  }
-})
-
 app.use(function (req, res, next) {
   res.status(404).render('error', {
     title: 'Page not found'
