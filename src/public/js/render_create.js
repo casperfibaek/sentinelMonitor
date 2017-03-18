@@ -199,26 +199,16 @@ app.render.create = function (user) {
         'user': cookies
       }
 
-      app.database.createSite(post, function (res) { console.log(res); bob = res }) // eslint-disable-line
-      // app.render.loading('Creating user site..')
-      // app.database.createUserSite(post, function (res) {
-      //   if (res.status === 'success') {
-      //     app.render.loading('Fetching images..')
-      //     console.log('created user site: ', res)
-      //     app.database.fetchEsaImages(post, function (res) {
-      //       if (res.status === 'success') {
-      //         app.render.sites()
-      //         console.log(res)
-      //       } else {
-      //         app.render.create()
-      //         console.log(res)
-      //       }
-      //     })
-      //   } else {
-      //     app.render.create()
-      //     console.log(res)
-      //   }
-      // })
+      app.render.loading('Creating user site..')
+      app.database.createSite(post, function (res) {
+        if (res.status === 'success') {
+          app.render.sites()
+          console.log(res)
+        } else {
+          app.render.create()
+          console.log(res)
+        }
+      })
     }
   })
 

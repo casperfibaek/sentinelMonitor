@@ -142,7 +142,7 @@ router.post('/api/createSite', function (req, res) {
     UPDATE trig_users SET sites = array_append(sites, '${post.projectname}')
     WHERE username = '${post.user.username}' AND session_id = '${post.user.session}';
     `
-    console.log(request)
+
     client.query(request, function (err, result) {
       if (err) { errMsg.queryError(err, res) }
 
@@ -166,69 +166,67 @@ router.post('/api/createSite', function (req, res) {
             latest = time
             latestUID = img.id
           }
-        }
-
-        var request = `
-        DO LANGUAGE plpgsql
-        $$
-        BEGIN
+          var request = `
+          DO LANGUAGE plpgsql
+          $$
+          BEGIN
           INSERT INTO trig_images (
-              image_uuid,
-              sat_name,
-              sat_sensor,
-              sat_producttype,
-              sat_sensormode,
-              sat_polarisation,
-              time_utc,
-              time_local,
-              footprint,
-              clouds,
-              radar,
-              sun_altitude,
-              sun_azimuth
+            image_uuid,
+            sat_name,
+            sat_sensor,
+            sat_producttype,
+            sat_sensormode,
+            sat_polarisation,
+            time_utc,
+            time_local,
+            footprint,
+            clouds,
+            radar,
+            sun_altitude,
+            sun_azimuth
           ) VALUES (
-              '${img.id}',
-              '${img.satellite.name}',
-              '${img.satellite.sensor}',
-              '${img.satellite.producttype}',
-              '${img.satellite.sensormode}',
-              '${img.satellite.polarisation}',
-              '${img.date.UTC}',
-              '${img.date.local}',
-              '${jsonminify(JSON.stringify(img.footprint))}',
-              '${img.clouds.radar}',
-               ${img.clouds.cover},
-               ${img.sun.altitude},
-               ${img.sun.azimuth}
+            '${img.id}',
+            '${img.satellite.name}',
+            '${img.satellite.sensor}',
+            '${img.satellite.producttype}',
+            '${img.satellite.sensormode}',
+            '${img.satellite.polarisation}',
+            '${img.date.UTC}',
+            '${img.date.local}',
+            '${jsonminify(JSON.stringify(img.footprint))}',
+             ${img.clouds.cover},
+            '${img.clouds.radar}',
+             ${img.sun.altitude},
+             ${img.sun.azimuth}
           );
 
           UPDATE trig_sites SET
-            images = array_append(images, '${img.id}'),
-            latest_image = '${new Date(latest).toISOString()}',
-            latest_image_uuid = '${latestUID}'
+          images = array_append(images, '${img.id}'),
+          latest_image_time = '${new Date(latest).toISOString()}',
+          latest_image_uuid = '${latestUID}'
           WHERE username = '${post.user.username}' AND sitename = '${post.projectname}';
 
-        EXCEPTION
+          EXCEPTION
           WHEN unique_violation THEN
           UPDATE trig_images SET image_uuid = '${img.id}' WHERE image_uuid = '${img.id}';
 
-        END;
-        $$;
+          END;
+          $$;
         `
-        console.log(request)
-        client.query(request, function (err, result) {
-          if (err) { errMsg.queryError(client, err, res) }
+          client.query(request, function (err, result) {
+            if (err) { errMsg.queryError(client, err, res) }
 
-          count += 1
+            count += 1
 
-          if (count === imgCount) {
-            errMsg.endConnection(client, err, res)
-            return res.status(200).json({
-              'status': 'success',
-              'message': `Prepared database`
-            })
-          }
-        })
+            if (count === imgCount) {
+              errMsg.endConnection(client, err, res)
+              return res.status(200).json({
+                'status': 'success',
+                'message': `Prepared database`
+              })
+            }
+          })
+        }
       } else {
         client.end(function (err) { if (err) { console.log('error closing connection') } })
         return res.status(200).json({status: 'error', 'message': 'Error getting image metadata'})
