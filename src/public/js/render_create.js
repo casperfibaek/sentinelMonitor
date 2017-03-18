@@ -16,10 +16,10 @@ app.render.create = function (user) {
           <input class="date" type="date" name="startdate" value="2016-10-01"/>
           <p>Satellites</p>
           <div class="satelliteHolder">
-            <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-1" value="sentinel-1"><p>Sentinel 1</p></div>
-            <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-2" value="sentinel-2" checked><p>Sentinel 2</p></div>
-            <div class="checkbox"><input class="checkButton" type="checkbox" name="satellite-3" value="sentinel-3"><p>Sentinel 3</p></div>
-            <div class="checkbox"><input class="checkButton" type="checkbox" name="Landsat 8" value="Landsat 8"><p>Landsat 8</p></div>
+            <div class="checkbox"><input class="checkButton" type="checkbox" name="sentinel1" value="sentinel-1"><p>Sentinel 1</p></div>
+            <div class="checkbox"><input class="checkButton" type="checkbox" name="sentinel2" value="sentinel-2" checked><p>Sentinel 2</p></div>
+            <div class="checkbox"><input class="checkButton" type="checkbox" name="sentinel3" value="sentinel-3"><p>Sentinel 3</p></div>
+            <div class="checkbox"><input class="checkButton" type="checkbox" name="landsat8" value="Landsat 8"><p>Landsat 8</p></div>
           </div>
           <div class="buttonHolder">
               <input type="button" name="back" class="button" value="Back">
@@ -184,41 +184,45 @@ app.render.create = function (user) {
 
       $('input[name="projectname"]').focus()
     } else if (
-      $('.checkButton[value="sentinel-1"]').is(':checked') === false &&
-      $('.checkButton[value="sentinel-2"]').is(':checked') === false &&
-      $('.checkButton[value="sentinel-3"]').is(':checked') === false) {
+      $('.checkButton[name="sentinel1"]').is(':checked') === false &&
+      $('.checkButton[name="sentinel2"]').is(':checked') === false &&
+      $('.checkButton[name="sentinel3"]').is(':checked') === false &&
+      $('.checkButton[name="landsat8"]').is(':checked') === false) {
       message('Please select a satellite')
     } else {
       var post = {
         'projectname': $('input[name="projectname"]').val(),
-        'startdate': $('input[name="startdate"]').val(),
-        'geom': JSON.stringify(defaultLayer.toGeoJSON()),
-        'satellites': {
-          'sentinel-1': $('.checkButton[value="sentinel-1"]').is(':checked'),
-          'sentinel-2': $('.checkButton[value="sentinel-2"]').is(':checked'),
-          'sentinel-3': $('.checkButton[value="sentinel-3"]').is(':checked')
+        'geometry': defaultLayer.toGeoJSON(),
+        'options': {
+          'date': $('input[name="startdate"]').val(),
+          'sentinel1': $('.checkButton[name="sentinel1"]').is(':checked'),
+          'sentinel2': $('.checkButton[name="sentinel2"]').is(':checked'),
+          'sentinel3': false, // $('.checkButton[name="sentinel3"]').is(':checked')
+          'landsat8': $('.checkButton[name="landsat8"]').is(':checked')
         },
         'user': cookies
       }
-      app.render.loading('Creating user site..')
-      app.database.createUserSite(post, function (res) {
-        if (res.status === 'success') {
-          app.render.loading('Fetching images from ESA..')
-          console.log('created user site: ', res)
-          app.database.fetchEsaImages(post, function (res) {
-            if (res.status === 'success') {
-              app.render.sites()
-              console.log(res)
-            } else {
-              app.render.create()
-              console.log(res)
-            }
-          })
-        } else {
-          app.render.create()
-          console.log(res)
-        }
-      })
+
+      app.database.fetch(post, function (res) { console.log(res) })
+      // app.render.loading('Creating user site..')
+      // app.database.createUserSite(post, function (res) {
+      //   if (res.status === 'success') {
+      //     app.render.loading('Fetching images from ESA..')
+      //     console.log('created user site: ', res)
+      //     app.database.fetchEsaImages(post, function (res) {
+      //       if (res.status === 'success') {
+      //         app.render.sites()
+      //         console.log(res)
+      //       } else {
+      //         app.render.create()
+      //         console.log(res)
+      //       }
+      //     })
+      //   } else {
+      //     app.render.create()
+      //     console.log(res)
+      //   }
+      // })
     }
   })
 

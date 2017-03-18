@@ -25,7 +25,8 @@
     "pg": "^6.1.2",
     "suncalc": "^1.8.0",
     "turf": "^3.0.14",
-    "wicket": "^1.3.2"
+    "wicket": "^1.3.2",
+    "xmldoc": "^1.0.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
