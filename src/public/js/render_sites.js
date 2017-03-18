@@ -15,11 +15,22 @@ app.render.sites = function () {
 
     $('#app').empty().append(setup)
 
-    // console.log(res)
+    var L8Url = function (id) {
+      var path = id.slice(6, 9)
+      var row = id.slice(3, 6)
+      return `http://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/${id}_thumb_large.jpg`
+    }
+
     if (res.status === 'success' && res.message.length !== 0) {
       var allSites = res.message
       for (var i = 0; i < allSites.length; i += 1) {
         var site = allSites[i]
+        var imgURL = ''
+        if (site.latest_image_uuid.indexOf('LC8') === 0) {
+          imgURL = L8Url(site.latest_image_uuid)
+        } else {
+          imgURL = `/image?uuid=${site.latest_image_uuid}`
+        }
         $('.sitesScreen > .siteHolder').append(`
           <div class="site" name="${site.sitename}" timezone="${site.timezone}">
             <div class="head">
@@ -31,7 +42,7 @@ app.render.sites = function () {
               <div class="remove"><i class="fa fa-trash" aria-hidden="true"></i></div>
               <div class="options"><i class="fa fa-cog" aria-hidden="true"></i></div>
             </div>
-            <img src="/image?uuid=${site.latest_image_uuid}" />
+            <img src="${imgURL}" />
           </div>
           `)
       }
@@ -46,7 +57,7 @@ app.render.sites = function () {
         var sitename = `${$(this).parent().attr('name')}`
         var timezone = `${$(this).parent().attr('timezone')}`
         app.render.loading('Loading site..')
-        app.database.getSite({
+        app.database.getImages({
           'username': cookies.username,
           'site': sitename
         }, function (res) {

@@ -93,7 +93,8 @@ router.post('/api/createSite', function (req, res) {
 
         return res.status(200).json({
           'status': 'error',
-          'message': 'please choose a unique name'
+          'message': 'please choose a unique name',
+          'total': result
         })
       } else {
         callback()
@@ -166,6 +167,7 @@ router.post('/api/createSite', function (req, res) {
             latest = time
             latestUID = img.id
           }
+
           var request = `
           DO LANGUAGE plpgsql
           $$
@@ -214,7 +216,10 @@ router.post('/api/createSite', function (req, res) {
           $$;
         `
           client.query(request, function (err, result) {
-            if (err) { errMsg.queryError(client, err, res) }
+            if (err) {
+              // return res.json(request)
+              errMsg.queryError(client, err, res)
+            }
 
             count += 1
 

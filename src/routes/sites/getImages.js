@@ -26,7 +26,7 @@ router.post('/api/getImages', function (req, res) {
     SELECT
       sitename,
       image_uuid,
-      sat_name
+      sat_name,
       sat_sensor,
       sat_producttype,
       sat_sensormode,
@@ -47,7 +47,7 @@ router.post('/api/getImages', function (req, res) {
         trig_images.sat_name AS sat_name,
         trig_images.sat_sensor AS sat_sensor,
         trig_images.sat_producttype AS sat_producttype,
-        trig_images.sat_sensormode AS sat_sensor,
+        trig_images.sat_sensormode AS sat_sensormode,
         trig_images.sat_polarisation AS sat_polarisation,
         trig_images.time_utc AS time_utc,
         trig_images.time_local AS time_local,
@@ -55,7 +55,7 @@ router.post('/api/getImages', function (req, res) {
         trig_images.clouds AS clouds,
         trig_images.radar AS radar,
         trig_images.sun_altitude AS sun_altitude,
-        trig_images.sun_azimuth AS sun_azimuth,
+        trig_images.sun_azimuth AS sun_azimuth
       FROM trig_sites, trig_images
     ) AS b
     WHERE sites_images = image_uuid

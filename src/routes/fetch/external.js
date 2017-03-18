@@ -176,9 +176,6 @@ var external = function (obj, callback) {
                 replyLandsat.clouds.cover = preFormat.IMAGE_ATTRIBUTES.CLOUD_COVER
                 replyLandsat.sun.altitude = preFormat.IMAGE_ATTRIBUTES.SUN_ELEVATION
                 replyLandsat.sun.azimuth = preFormat.IMAGE_ATTRIBUTES.SUN_AZIMUTH
-                // replyLandsat.links.main = main
-                // replyLandsat.links.alternative = main
-                // replyLandsat.links.thumbnail = thumbnail
 
                 returnArray.push(replyLandsat)
               } else {
@@ -232,7 +229,7 @@ var external = function (obj, callback) {
         entries = esa.childrenNamed('entry')
 
         if (nrSearches === 0) {
-          entries = helper.parseXML(entries, params)
+          entries = helper.parseXML(entries, params.geometry.timezone)
 
           for (var i = 0; i < entries.length; i += 1) {
             returnArray.push(entries[i])
@@ -257,8 +254,8 @@ var external = function (obj, callback) {
                 entries = entries.concat(esa.childrenNamed('entry'))
 
                 if (completed === nrSearches) {
-                  entries = helper.parseXML(entries, params)
-                  for (var i = 0; i > entries.length; i += 1) {
+                  entries = helper.parseXML(entries, params.geometry.timezone)
+                  for (var i = 0; i < entries.length; i += 1) {
                     returnArray.push(entries[i])
                   }
                   console.log('Sentinel request finished')

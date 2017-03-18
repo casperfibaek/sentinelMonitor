@@ -115,7 +115,7 @@ helpers.getSearches = function (nr) {
 }
 
 // Parses the return XML file from ESA into an array of human readable objects
-helpers.parseXML = function (arr, params) {
+helpers.parseXML = function (arr, timezone) {
   var parsed = []
 
   for (var i = 0; i < arr.length; i += 1) {
@@ -134,11 +134,14 @@ helpers.parseXML = function (arr, params) {
 
       if (entry[j].attr && entry[j].attr.name === 'beginposition') {
         reply.date.UTC = entry[j].val
-        reply.date.local = helpers.toLocaltime(entry[j].val, params.geometry.timezone)
+        reply.date.local = helpers.toLocaltime(entry[j].val, timezone)
       }
       if (entry[j].attr && entry[j].attr.name === 'instrumentshortname') {
         reply.satellite.sensor = entry[j].val
-        if (entry[j].val !== 'MSI') { reply.clouds.radar = true } else { reply.clouds.radar = false }
+        if (entry[j].val !== 'MSI') {
+          reply.clouds.radar = true
+          reply.clouds.cover = 0
+        } else { reply.clouds.radar = false }
       }
       if (entry[j].attr && entry[j].attr.name === 'footprint') {
         polygon = turf.polygon([helpers.wkt2arr(entry[j].val)])

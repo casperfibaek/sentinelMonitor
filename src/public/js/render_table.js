@@ -21,7 +21,6 @@ app.render.table = function (info) {
                 <th name="platform" sorted="down" title="The satellite that took the image">Platform</th>
                 <th name="uuid" sorted="down" title="Unique image ID">UUID</th>
                 <th name="main" sorted="down" title="Main download link">Main</th>
-                <th name="alternative" sorted="down" title="Alternative download link">Alt</th>
               </tr>
             </thead>
             <tbody>
@@ -44,32 +43,28 @@ app.render.table = function (info) {
     `)
     window.location.hash = info.sitename
 
+    var round = function (num, roundTo) {
+      return Math.round(num * Math.pow(10, roundTo)) / Math.pow(10, roundTo)
+    }
+
     var addRows = function (obj) {
       for (var i = 0; i < obj.length; i += 1) {
         var image = obj[i]
 
-        var time = new Date(image.time_begin)
-        time = new Date(time.getTime() + (1000 * 60 * 60 * Number(info.timezone)))
-        time = time.toISOString()
-        var day = time.slice(0, 10)
-        var hours = time.slice(11, 16)
+        var day = image.time_local.slice(0, 10)
+        var hours = image.time_local.slice(11, 16)
 
         var row = `
         <tr type="info" uuid="${image.image_uuid}">
           <td name="date" align="center">${day}</td>
           <td name="time" align="center">${hours}</td>
-          <td name="clouds" align="right">${image.clouds}</td>
-          <td name="sun_alt" align="right">${image.sun_altitude}</td>
-          <td name="sun_azi" align="right">${image.sun_azimuth}</td>
-          <td name="platform" align="center">${image.platform_id}</td>
+          <td name="clouds" align="right">${round(image.clouds, 2)}</td>
+          <td name="sun_alt" align="right">${round(image.sun_altitude, 2)}</td>
+          <td name="sun_azi" align="right">${round(image.sun_azimuth, 2)}</td>
+          <td name="platform" align="center">${image.sat_name}</td>
           <td name="uuid" align="center">${image.image_uuid}</td>
           <td name="main" align="center">
-            <a href="${image.link_main}">
-              <i class="fa fa-external-link" aria-hidden="true"></i>
-            </a>
-          </td>
-          <td name="alternative" align="center">
-            <a href="${image.link_alt}">
+            <a href="linkFrom:${image.image_uuid}">
               <i class="fa fa-external-link" aria-hidden="true"></i>
             </a>
           </td>
@@ -137,11 +132,22 @@ app.render.table = function (info) {
       }
     })
 
+    // LC81950212017023LGN00
+    var L8Url = function (id) {
+      var path = id.slice(6, 9)
+      var row = id.slice(3, 6)
+      return `http://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/${id}_thumb_large.jpg`
+    }
+
     var timeout
     $('tr[type="info"]').hover(function () {
       var rowUUID = $(this).attr('uuid')
       timeout = setTimeout(function () {
-        $('.mouseFollow > img').attr('src', `/image?uuid=${rowUUID}`)
+        if (rowUUID.indexOf('LC8') === 0) {
+          $('.mouseFollow > img').attr('src', L8Url(rowUUID))
+        } else {
+          $('.mouseFollow > img').attr('src', `/image?uuid=${rowUUID}`)
+        }
         $('.mouseFollow').show()
       }, 250)
     }, function () {
