@@ -50,6 +50,7 @@ app.render.table = function (info) {
     }
 
     bob = imgArray
+    bob1 = info.siteFootprint
 
     var addRows = function (obj) {
       for (var i = 0; i < obj.length; i += 1) {

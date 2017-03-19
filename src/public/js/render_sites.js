@@ -47,8 +47,6 @@ app.render.sites = function () {
           `)
       }
 
-      bob_site = allSites
-
       $('.site').hover(function () {
         $(this).children('.foot').css('opacity', 1)
       }, function () {
@@ -67,7 +65,8 @@ app.render.sites = function () {
             app.render.table({
               'sitename': sitename,
               'timezone': timezone,
-              'images': res.message
+              'images': res.message,
+              'siteFootprint': res.footprint
             })
           } else {
             app.render.sites()

@@ -23,13 +23,14 @@ router.post('/api/getSites', function (req, res) {
     if (err) { errMsg.serverError(err, res) }
 
     var request = `
-    SELECT sitename, latest_image_time, latest_image_uuid, timezone
+    SELECT sitename, latest_image_time, latest_image_uuid, timezone, footprint
     FROM (
       SELECT
         UNNEST(users.sites) AS arr_sitename,
         sites.latest_image_time AS latest_image_time,
         sites.latest_image_uuid AS latest_image_uuid,
         sites.sitename AS sitename,
+        sites.footprint AS footprint,
         sites.timezone AS timezone,
         users.username AS username,
         users.session_id AS session_id,
