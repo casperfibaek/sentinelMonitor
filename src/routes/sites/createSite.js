@@ -216,10 +216,7 @@ router.post('/api/createSite', function (req, res) {
           $$;
         `
           client.query(request, function (err, result) {
-            if (err) {
-              // return res.json(request)
-              errMsg.queryError(client, err, res)
-            }
+            if (err) { errMsg.queryError(client, err, res) }
 
             count += 1
 
