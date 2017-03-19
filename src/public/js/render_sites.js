@@ -58,7 +58,7 @@ app.render.sites = function () {
       $('.site > .head, .site > img').click(function () {
         var sitename = `${$(this).parent().attr('name')}`
         var timezone = `${$(this).parent().attr('timezone')}`
-        var footprint = footprint[sitename]
+        var footprint = footprints[sitename]
         app.render.loading('Loading site..')
         app.database.getImages({
           'username': cookies.username,
