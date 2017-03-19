@@ -45,10 +45,7 @@ app.render.login = function () {
           $('.loggedInAs > a').html(`${user.username}<i class="fa fa-user" aria-hidden="true"></i>`)
           $('.loggedInAs').attr('login', 'true')
           cookies.username = user.username
-
-          setTimeout(function () {
-            app.render.sites()
-          }, 500)
+          app.render.sites()
         } else {
           app.render.login(user)
 

@@ -49,6 +49,8 @@ app.render.table = function (info) {
       return Math.round(num * Math.pow(10, roundTo)) / Math.pow(10, roundTo)
     }
 
+    bob = imgArray
+
     var addRows = function (obj) {
       for (var i = 0; i < obj.length; i += 1) {
         var image = obj[i]
