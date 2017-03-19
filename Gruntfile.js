@@ -35,6 +35,7 @@ module.exports = function (grunt) {
       build: {
         files: {
           'dist/public/js/app.min.js': [
+            'dist/public/js/ga.js',
             'dist/public/js/ext_jquery.js',
             'dist/public/js/ext_scrollbar.js',
             'dist/public/js/ext_leaflet.js',
