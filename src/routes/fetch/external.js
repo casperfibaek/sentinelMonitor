@@ -81,8 +81,6 @@ var external = function (obj, callback) {
   var finished = 0
   var finishCheck = function () {
     finished += 1
-    console.log('finished: ' + finished)
-    console.log('totalSatellites: ' + totalSatellites)
     if (finished === totalSatellites) {
       clearTimeout(timeOut)
       callback({
@@ -101,8 +99,6 @@ var external = function (obj, callback) {
       'count_AMAZON': 0,
       'id': []
     }
-
-    console.log('landsat getting image IDs from NASA')
 
     // MINUS ONE BECAUSE GEOJSON ARRAYS REPEATS THE LAST POINT
     for (var i = 0; i < params.geometry.array.length - 1; i += 1) {
@@ -129,8 +125,6 @@ var external = function (obj, callback) {
 
         // MINUS ONE BECAUSE GEOJSON ARRAYS REPEATS THE LAST POINT
         if (landsat.count_NASA === params.geometry.array.length - 1) {
-          console.log('landsat recieved: ' + landsat.id.length + ' from NASA')
-
           if (landsat.id.length === 0) { finishCheck() }
 
           for (var i = 0; i < landsat.id.length; i += 1) {
@@ -185,10 +179,7 @@ var external = function (obj, callback) {
               }
 
               landsat.count_AMAZON += 1
-              console.log(`landsat completed: ${helper.round((landsat.count_AMAZON / landsat.id.length) * 100, 2)}%`)
-
               if (landsat.count_AMAZON === landsat.id.length) {
-                console.log('Landsat request finished')
                 finishCheck()
               }
             }
@@ -214,7 +205,6 @@ var external = function (obj, callback) {
     var esaRequest = `${baseUrl}footprint:"Intersects(${params.geometry.wkt})"${platforms} AND beginposition:[${params.date}T00:00:00.000Z TO NOW]${end}`
     var entries = []
 
-    console.log('Sentinel requesting images')
     request.get(esaRequest, {
       'auth': credentials.main,
       'gzip': true
@@ -222,7 +212,6 @@ var external = function (obj, callback) {
       if (!error && response.statusCode === 200) {
         var esa = new xmldoc.XmlDocument(result)
         var nrEntries = Number(esa.childNamed('opensearch:totalResults').val)
-        console.log('Sentinel recived: ' + nrEntries + ' IDs')
 
         var nrSearches = helper.getSearches(nrEntries) - 1
         var completed = 0
@@ -235,7 +224,6 @@ var external = function (obj, callback) {
             returnArray.push(entries[i])
           }
 
-          console.log('Sentinel request finished')
           finishCheck()
         } else {
           for (var j = 0; j < nrSearches; j += 1) {
@@ -258,7 +246,6 @@ var external = function (obj, callback) {
                   for (var i = 0; i < entries.length; i += 1) {
                     returnArray.push(entries[i])
                   }
-                  console.log('Sentinel request finished')
                   finishCheck()
                 }
               } else { console.log('error: ' + error) }

@@ -222,6 +222,7 @@ router.post('/api/createSite', function (req, res) {
 
             if (count === imgCount) {
               errMsg.endConnection(client, err, res)
+              console.log(`${post.user.username} created ${post.projectname}`)
               return res.status(200).json({
                 'status': 'success',
                 'message': `Prepared database`
