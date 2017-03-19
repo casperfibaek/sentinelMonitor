@@ -47,6 +47,8 @@ app.render.sites = function () {
           `)
       }
 
+      bob_site = allSites
+
       $('.site').hover(function () {
         $(this).children('.foot').css('opacity', 1)
       }, function () {
