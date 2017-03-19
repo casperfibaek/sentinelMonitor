@@ -66,6 +66,7 @@ router.post('/auth/login', function (req, res) {
             client.query(request, function (err, result) {
               if (err) { errMsg.queryError(err, res) }
 
+              console.log(`${user.username} logged in`)
               return res.status(200).json({
                 'status': 'success',
                 'message': result.rows[0]
