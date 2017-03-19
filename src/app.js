@@ -47,3 +47,4 @@ app.use(function (req, res, next) {
 })
 app.set('port', port)
 app.listen(app.get('port'), '0.0.0.0')
+console.log('Monitor initialized..')
