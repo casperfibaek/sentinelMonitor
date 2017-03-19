@@ -170,6 +170,7 @@ router.post('/auth/session', function (req, res) {
       errMsg.endConnection(client, err, res)
 
       if (result.rowCount > 0) {
+        console.log(`${result.rows[0].username} returned`)
         return res.status(200).json({
           'status': 'success',
           'username': result.rows[0].username,
