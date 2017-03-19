@@ -23,8 +23,10 @@ app.render.sites = function () {
 
     if (res.status === 'success' && res.message.length !== 0) {
       var allSites = res.message
+      var footprints = {}
       for (var i = 0; i < allSites.length; i += 1) {
         var site = allSites[i]
+        footprints[site.sitename] = site.footprint
         var imgURL = ''
         if (site.latest_image_uuid.indexOf('LC8') === 0) {
           imgURL = L8Url(site.latest_image_uuid)
@@ -56,6 +58,7 @@ app.render.sites = function () {
       $('.site > .head, .site > img').click(function () {
         var sitename = `${$(this).parent().attr('name')}`
         var timezone = `${$(this).parent().attr('timezone')}`
+        var footprint = footprint[sitename]
         app.render.loading('Loading site..')
         app.database.getImages({
           'username': cookies.username,
@@ -66,7 +69,7 @@ app.render.sites = function () {
               'sitename': sitename,
               'timezone': timezone,
               'images': res.message,
-              'siteFootprint': res.footprint
+              'siteFootprint': footprint
             })
           } else {
             app.render.sites()
