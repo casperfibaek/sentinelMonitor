@@ -138,6 +138,7 @@ router.post('/auth/signup', function (req, res) {
 
           errMsg.endConnection(client, err, res)
 
+          console.log(`created user: ${user.username}`)
           return res.status(200).json({
             'status': 'success',
             'message': result
