@@ -28,10 +28,10 @@ router.post('/api/deleteSite', function (req, res) {
     if (err) { errMsg.serverError(err, res) }
 
     var request = `
-    UPDATE trig_users SET sites = array_remove(sites, '${userRequest.site}')
+    UPDATE users SET sites = array_remove(sites, '${userRequest.site}')
     WHERE username = '${userRequest.username}' AND session_id = '${userRequest.session}';
 
-    DELETE FROM trig_sites
+    DELETE FROM sites
     WHERE sitename = '${userRequest.site}' AND username = '${userRequest.username}';
     `
 

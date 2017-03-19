@@ -26,15 +26,15 @@ router.post('/api/getSites', function (req, res) {
     SELECT sitename, latest_image_time, latest_image_uuid, timezone
     FROM (
       SELECT
-        UNNEST(trig_users.sites) AS arr_sitename,
-        trig_sites.latest_image_time AS latest_image_time,
-        trig_sites.latest_image_uuid AS latest_image_uuid,
-        trig_sites.sitename AS sitename,
-        trig_sites.timezone AS timezone,
-        trig_users.username AS username,
-        trig_users.session_id AS session_id,
-        trig_images.image_uuid as image_uuid
-      FROM trig_sites, trig_users, trig_images
+        UNNEST(users.sites) AS arr_sitename,
+        sites.latest_image_time AS latest_image_time,
+        sites.latest_image_uuid AS latest_image_uuid,
+        sites.sitename AS sitename,
+        sites.timezone AS timezone,
+        users.username AS username,
+        users.session_id AS session_id,
+        images.image_uuid as image_uuid
+      FROM sites, users, images
     ) AS b
     WHERE arr_sitename = sitename
     AND latest_image_uuid = image_uuid

@@ -3,7 +3,7 @@ app.database = {
   'login': function (user, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/auth/login',
+	  url: '/auth/login',
       dataType: 'json',
       data: user
     })
@@ -21,7 +21,7 @@ app.database = {
   'signup': function (user, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/auth/signup',
+	  url: '/auth/signup',
       dataType: 'json',
       data: user
     })
@@ -39,7 +39,7 @@ app.database = {
   'validateSession': function (str, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/auth/session',
+      url: '/auth/session',
       dataType: 'json',
       data: {'session': str}
     })
@@ -57,7 +57,7 @@ app.database = {
   'getImages': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/getImages',
+      url: '/api/getImages',
       dataType: 'json',
       data: request
     })
@@ -75,7 +75,7 @@ app.database = {
   'createSite': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/createSite',
+      url: '/api/createSite',
       dataType: 'json',
       data: request
     })
@@ -93,7 +93,7 @@ app.database = {
   'deleteSite': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/deleteSite',
+      url: '/api/deleteSite',
       dataType: 'json',
       data: request
     })
@@ -111,7 +111,7 @@ app.database = {
   'getSites': function (request, callback) {
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:3000/api/getSites',
+      url: '/api/getSites',
       dataType: 'json',
       data: request
     })

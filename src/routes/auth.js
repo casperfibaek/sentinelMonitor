@@ -32,7 +32,7 @@ router.post('/auth/login', function (req, res) {
 
     // Query the database
     var request = `
-      SELECT * FROM trig_users
+      SELECT * FROM users
       WHERE username = '${user.username}';`
 
     client.query(request, function (err, result) {
@@ -55,12 +55,12 @@ router.post('/auth/login', function (req, res) {
 
           if (check === true) {
             var request = `
-            UPDATE trig_users SET
+            UPDATE users SET
               session_id = '${user.session}',
               last_login = NOW()
             WHERE username = '${user.username}';
 
-            SELECT * FROM trig_users
+            SELECT * FROM users
             WHERE username = '${user.username}';`
 
             client.query(request, function (err, result) {
@@ -110,7 +110,7 @@ router.post('/auth/signup', function (req, res) {
     if (err) { errMsg.serverError(err, res) }
 
     var request = `
-    SELECT * FROM trig_users
+    SELECT * FROM users
     WHERE username = '${user.username}' OR email = '${user.email}';`
 
     client.query(request, function (err, result) {
@@ -126,10 +126,10 @@ router.post('/auth/signup', function (req, res) {
         })
       } else {
         var request = `
-        INSERT INTO trig_users (username, password, email, created_on, last_login, session_id)
+        INSERT INTO users (username, password, email, created_on, last_login, session_id)
         VALUES ('${user.username}', '${user.password}', '${user.email}', NOW(), NOW(), '${user.session}');
 
-        SELECT * FROM trig_users
+        SELECT * FROM users
         WHERE username = '${user.username}' AND password = '${user.password}';`
 
         client.query(request, function (err, result) {
@@ -160,7 +160,7 @@ router.post('/auth/session', function (req, res) {
   client.connect(function (err) {
     if (err) { errMsg.serverError(err, res) }
 
-    var request = `SELECT * FROM trig_users WHERE session_id = '${session}';`
+    var request = `SELECT * FROM users WHERE session_id = '${session}';`
 
     client.query(request, function (err, result) {
       if (err) { errMsg.queryError(err, res) }

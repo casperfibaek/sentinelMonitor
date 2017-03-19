@@ -13,7 +13,7 @@ app.render.logout = {
       $('.loggedInAs > a').html(`Not logged in<i class="fa fa-user" aria-hidden="true"></i>`)
       $('.loggedInAs').attr('login', 'false')
       $(this).remove()
-      $(location).attr('href', 'http://127.0.0.1:3000/auth/logout')
+      $(location).attr('href', '/auth/logout')
     })
 
     $('#mainContent').on('click', function () {

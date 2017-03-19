@@ -60,7 +60,7 @@ router.post('/api/createSite', function (req, res) {
     if (err) { errMsg.serverError(err, res) }
 
     // Find the user in the database
-    var request = `SELECT username FROM trig_users WHERE session_id = '${post.user.session}';`
+    var request = `SELECT username FROM users WHERE session_id = '${post.user.session}';`
 
     client.query(request, function (err, result) {
       if (err) { errMsg.queryError(err, res) }
@@ -81,7 +81,7 @@ router.post('/api/createSite', function (req, res) {
 
   var checkUnique = function (callback) {
     var request = `
-      SELECT sitename FROM trig_sites
+      SELECT sitename FROM sites
       WHERE sitename = '${post.projectname}' AND username = '${post.user.username}';
     `
     client.query(request, function (err, result) {
@@ -122,7 +122,7 @@ router.post('/api/createSite', function (req, res) {
     sat = `{${sat.toString()}}`
 
     var request = `
-    INSERT INTO trig_sites (
+    INSERT INTO sites (
       sitename,
       footprint,
       satellites,
@@ -140,7 +140,7 @@ router.post('/api/createSite', function (req, res) {
       ${timezone}
     );
 
-    UPDATE trig_users SET sites = array_append(sites, '${post.projectname}')
+    UPDATE users SET sites = array_append(sites, '${post.projectname}')
     WHERE username = '${post.user.username}' AND session_id = '${post.user.session}';
     `
 
@@ -172,7 +172,7 @@ router.post('/api/createSite', function (req, res) {
           DO LANGUAGE plpgsql
           $$
           BEGIN
-          INSERT INTO trig_images (
+          INSERT INTO images (
             image_uuid,
             sat_name,
             sat_sensor,
@@ -202,7 +202,7 @@ router.post('/api/createSite', function (req, res) {
              ${img.sun.azimuth}
           );
 
-          UPDATE trig_sites SET
+          UPDATE sites SET
           images = array_append(images, '${img.id}'),
           latest_image_time = '${new Date(latest).toISOString()}',
           latest_image_uuid = '${latestUID}'
@@ -210,7 +210,7 @@ router.post('/api/createSite', function (req, res) {
 
           EXCEPTION
           WHEN unique_violation THEN
-          UPDATE trig_images SET image_uuid = '${img.id}' WHERE image_uuid = '${img.id}';
+          UPDATE images SET image_uuid = '${img.id}' WHERE image_uuid = '${img.id}';
 
           END;
           $$;
