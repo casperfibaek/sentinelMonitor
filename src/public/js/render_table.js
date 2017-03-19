@@ -44,7 +44,6 @@ app.render.table = function (info) {
 
     window.location.hash = info.sitename
     var imgArray = info.images
-    bob = imgArray
 
     var round = function (num, roundTo) {
       return Math.round(num * Math.pow(10, roundTo)) / Math.pow(10, roundTo)

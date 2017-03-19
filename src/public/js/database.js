@@ -3,7 +3,7 @@ app.database = {
   'login': function (user, callback) {
     $.ajax({
       type: 'POST',
-	  url: '/auth/login',
+      url: '/auth/login',
       dataType: 'json',
       data: user
     })
@@ -21,7 +21,7 @@ app.database = {
   'signup': function (user, callback) {
     $.ajax({
       type: 'POST',
-	  url: '/auth/signup',
+      url: '/auth/signup',
       dataType: 'json',
       data: user
     })
