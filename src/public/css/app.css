@@ -586,6 +586,7 @@ input[type="password"]:focus {
 }
 
 .tableHolder {
+  height: 90%;
   max-height: 550px;
 }
 
@@ -603,6 +604,12 @@ th {
 
 th:hover {
   background: #18526c;
+}
+
+th[name="overlap"] > img {
+  width: 24px;
+  margin-bottom: -4px;
+  margin-top: -4px;
 }
 
 td {
