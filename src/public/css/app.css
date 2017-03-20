@@ -383,7 +383,7 @@ input[type="password"]:focus {
   height: 200px;
 }
 
-#map {
+.createScreen > #map {
   order: 2;
   border-radius: 2px;
   margin-right: 20px;
@@ -573,16 +573,37 @@ input[type="password"]:focus {
   padding-bottom: 0;
 }
 
-.tableScreen > .buttonHolder {
+.tableScreen > .container > .mapHolder {
+  height: 100%;
+  width: 400px;
+}
+
+.tableScreen > .container > .buttonHolder {
     padding-top: 20px;
 }
 
-.tableScreen > .buttonHolder > input {
+.tableScreen > .container > .buttonHolder > input {
   margin-left: 10px;
 }
 
-.tableScreen > .buttonHolder > input[name='filter'] {
+.tableScreen > .container > .buttonHolder > input[name='filter'] {
   float: left;
+}
+
+.tableScreen > .container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.tableScreen > .container > .mapHolder > #map {
+  border-radius: 2px;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
+  padding-left: 10px;
+  height: 360px;
+  width: 380px;
 }
 
 .tableHolder {
@@ -642,8 +663,7 @@ tr:not(.tableHeaders):hover {
 }
 
 .fixed_headers {
-  width: 704px;
-  height: 400px;
+  width: auto;
   table-layout: fixed;
   border-collapse: collapse;
   border: 0px;
@@ -668,7 +688,7 @@ tr:not(.tableHeaders):hover {
   overflow:hidden !important;
   height: 200px;
   width: 200px;
-  z-index: 11;
+  z-index: 1011;
 }
 
 .mouseFollow > img {
@@ -681,7 +701,7 @@ tr:not(.tableHeaders):hover {
   width: 206px;
   left: -3px;
   top: -3px;
-  z-index: 10;
+  z-index: 1010;
   position: absolute;
 }
 

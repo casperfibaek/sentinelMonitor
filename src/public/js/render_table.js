@@ -1,4 +1,4 @@
-/* globals $ app turf */
+/* globals $ app turf L */
 app.render.table = function (info) {
   console.log('rendered: sites')
   var setup
@@ -9,23 +9,26 @@ app.render.table = function (info) {
     setup = `
       <div class='tableScreen'>
         <h2>${info.sitename}</h2>
-        <div class="tableHolder">
-          <table class="fixed_headers sortable">
-            <thead>
-              <tr class="tableHeaders">
-                <th name="time_local" sorted="down" title="Date of capture"><i class="fa fa-calendar" aria-hidden="true"></i></th>
-                <th name="time_local" sorted="down" title="Time of Capture"><i class="fa fa-clock-o" aria-hidden="true"></i></th>
-                <th name="clouds" sorted="down" title="Percent cloudcover"><i class="fa fa-cloud" aria-hidden="true"></i></th>
-                <th name="overlap" sorted="down" title="How much of the image overlaps the project area"><img src="css/images/overlap.png" /></th>
-                <th name="sun_altitude" sorted="down" title="Altitude of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> al</th>
-                <th name="sun_azimuth" sorted="down" title="Azimuth of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> az</th>
-                <th name="sat_name" sorted="down" title="The satellite that took the image">Platform</th>
-                <th name="main" sorted="down" title="Main download link">Main</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+        <div class="container">
+          <div class="tableHolder">
+            <table class="fixed_headers sortable">
+              <thead>
+                <tr class="tableHeaders">
+                  <th name="time_local" sorted="down" title="Date of capture (Local)"><i class="fa fa-calendar" aria-hidden="true"></i></th>
+                  <th name="time_local" sorted="down" title="Time of Capture (Local)"><i class="fa fa-clock-o" aria-hidden="true"></i></th>
+                  <th name="clouds" sorted="down" title="Percent cloudcover"><i class="fa fa-cloud" aria-hidden="true"></i></th>
+                  <th name="overlap" sorted="down" title="How much of the image overlaps the project area"><img src="css/images/overlap.png" /></th>
+                  <th name="sun_altitude" sorted="down" title="Altitude of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> al</th>
+                  <th name="sun_azimuth" sorted="down" title="Azimuth of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> az</th>
+                  <th name="sat_name" sorted="down" title="The satellite that took the image">Platform</th>
+                  <th name="main" sorted="down" title="Main download link">Main</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div class="mapHolder"><div id="map"></div></div>
         </div>
         <div class="buttonHolder">
           <input type="button" name="edit" class="button" value="Edit">
@@ -72,6 +75,45 @@ app.render.table = function (info) {
     var projectGeom = JSON.parse(info.siteFootprint)
     var projectGeomArea = turf.area(projectGeom)
 
+    var map = L.map('map', {
+      center: [ 55.3322691334024, 10.3491210937499 ],
+      zoom: 6,
+      maxZoom: 12,
+      minZoom: 3,
+      editable: true,
+      zoomControl: false,
+      attributionControl: false
+    })
+
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
+        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      maxZoom: 21,
+      maxNativeZoom: 18
+    }).addTo(map)
+
+    var projectLayerStyle = {
+      'weight': 2,
+      'color': '#099c59'
+    }
+
+    var intersectionStyle = {
+      'weight': 0,
+      'fillColor': '#f44336',
+      'fillOpacity': 0.40
+    }
+
+    var footprintStyle = {
+      'weight': 2.5,
+      'color': 'rgb(58, 163, 191)',
+      'fillOpacity': 0
+    }
+
+    var projectLayer = L.geoJSON(projectGeom, {style: projectLayerStyle}).addTo(map)
+    map.fitBounds(projectLayer.getBounds({'padding': [1000, 1000]}))
+
+    var footprintsGroup = L.featureGroup().addTo(map)
+
     var addRows = function (obj) {
       for (var i = 0; i < obj.length; i += 1) {
         var image = obj[i]
@@ -81,12 +123,10 @@ app.render.table = function (info) {
         if (typeof image.footprint === 'string') { image.footprint = JSON.parse(image.footprint) }
         image.intersection = turf.intersect(image.footprint, projectGeom)
         image.overlap = (turf.area(image.intersection) / projectGeomArea) * 100
-
-        var link
         if (isLandsat(image.image_uuid)) {
-          link = L8Index(image.image_uuid)
+          image.link = L8Index(image.image_uuid)
         } else {
-          link = ESAIndex(image.image_uuid)
+          image.link = ESAIndex(image.image_uuid)
         }
 
         var row = `
@@ -99,7 +139,7 @@ app.render.table = function (info) {
           <td name="sun_azi" align="right">${round(image.sun_azimuth, 2)}\xB0</td>
           <td name="platform" align="center">${image.sat_name}</td>
           <td name="main" align="center">
-            <a href="${link}">
+            <a href="${image.link}">
               <i class="fa fa-external-link" aria-hidden="true"></i>
             </a>
           </td>
@@ -107,6 +147,22 @@ app.render.table = function (info) {
         `
         $('tbody').append(row)
       }
+
+      $('tr[type="info"]').click(function () {
+        var uid = $(this).attr('uuid')
+        footprintsGroup.eachLayer(function (layer) {
+          footprintsGroup.removeLayer(layer)
+        })
+        var thisImage = imgArray.filter(function (fl) { return fl.image_uuid === uid })[0]
+        var thisIntersection = L.geoJSON(thisImage.intersection, {style: intersectionStyle})
+        var thisFootprint = L.geoJSON(thisImage.footprint, {style: footprintStyle})
+        /* TODO: WORK FROM HERE - add image overlay and panes */
+        // var thisOverlay = L.imageOverlay(thisImage.link, thisFootprint.getBounds())
+        // footprintsGroup.addlayer(thisOverlay)
+        footprintsGroup.addLayer(thisIntersection)
+        footprintsGroup.addLayer(thisFootprint)
+        map.fitBounds(thisFootprint.getBounds())
+      })
 
       var timeout
       $('tr[type="info"]').hover(function () {
