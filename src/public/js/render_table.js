@@ -20,8 +20,8 @@ app.render.table = function (info) {
                   <th name="overlap" sorted="down" title="How much of the image overlaps the project area"><img src="css/images/overlap.png" /></th>
                   <th name="sun_altitude" sorted="down" title="Altitude of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> al</th>
                   <th name="sun_azimuth" sorted="down" title="Azimuth of the sun (degrees)"><i class="fa fa-sun-o" aria-hidden="true"></i> az</th>
-                  <th name="sat_name" sorted="down" title="The satellite that took the image">Platform</th>
-                  <th name="main" sorted="down" title="Main download link">Main</th>
+                  <th name="sat_name" sorted="down" title="The satellite that took the image"><img src="css/images/favicon_white.png" /></th>
+                  <th name="main" sorted="down" title="Main download link"><i class="fa fa-link" aria-hidden="true"></i></th>
                 </tr>
               </thead>
               <tbody>
@@ -109,8 +109,14 @@ app.render.table = function (info) {
       'fillOpacity': 0
     }
 
+    var invisibleStyle = {
+      'weight': 0,
+      'opacity': 0,
+      'fillOpacity': 0
+    }
+
     var projectLayer = L.geoJSON(projectGeom, {style: projectLayerStyle}).addTo(map)
-    map.fitBounds(projectLayer.getBounds({'padding': [1000, 1000]}))
+    map.fitBounds(projectLayer.getBounds({'padding': [250, 250]}))
 
     var footprintsGroup = L.featureGroup().addTo(map)
 
@@ -149,6 +155,8 @@ app.render.table = function (info) {
       }
 
       $('tr[type="info"]').click(function () {
+        $('tr[type="info"]').removeClass('selected')
+        $(this).addClass('selected')
         var uid = $(this).attr('uuid')
         footprintsGroup.eachLayer(function (layer) {
           footprintsGroup.removeLayer(layer)
@@ -161,7 +169,8 @@ app.render.table = function (info) {
         // footprintsGroup.addlayer(thisOverlay)
         footprintsGroup.addLayer(thisIntersection)
         footprintsGroup.addLayer(thisFootprint)
-        map.fitBounds(thisFootprint.getBounds())
+        footprintsGroup.addLayer(L.geoJSON(projectGeom, {style: invisibleStyle}))
+        map.fitBounds(footprintsGroup.getBounds({'padding': [250, 250]}))
       })
 
       var timeout
@@ -309,3 +318,87 @@ app.render.table = function (info) {
     })
   }
 }
+
+// _BR.2.VNIR.jpg Thumbnail
+// aster link: https://e4ftl01.cr.usgs.gov/ASTT/AST_L1T.003/2000.04.12/
+// var getAster = function () {
+//   var options = {
+//     'token': '23FFE8BF-CDC1-486B-B5E3-F2B7F55CE151',
+//     'center': 'LPDAAC_ECS',
+//     'shortname': 'AST_L1T',
+//     'version': '003',
+//     'begin': '2017-03-01',
+//     'end': '2017-03-20',
+//     'mode': 'coordinates',
+//     'urlat': 60,
+//     'urlon': 16,
+//     'lllat': 51,
+//     'lllon': 6,
+//     'minhoriz': 0,
+//     'maxhoriz': 35,
+//     'minvert': 0,
+//     'maxvert': 17,
+//     'metadata': 'on'
+//   }
+//
+//   var testMeta = function (arr) {
+//     var totalCount = arr.length
+//     var count = 0
+//     var dayImages = []
+//     for (var i = 0; i < arr.length; i += 1) {
+//       var metadataLink = arr[i]
+//
+//       $.ajax({
+//         'url': metadataLink,
+//         'type': 'get',
+//         'dataType': 'xml',
+//         'crossDomain': true
+//       })
+//          .done(function (xml) {
+//            count += 1
+//            $(xml).find('DayNightFlag').each(function () {
+//              var dayOrNight = $(this).text()
+//              if (dayOrNight === 'day') {
+//                dayImages.push(metadataLink)
+//              }
+//            })
+//            if (count === totalCount) { return dayImages }
+//          })
+//          .fail(function (jqxhr, textStatus, errorThrown) {
+//            alert('ERROR: ' + textStatus + ' | ' + errorThrown)
+//          })
+//     }
+//   }
+//
+//   var data = ''
+//   for (var prop in options) {
+//     if (options.hasOwnProperty(prop)) {
+//       data += prop + '=' + options[prop] + '&'
+//     }
+//   }
+//   data = data.slice(0, data.length - 1)
+//
+//   $.ajax({
+//     'url': 'https://dartool.cr.usgs.gov/cgi-bin/Daac2Disk.cgi',
+//     'type': 'POST',
+//     'data': data,
+//     'dataType': 'xml',
+//     'crossDomain': true,
+//     'timeout': 600000,
+//     'accepts': {
+//       'xml': 'text/xml',
+//       'text': 'text/xml'
+//     }
+//   })
+//      .done(function (xml) {
+//        var metadata = []
+//        $(xml).find('metadata').each(function () {
+//          metadata.push($(this).text())
+//        })
+//        testMeta(metadata)
+//      })
+//      .fail(function (jqxhr, textStatus, errorThrown) {
+//        alert('ERROR: ' + textStatus + ' | ' + errorThrown)
+//      })
+// }
+// var bob = getAster()

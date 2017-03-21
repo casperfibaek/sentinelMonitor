@@ -627,6 +627,12 @@ th:hover {
   background: #18526c;
 }
 
+th[name="sat_name"] > img {
+  width: 22px;
+  margin-bottom: -2px;
+  margin-top: -5px;
+}
+
 th[name="overlap"] > img {
   width: 24px;
   margin-bottom: -4px;
@@ -642,7 +648,6 @@ td {
   border-width: 0px;
   min-width: 30px;
   margin: 0px;
-  cursor: default;
 }
 
 tbody > tr {
@@ -658,8 +663,24 @@ td > a > i:hover{
   margin-right: -2px;
 }
 
+.tableHeaders > th {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+}
+
 tr:not(.tableHeaders):hover {
   background: #0e3b50;
+}
+
+tr:not(.tableHeaders) {
+  cursor: pointer;
+}
+
+tr:not(.tableHeaders).selected {
+  background: rgba(244, 67, 54, 0.4);
+}
+
+img[role="presentation"] {
+  filter: saturate(105%) contrast(110%);
 }
 
 .fixed_headers {
@@ -734,12 +755,22 @@ footer{
   z-index: 100;
   box-shadow: 0px -2px 3px 0px rgba(0, 0, 0, 0.15);
 }
+
 footer > p{
-  margin-top: 7px;
+  margin-top: 8px;
   margin-bottom: 0;
   margin-left: 20px;
-  font-size: 0.8em;
+  margin-right: 20px;
+  font-size: 0.75em;
   vertical-align: middle;
+}
+
+footer > .madeby {
+    float: left;
+}
+
+footer > .attribution {
+  float: right;
 }
 
 header{
