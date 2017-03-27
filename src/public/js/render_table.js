@@ -180,6 +180,10 @@ app.render.table = function (info) {
       var source
       $('tr[type="info"]').hover(function () {
         var rowUUID = $(this).attr('uuid')
+        var canvas = document.getElementById('viewport')
+        var context = canvas.getContext('2d')
+        context.clearRect(0, 0, canvas.width, canvas.height)
+
         timeout = setTimeout(function () {
           if (isLandsat(rowUUID)) {
             source = L8Thumb(rowUUID)
@@ -188,44 +192,16 @@ app.render.table = function (info) {
             source = `/image?uuid=${rowUUID}`
             // $('.mouseFollow > img').attr('src', source)
           }
-          var canvas = document.getElementById('viewport')
-          var context = canvas.getContext('2d')
-
-          var start = new Date()
-          var lines = 500
-          var cW = context.canvas.width
-          var cH = context.canvas.height
-
-          var draw = function () {
-            var rotation = parseInt(((new Date() - start) / 1800) * lines) / lines
-            context.save()
-            context.clearRect(0, 0, cW, cH)
-            context.translate(cW / 2, cH / 2)
-            context.rotate(Math.PI * 2 * rotation)
-            for (var i = 0; i < lines; i++) {
-              context.beginPath()
-              context.rotate(Math.PI * 2 / lines)
-              context.moveTo(cW / 20, 0)
-              context.lineTo(cW / 7, 0)
-              context.lineWidth = cW / 30
-              context.strokeStyle = 'rgba(255,255,255,' + i / (lines * 10) + ')'
-              context.stroke()
-            }
-            context.restore()
-          }
-          var spinner = window.setInterval(draw, 1000 / 30)
-
           var img = new Image()
           img.crossOrigin = 'Anonymous'
           img.onload = function () {
-            clearInterval(spinner)
               // remove black
             context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
             var canvasData = context.getImageData(0, 0, 512, 512)
             var pix = canvasData.data
 
             for (var i = 0, n = pix.length; i < n; i += 4) {
-              if (pix[i] <= 3 && pix[i + 1] <= 3 && pix[i + 2] <= 3) {
+              if (pix[i] <= 2 && pix[i + 1] <= 2 && pix[i + 2] <= 2) {
                 pix[i + 3] = 0
               }
             }
@@ -237,7 +213,7 @@ app.render.table = function (info) {
         }, 250)
       }, function () {
         clearTimeout(timeout)
-        $('.mouseFollow > img[name="default"]').removeAttr('src')
+        // $('.mouseFollow > img[name="default"]').removeAttr('src')
         $('.mouseFollow').hide()
       })
     }
@@ -341,33 +317,33 @@ app.render.table = function (info) {
       })
     })
 
-    $(document).on('keydown', function (event) {
-      if (event.keyCode === 17 || event.ctrlKey) {
-        $('.mouseFollow').css({
-          height: '400px',
-          width: '400px'
-        })
-        $('.mouseFollow > img').css({
-          height: '406px',
-          width: '406px',
-          filter: 'saturate(105%) contrast(110%)'
-        })
-      }
-    })
+    // $(document).on('keydown', function (event) {
+    //   if (event.keyCode === 17 || event.ctrlKey) {
+    //     $('.mouseFollow').css({
+    //       height: '400px',
+    //       width: '400px'
+    //     })
+    //     $('.mouseFollow > img').css({
+    //       height: '406px',
+    //       width: '406px',
+    //       filter: 'saturate(105%) contrast(110%)'
+    //     })
+    //   }
+    // })
 
-    $(document).on('keyup', function (event) {
-      if (event.keyCode === 17 || event.ctrlKey) {
-        $('.mouseFollow').css({
-          height: '200px',
-          width: '200px'
-        })
-        $('.mouseFollow > img').css({
-          height: '206px',
-          width: '206px',
-          filter: 'saturate(100%) contrast(100%)'
-        })
-      }
-    })
+    // $(document).on('keyup', function (event) {
+    //   if (event.keyCode === 17 || event.ctrlKey) {
+    //     $('.mouseFollow').css({
+    //       height: '200px',
+    //       width: '200px'
+    //     })
+    //     $('.mouseFollow > img').css({
+    //       height: '206px',
+    //       width: '206px',
+    //       filter: 'saturate(100%) contrast(100%)'
+    //     })
+    //   }
+    // })
   }
 }
 

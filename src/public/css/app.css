@@ -748,11 +748,11 @@ img[role="presentation"] {
   position: fixed;
   transition: height 0.15s ease-in-out, width 0.15s ease-in-out, filter 0.3s ease-in-out;
   overflow:hidden !important;
-  height: 200px;
-  width: 200px;
+  height: 512px;
+  width: 512px;
   z-index: 1011;
 }
-
+/*
 .mouseFollow > img {
   background-repeat: no-repeat;
   background-position-x: 10px;
@@ -766,7 +766,7 @@ img[role="presentation"] {
   z-index: 1010;
   position: absolute;
 }
-
+*/
 .header-fixed {
     position: absolute;
     top: 0px;
