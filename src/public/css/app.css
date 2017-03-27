@@ -608,6 +608,10 @@ input[type="password"]:focus {
   width: 400px;
 }
 
+.tableScreen > .container > .mapHolder > p {
+  margin-left: 10px;
+}
+
 .tableScreen > .buttonHolder {
     padding-top: 20px;
 }
@@ -639,8 +643,7 @@ input[type="password"]:focus {
   margin-top: 20px;
   margin-left: 10px;
   padding-left: 10px;
-  height: 360px;
-  width: 380px;
+  height: 456px;
 }
 
 .tableHolder {

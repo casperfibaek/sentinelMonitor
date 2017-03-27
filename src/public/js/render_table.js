@@ -1,4 +1,4 @@
-/* globals $ app turf L */
+/* globals $ app turf L Image */
 app.render.table = function (info) {
   console.log('rendered: sites')
   var setup
@@ -24,11 +24,13 @@ app.render.table = function (info) {
                   <th name="main" sorted="down" title="Main download link"><i class="fa fa-link" aria-hidden="true"></i></th>
                 </tr>
               </thead>
-              <tbody>
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
-          <div class="mapHolder"><div id="map"></div></div>
+          <div class="mapHolder">
+            <div id="map"></div>
+            <p>Hold Ctrl or ⌘ to enlarge images</p>
+          </div>
         </div>
         <div class="buttonHolder">
           <input type="button" name="edit" class="button" value="Edit">
@@ -39,10 +41,10 @@ app.render.table = function (info) {
         </div>
       </div>
     `
-    $('#app').empty().append(setup)
+    $('#app').empty().append(setup) // <img name="default"/>
     $('#app').prepend(`
     <div class='mouseFollow'>
-      <img name="default"/>
+      <canvas id="viewport" width="512" height="512"></canvas>
     </div>
     `)
 
@@ -175,14 +177,62 @@ app.render.table = function (info) {
       })
 
       var timeout
+      var source
       $('tr[type="info"]').hover(function () {
         var rowUUID = $(this).attr('uuid')
         timeout = setTimeout(function () {
           if (isLandsat(rowUUID)) {
-            $('.mouseFollow > img').attr('src', L8Thumb(rowUUID))
+            source = L8Thumb(rowUUID)
+            // $('.mouseFollow > img').attr('src', source)
           } else {
-            $('.mouseFollow > img').attr('src', `/image?uuid=${rowUUID}`)
+            source = `/image?uuid=${rowUUID}`
+            // $('.mouseFollow > img').attr('src', source)
           }
+          var canvas = document.getElementById('viewport')
+          var context = canvas.getContext('2d')
+
+          var start = new Date()
+          var lines = 500
+          var cW = context.canvas.width
+          var cH = context.canvas.height
+
+          var draw = function () {
+            var rotation = parseInt(((new Date() - start) / 1800) * lines) / lines
+            context.save()
+            context.clearRect(0, 0, cW, cH)
+            context.translate(cW / 2, cH / 2)
+            context.rotate(Math.PI * 2 * rotation)
+            for (var i = 0; i < lines; i++) {
+              context.beginPath()
+              context.rotate(Math.PI * 2 / lines)
+              context.moveTo(cW / 20, 0)
+              context.lineTo(cW / 7, 0)
+              context.lineWidth = cW / 30
+              context.strokeStyle = 'rgba(255,255,255,' + i / (lines * 10) + ')'
+              context.stroke()
+            }
+            context.restore()
+          }
+          var spinner = window.setInterval(draw, 1000 / 30)
+
+          var img = new Image()
+          img.crossOrigin = 'Anonymous'
+          img.onload = function () {
+            clearInterval(spinner)
+              // remove black
+            context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
+            var canvasData = context.getImageData(0, 0, 512, 512)
+            var pix = canvasData.data
+
+            for (var i = 0, n = pix.length; i < n; i += 4) {
+              if (pix[i] <= 3 && pix[i + 1] <= 3 && pix[i + 2] <= 3) {
+                pix[i + 3] = 0
+              }
+            }
+
+            context.putImageData(canvasData, 0, 0)
+          }
+          img.src = source
           $('.mouseFollow').show()
         }, 250)
       }, function () {
@@ -271,10 +321,6 @@ app.render.table = function (info) {
       theme: 'light-thick'
     })
 
-    $('img').on('load', function () {
-      $(this).attr('cached', 'true')
-    })
-
     $('.tableScreen > .buttonHolder > input[name="back"]').click(function () {
       app.render.sites()
     })
@@ -296,7 +342,7 @@ app.render.table = function (info) {
     })
 
     $(document).on('keydown', function (event) {
-      if (event.keyCode === 17) {
+      if (event.keyCode === 17 || event.ctrlKey) {
         $('.mouseFollow').css({
           height: '400px',
           width: '400px'
@@ -310,7 +356,7 @@ app.render.table = function (info) {
     })
 
     $(document).on('keyup', function (event) {
-      if (event.keyCode === 17) {
+      if (event.keyCode === 17 || event.ctrlKey) {
         $('.mouseFollow').css({
           height: '200px',
           width: '200px'
