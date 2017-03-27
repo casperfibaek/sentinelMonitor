@@ -75,6 +75,9 @@ app.render.table = function (info) {
       return `https://scihub.copernicus.eu/dhus/odata/v1/Products('${id}')/$value`
     }
 
+    var canvas = document.getElementById('viewport')
+    var context = canvas.getContext('2d')
+
     var projectGeom = JSON.parse(info.siteFootprint)
     var projectGeomArea = turf.area(projectGeom)
 
@@ -174,8 +177,32 @@ app.render.table = function (info) {
         footprintsGroup.addLayer(thisFootprint)
         footprintsGroup.addLayer(L.geoJSON(projectGeom, {style: invisibleStyle}))
         map.fitBounds(footprintsGroup.getBounds({'padding': [250, 250]}))
-      })
 
+        var source
+        if (isLandsat(uid)) { source = L8Thumb(uid) } else { source = `/image?uuid=${uid}` }
+
+        var img = new Image()
+        img.crossOrigin = 'Anonymous'
+        img.onload = function () {
+            // remove black
+          context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
+          var canvasData = context.getImageData(0, 0, 512, 512)
+          var pix = canvasData.data
+
+          for (var i = 0, n = pix.length; i < n; i += 4) {
+            if (pix[i] <= 2 && pix[i + 1] <= 2 && pix[i + 2] <= 2) {
+              pix[i + 3] = 0
+            }
+          }
+
+          context.putImageData(canvasData, 0, 0)
+          var imageURL = canvas.toDataURL('image/png')
+          var imageOverlay = L.imageOverlay(imageURL, thisFootprint.getBounds()).addTo(map)
+          footprintsGroup(imageOverlay)
+        }
+        img.src = source
+      })
+      /*
       var timeout
       var source
       $('tr[type="info"]').hover(function () {
@@ -207,6 +234,9 @@ app.render.table = function (info) {
             }
 
             context.putImageData(canvasData, 0, 0)
+            var img_ = canvas.toDataURL('image/png')
+
+            console.log(img_)
           }
           img.src = source
           $('.mouseFollow').show()
@@ -216,6 +246,7 @@ app.render.table = function (info) {
         // $('.mouseFollow > img[name="default"]').removeAttr('src')
         $('.mouseFollow').hide()
       })
+      */
     }
     addRows(imgArray)
 
