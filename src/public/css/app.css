@@ -578,15 +578,15 @@ input[type="password"]:focus {
   width: 400px;
 }
 
-.tableScreen > .container > .buttonHolder {
+.tableScreen > .buttonHolder {
     padding-top: 20px;
 }
 
-.tableScreen > .container > .buttonHolder > input {
+.tableScreen > .buttonHolder > input {
   margin-left: 10px;
 }
 
-.tableScreen > .container > .buttonHolder > input[name='filter'] {
+.tableScreen > .buttonHolder > input[name='filter'] {
   float: left;
 }
 
@@ -609,6 +609,7 @@ input[type="password"]:focus {
 .tableHolder {
   height: 90%;
   max-height: 550px;
+  width: 470px;
 }
 
 th {
@@ -684,7 +685,7 @@ img[role="presentation"] {
 }
 
 .fixed_headers {
-  width: auto;
+  width: 470px;
   table-layout: fixed;
   border-collapse: collapse;
   border: 0px;
