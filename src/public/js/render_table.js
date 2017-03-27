@@ -198,7 +198,7 @@ app.render.table = function (info) {
           context.putImageData(canvasData, 0, 0)
           var imageURL = canvas.toDataURL('image/png')
           var imageOverlay = L.imageOverlay(imageURL, thisFootprint.getBounds()).addTo(map)
-          footprintsGroup(imageOverlay)
+          footprintsGroup.addLayer(imageOverlay)
         }
         img.src = source
       })
