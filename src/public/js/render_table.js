@@ -44,7 +44,7 @@ app.render.table = function (info) {
     $('#app').empty().append(setup) // <img name="default"/>
     $('#app').prepend(`
     <div class='mouseFollow'>
-      <canvas id="viewport" width="512" height="512"></canvas>
+      <canvas id="viewport" width="auto" height="auto"></canvas>
     </div>
     `)
 
@@ -185,8 +185,10 @@ app.render.table = function (info) {
         img.crossOrigin = 'Anonymous'
         img.onload = function () {
             // remove black
-          context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
-          var canvasData = context.getImageData(0, 0, 512, 512)
+          // context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
+          context.drawImage(img, 0, 0)
+          // var canvasData = context.getImageData(0, 0, 512, 512)
+          var canvasData = context.getImageData(0, 0, canvas.height, canvas.width)
           var pix = canvasData.data
 
           for (var i = 0, n = pix.length; i < n; i += 4) {
