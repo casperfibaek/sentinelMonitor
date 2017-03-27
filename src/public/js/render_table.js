@@ -35,6 +35,7 @@ app.render.table = function (info) {
           <input type="button" name="export" class="button" value="Export">
           <input type="button" name="back" class="button" value="Back">
           <input type="button" name="filter" class="button" value="Filter">
+          <input type="button" name="reset" class="button" value="Reset">
         </div>
       </div>
     `
@@ -152,6 +153,7 @@ app.render.table = function (info) {
         </tr>
         `
         $('tbody').append(row)
+        if (app.filter.indexOf(image.image_uuid) !== -1) { $(`tr[uuid="${image.image_uuid}"]`).hide() }
       }
 
       $('tr[type="info"]').click(function () {
@@ -164,9 +166,8 @@ app.render.table = function (info) {
         var thisImage = imgArray.filter(function (fl) { return fl.image_uuid === uid })[0]
         var thisIntersection = L.geoJSON(thisImage.intersection, {style: intersectionStyle})
         var thisFootprint = L.geoJSON(thisImage.footprint, {style: footprintStyle})
+
         /* TODO: WORK FROM HERE - add image overlay and panes */
-        // var thisOverlay = L.imageOverlay(thisImage.link, thisFootprint.getBounds())
-        // footprintsGroup.addlayer(thisOverlay)
         footprintsGroup.addLayer(thisIntersection)
         footprintsGroup.addLayer(thisFootprint)
         footprintsGroup.addLayer(L.geoJSON(projectGeom, {style: invisibleStyle}))
@@ -279,7 +280,12 @@ app.render.table = function (info) {
     })
 
     $('input[name="filter"]').click(function () {
-      app.render.popup.filter(info.images)
+      app.render.popup.filter()
+    })
+
+    $('.tableScreen > .buttonHolder > input[name="reset"]').click(function () {
+      app.filter = []
+      $('tr[type="info"]').show()
     })
 
     $(document).on('mousemove', function (e) {

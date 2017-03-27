@@ -241,7 +241,7 @@ input[type="password"]:focus {
 
 .siteHolder{
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%
@@ -509,7 +509,8 @@ input[type="password"]:focus {
   margin: auto;
   height: 160px;
   width: 400px;
-  background: rgba(226, 242, 247, 0.95);
+  background: rgba(8, 51, 56, 0.95);
+  color: white;
   z-index: 1000;
   text-align: center;
   border-radius: 2px;
@@ -526,13 +527,32 @@ input[type="password"]:focus {
   top: 0;
   bottom: 0;
   margin: auto;
-  height: 425px;
-  width: 300px;
-  background: rgba(226, 242, 247, 0.95);
+  height: 280px;
+  width: 220px;
+  background: rgba(8, 51, 56, 0.95);
+  color: white;
   z-index: 1000;
   border-radius: 2px;
   text-align: left;
   display: block;
+}
+
+.filter > .container > form > p >[name="startdate"],
+.filter > .container > form > p >[name="enddate"] {
+  position: absolute;
+  left: 60px;
+}
+
+
+.filter > .container > form > p >[name="cloudcover"],
+.filter > .container > form > p >[name="coverage"] {
+  position: absolute;
+  width: 40px;
+  left: 160px;
+}
+
+.filter > h2 {
+  padding-bottom: 0;
 }
 
 .filter > .container > .buttonHolder {
@@ -542,6 +562,16 @@ input[type="password"]:focus {
 
 .filter > .container > .buttonHolder > .button {
   margin-left: 10px;
+}
+
+.filter > .container > .buttonHolder > .button[name="apply"] {
+  float: right;
+  margin-right: 0px;
+}
+
+.filter > .container > .buttonHolder > .button[name="back"] {
+  float: left;
+  margin-left: 5px;
 }
 
 .filter > .container {
@@ -588,6 +618,13 @@ input[type="password"]:focus {
 
 .tableScreen > .buttonHolder > input[name='filter'] {
   float: left;
+  margin-left: 0px;
+}
+
+.tableScreen > .buttonHolder > input[name='reset'] {
+  float: left;
+  margin-left: 10px;
+  background: #b7740d;
 }
 
 .tableScreen > .container {
@@ -832,7 +869,6 @@ header{
   }
   #app{
     max-width: 700px;
-    max-height: 600px;
   }
   .logo{
     display: none;

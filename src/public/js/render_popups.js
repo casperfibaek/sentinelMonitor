@@ -45,20 +45,19 @@ app.render.popup = {
       })
     }
   },
-  filter: function (arr) {
+  filter: function () {
+    var today = new Date().toISOString().split('T')[0]
+    var todayMinusThreeMonths = new Date().setMonth(new Date().getMonth() - 3)
+    todayMinusThreeMonths = new Date(todayMinusThreeMonths).toISOString().split('T')[0]
     var setup = `
       <div class='popup filter'>
         <h2>Filter</h4>
         <div class="container">
           <form>
-            <p>Start date</p>
-            <input class="date" type="date" name="startdate" value="2016-06-01"/>
-            <p>End date</p>
-            <input class="date" type="date" name="enddate" value="2016-12-08"/>
-            <p>Clouds from</p>
-            <input class="number" type="number" name="clouds_from" value="0"/>
-            <p>Clouds to</p>
-            <input class="number" type="number" name="clouds_to" value="15"/>
+            <p>From:<input class="date" type="date" name="startdate" value="${todayMinusThreeMonths}"/></p>
+            <p>To:<input class="date" type="date" name="enddate" value="${today}"/></p>
+            <p>Max Cloudcover (%)<input class="number" type="number" max="100" min="0" name="cloudcover" value="15"/></p>
+            <p>Min Coverage (%)<input class="number" type="number" max="100" min="0" name="coverage" value="50"/></p>
           </form>
           <div class="buttonHolder">
             <input type="button" name="apply" class="button" value="Apply">
@@ -67,7 +66,6 @@ app.render.popup = {
         </div>
       </div>
       `
-    console.log('arr', arr)
 
     $('body').prepend(setup)
     $('.content').append('<div class="overlay"></div>')
@@ -80,6 +78,30 @@ app.render.popup = {
     })
 
     $('.filter > .container > .buttonHolder > input[name="back"]').on('click', function () {
+      $('.popup, .overlay').remove()
+    })
+
+    $('.filter > .container > .buttonHolder > input[name="apply"]').on('click', function () {
+      $('tr[type="info"]').show()
+      app.filter = []
+      var startDate = new Date($('.filter > .container > form > p > input[name="startdate"]').val()).getTime()
+      var endDate = new Date($('.filter > .container > form > p > input[name="enddate"]').val()).getTime()
+      var cloudcover = Number($('.filter > .container > form > p > input[name="cloudcover"]').val())
+      var coverage = Number($('.filter > .container > form > p > input[name="coverage"]').val())
+
+      $('tr[type="info"]').each(function () {
+        var imgRow = this
+        var imgProps = {
+          date: new Date($(this).find('[name="date"]').text()).getTime(),
+          clouds: Number($(this).find('[name="clouds"]').text().slice(0, -1)),
+          cover: Number($(this).find('[name="overlap"]').text().slice(0, -1))
+        }
+        if (imgProps.date > endDate || imgProps.date < startDate) { $(imgRow).hide() }
+        if (imgProps.clouds > cloudcover) { $(imgRow).hide() }
+        if (imgProps.cover < coverage) { $(imgRow).hide() }
+        if (!$(imgRow).is(':visible')) { app.filter.push($(imgRow).attr('uuid')) }
+      })
+
       $('.popup, .overlay').remove()
     })
   }
