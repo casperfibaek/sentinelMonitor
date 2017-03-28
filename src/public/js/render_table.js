@@ -97,18 +97,19 @@ app.render.table = function (info) {
 
     var projectLayerStyle = {
       'weight': 2,
-      'color': '#099c59'
+      'color': '#099c59',
+      'fillOpacity': 0
     }
 
     var intersectionStyle = {
       'weight': 0,
-      'fillColor': '#f44336',
-      'fillOpacity': 0.40
+      'fillColor': 'rgb(244, 67, 54)',
+      'fillOpacity': 0.20
     }
 
     var footprintStyle = {
       'weight': 2.5,
-      'color': 'rgb(58, 163, 191)',
+      'color': 'rgb(244, 67, 54)',
       'fillOpacity': 0
     }
 
@@ -157,7 +158,6 @@ app.render.table = function (info) {
         $('tbody').append(row)
         if (app.filter.indexOf(image.image_uuid) !== -1) { $(`tr[uuid="${image.image_uuid}"]`).hide() }
       }
-
       $('tr[type="info"]').click(function () {
         $('tr[type="info"]').removeClass('selected')
         $(this).addClass('selected')
@@ -168,6 +168,14 @@ app.render.table = function (info) {
         var thisImage = imgArray.filter(function (fl) { return fl.image_uuid === uid })[0]
         var thisIntersection = L.geoJSON(thisImage.intersection, {style: intersectionStyle})
         var thisFootprint = L.geoJSON(thisImage.footprint, {style: footprintStyle})
+
+        var lineOffset = 0
+        thisFootprint.setStyle({dashArray: '5'})
+        var loadingImage = setInterval(function () {
+          thisFootprint.setStyle({dashOffset: String(lineOffset)})
+          lineOffset += 1
+          if (lineOffset === 10) { lineOffset = 0 }
+        }, 100)
 
         /* TODO: WORK FROM HERE - add image overlay and panes */
         footprintsGroup.addLayer(thisIntersection)
@@ -184,6 +192,10 @@ app.render.table = function (info) {
         var img = new Image()
         img.crossOrigin = 'Anonymous'
         img.onload = function () {
+          clearInterval(loadingImage)
+          thisFootprint.setStyle({dashArray: '0', dashOffset: '0', weight: '0'})
+          thisIntersection.setStyle({fillOpacity: '0'})
+
           $('#viewport').attr('height', img.height)
           $('#viewport').attr('width', img.width)
 
@@ -201,56 +213,11 @@ app.render.table = function (info) {
 
           context.putImageData(canvasData, 0, 0)
           var imageURL = canvas.toDataURL('image/png')
-          var imageOverlay = L.imageOverlay(imageURL, thisFootprint.getBounds()).addTo(map)
+          var imageOverlay = L.imageOverlay(imageURL, thisFootprint.getBounds())
           footprintsGroup.addLayer(imageOverlay)
         }
         img.src = source
       })
-      /*
-      var timeout
-      var source
-      $('tr[type="info"]').hover(function () {
-        var rowUUID = $(this).attr('uuid')
-        var canvas = document.getElementById('viewport')
-        var context = canvas.getContext('2d')
-        context.clearRect(0, 0, canvas.width, canvas.height)
-
-        timeout = setTimeout(function () {
-          if (isLandsat(rowUUID)) {
-            source = L8Thumb(rowUUID)
-            // $('.mouseFollow > img').attr('src', source)
-          } else {
-            source = `/image?uuid=${rowUUID}`
-            // $('.mouseFollow > img').attr('src', source)
-          }
-          var img = new Image()
-          img.crossOrigin = 'Anonymous'
-          img.onload = function () {
-              // remove black
-            context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
-            var canvasData = context.getImageData(0, 0, 512, 512)
-            var pix = canvasData.data
-
-            for (var i = 0, n = pix.length; i < n; i += 4) {
-              if (pix[i] <= 2 && pix[i + 1] <= 2 && pix[i + 2] <= 2) {
-                pix[i + 3] = 0
-              }
-            }
-
-            context.putImageData(canvasData, 0, 0)
-            var img_ = canvas.toDataURL('image/png')
-
-            console.log(img_)
-          }
-          img.src = source
-          $('.mouseFollow').show()
-        }, 250)
-      }, function () {
-        clearTimeout(timeout)
-        // $('.mouseFollow > img[name="default"]').removeAttr('src')
-        $('.mouseFollow').hide()
-      })
-      */
     }
     addRows(imgArray)
 
