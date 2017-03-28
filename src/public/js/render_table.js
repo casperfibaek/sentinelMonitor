@@ -29,7 +29,6 @@ app.render.table = function (info) {
           </div>
           <div class="mapHolder">
             <div id="map"></div>
-            <p>Hold Ctrl or ⌘ to enlarge images</p>
           </div>
         </div>
         <div class="buttonHolder">
