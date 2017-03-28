@@ -182,7 +182,7 @@ app.render.table = function (info) {
         var context = canvas.getContext('2d')
 
         var img = new Image()
-        img.crossOrigin = 'Anonymous'
+        // img.crossOrigin = 'Anonymous'
         img.onload = function () {
           $('#viewport').attr('height', img.height)
           $('#viewport').attr('width', img.width)
