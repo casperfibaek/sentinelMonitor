@@ -35,9 +35,8 @@ module.exports = function (grunt) {
       build: {
         files: {
           'dist/public/js/app.min.js': [
-            'dist/public/js/ga.js',
+            'dist/public/js/ext_ga.js',
             'dist/public/js/ext_jquery.js',
-            'dist/public/js/ext_turf.js',
             'dist/public/js/ext_scrollbar.js',
             'dist/public/js/ext_leaflet.js',
             'dist/public/js/ext_editable.js',
@@ -66,10 +65,11 @@ module.exports = function (grunt) {
       target: {
         files: {
           'dist/public/css/app.min.css': [
-            'src/public/css/font-awesome.css',
+            'src/public/css/app.css',
             'src/public/css/spinners.css',
-            'src/public/css/leaflet.css',
-            'src/public/css/app.css'
+            'src/public/css/font-awesome.css',
+            'src/public/css/scrollbar.css',
+            'src/public/css/leaflet.css'
           ]
         }
       }

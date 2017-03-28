@@ -1,6 +1,6 @@
 'use strict'
 
-/* globals L */
+/* eslint-disable */
 
 /* A Draggable that does not update the element position
 and takes care of only bubbling to targetted path in Canvas mode. */

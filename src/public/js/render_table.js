@@ -76,7 +76,7 @@ app.render.table = function (info) {
     }
 
     var projectGeom = JSON.parse(info.siteFootprint)
-    var projectGeomArea = turf.area(projectGeom)
+    var projectGeomArea = turf.area(projectGeom) || 100
 
     var map = L.map('map', {
       center: [ 55.3322691334024, 10.3491210937499 ],
@@ -177,7 +177,6 @@ app.render.table = function (info) {
           if (lineOffset === 10) { lineOffset = 0 }
         }, 100)
 
-        /* TODO: WORK FROM HERE - add image overlay and panes */
         footprintsGroup.addLayer(thisIntersection)
         footprintsGroup.addLayer(thisFootprint)
         footprintsGroup.addLayer(L.geoJSON(projectGeom, {style: invisibleStyle}))
