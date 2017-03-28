@@ -1,7 +1,7 @@
 /* globals $ app cookies */
 app.render.popup = {
   deleteSite: function (sitename) {
-    console.log('rendered: popup(delete site?)')
+    // console.log('rendered: popup(delete site?)')
 
     if (typeof (sitename) === 'undefined') { console.log('Unable to get site identity') } else {
       var setup = `

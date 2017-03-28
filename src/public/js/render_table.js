@@ -1,12 +1,11 @@
 /* globals $ app turf L Image */
 app.render.table = function (info) {
-  console.log('rendered: sites')
+  // console.log('rendered: sites')
   var setup
   if (typeof (info) === 'undefined') {
     app.render.sites()
     console.log('error reading site information')
   } else {
-    console.log(info)
     setup = `
       <div class='tableScreen'>
         <h2>${info.sitename}</h2>

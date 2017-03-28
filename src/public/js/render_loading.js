@@ -1,6 +1,6 @@
 /* global $ app */
 app.render.loading = function (text) {
-  console.log('rendered: loading')
+  // console.log('rendered: loading')
   var message = ''
   if (text) {
     if (text !== 'undefined') {

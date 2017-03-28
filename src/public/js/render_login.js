@@ -1,6 +1,6 @@
 /* globals $ app cookies */
 app.render.login = function () {
-  console.log('rendered: login')
+  // console.log('rendered: login')
   var setup = `
   <div class='loginScreen'>
     <form>

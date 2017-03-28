@@ -3,7 +3,7 @@ app.render.sites = function () {
   window.location.hash = 'sites'
   app.render.loading('Loading sites..')
   app.database.getSites(cookies, function (res) {
-    console.log('rendered: sites')
+    // console.log('rendered: sites')
     var setup = `
       <div class='sitesScreen'>
         <h2>Monitoring</h2>
