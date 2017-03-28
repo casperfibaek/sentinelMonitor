@@ -81,7 +81,7 @@ app.render.create = function (user) {
 
     return new L.polygon(latlngs) // eslint-disable-line
   }
-  var click = function (e) {
+  var click = function (e, str) {
     var location = e.latlng
     var currentPoint = map.latLngToContainerPoint(location)
     var width = 60
@@ -115,7 +115,7 @@ app.render.create = function (user) {
         var display = response.display_name || 'undefined'
         if (typeof (display) !== 'undefined') {
           var concice = `${display.split(',').slice(-2)[0].slice(1)}, ${display.split(',').slice(-1)[0].slice(1)}`
-          $('input[name="projectname"]').val(concice)
+          if (str === 'undefined') { $('input[name="projectname"]').val(concice) } else { $('input[name="projectname"]').val(str) }
         }
       })
       .fail(function (xhr, status, error) {
@@ -123,8 +123,13 @@ app.render.create = function (user) {
       })
   }
 
+  var clickCount = 0
   map.on('click', function (e) {
-    click(e)
+    clickCount += 1
+    setTimeout(function () {
+      if (clickCount === 1) { click(e) }
+      clickCount = 0
+    }, 300)
   })
 
   $('input[name="searchClick"]').click(function () {
@@ -142,12 +147,12 @@ app.render.create = function (user) {
           var display = top.display_name
           $('input[name="projectname"]').val(display)
           map.setView([lat, lng], 11)
+          click({latlng: L.latLng([lat, lng])}, display)
         })
         .fail(function (xhr, status, error) {
           console.log(xhr)
         })
     }
-    console.log($('input[name="search"]').val())
   })
 
   $('.satelliteHolder > .checkbox').on('click', function () {
@@ -193,7 +198,7 @@ app.render.create = function (user) {
           'date': $('input[name="startdate"]').val(),
           'sentinel1': $('.checkButton[name="sentinel1"]').is(':checked'),
           'sentinel2': $('.checkButton[name="sentinel2"]').is(':checked'),
-          'sentinel3': false, // $('.checkButton[name="sentinel3"]').is(':checked')
+          'sentinel3': false,
           'landsat8': $('.checkButton[name="landsat8"]').is(':checked')
         },
         'user': cookies
@@ -218,7 +223,7 @@ app.render.create = function (user) {
     }
 
     if (event.keyCode === 13) {
-      $('input[name="create"]').click()
+      $('.geocode > input[name="searchClick"]').click()
     }
   })
 }

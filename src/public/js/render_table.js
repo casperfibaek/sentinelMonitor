@@ -6,6 +6,7 @@ app.render.table = function (info) {
     app.render.sites()
     console.log('error reading site information')
   } else {
+    console.log(info)
     setup = `
       <div class='tableScreen'>
         <h2>${info.sitename}</h2>
@@ -132,6 +133,11 @@ app.render.table = function (info) {
         var hours = image.time_local.slice(11, 16)
         if (typeof image.footprint === 'string') { image.footprint = JSON.parse(image.footprint) }
         image.intersection = turf.intersect(image.footprint, projectGeom)
+
+        // TODO: Figure out why i sometimes get images that dont overlap properly.
+        // TODO: fix the hack below
+        if (typeof image.intersection === 'undefined') { continue }
+
         image.overlap = (turf.area(image.intersection) / projectGeomArea) * 100
         if (isLandsat(image.image_uuid)) {
           image.link = L8Index(image.image_uuid)
@@ -317,34 +323,6 @@ app.render.table = function (info) {
         'top': e.pageY + 20
       })
     })
-
-    // $(document).on('keydown', function (event) {
-    //   if (event.keyCode === 17 || event.ctrlKey) {
-    //     $('.mouseFollow').css({
-    //       height: '400px',
-    //       width: '400px'
-    //     })
-    //     $('.mouseFollow > img').css({
-    //       height: '406px',
-    //       width: '406px',
-    //       filter: 'saturate(105%) contrast(110%)'
-    //     })
-    //   }
-    // })
-
-    // $(document).on('keyup', function (event) {
-    //   if (event.keyCode === 17 || event.ctrlKey) {
-    //     $('.mouseFollow').css({
-    //       height: '200px',
-    //       width: '200px'
-    //     })
-    //     $('.mouseFollow > img').css({
-    //       height: '206px',
-    //       width: '206px',
-    //       filter: 'saturate(100%) contrast(100%)'
-    //     })
-    //   }
-    // })
   }
 }
 

@@ -56,8 +56,8 @@ app.render.popup = {
           <form>
             <p>From:<input class="date" type="date" name="startdate" value="${todayMinusThreeMonths}"/></p>
             <p>To:<input class="date" type="date" name="enddate" value="${today}"/></p>
-            <p>Max Cloudcover (%)<input class="number" type="number" max="100" min="0" name="cloudcover" value="15"/></p>
-            <p>Min Coverage (%)<input class="number" type="number" max="100" min="0" name="coverage" value="50"/></p>
+            <p class="clouds">Max Clouds (%) <i class="fa fa-cloud" aria-hidden="true"></i><input class="number" type="number" max="100" min="0" name="cloudcover" value="15"/></p>
+            <p class="overlap">Min Overlap (%) <img src="css/images/overlap.png" /><input class="number" type="number" max="100" min="0" name="coverage" value="50"/></p>
           </form>
           <div class="buttonHolder">
             <input type="button" name="apply" class="button" value="Apply">
