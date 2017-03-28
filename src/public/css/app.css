@@ -753,10 +753,10 @@ img[role="presentation"] {
   z-index: 1011;
 }
 
-.mouseFollow > canvas {
+/*.mouseFollow > canvas {
   height: 512px;
   width: 512px;
-}
+}*/
 /*
 .mouseFollow > img {
   background-repeat: no-repeat;

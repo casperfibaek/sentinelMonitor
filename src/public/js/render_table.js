@@ -186,9 +186,15 @@ app.render.table = function (info) {
         img.onload = function () {
             // remove black
           // context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
-          context.drawImage(img, 0, 0)
+          console.log(img.height)
+          console.log(img.width)
+
+          $('#viewport').height(img.height)
+          $('#viewport').width(img.width)
+          
+          context.drawImage(img, 0, 0, img.height, img.width)
           // var canvasData = context.getImageData(0, 0, 512, 512)
-          var canvasData = context.getImageData(0, 0, canvas.height, canvas.width)
+          var canvasData = context.getImageData(0, 0, img.height, img.width)
           var pix = canvasData.data
 
           for (var i = 0, n = pix.length; i < n; i += 4) {
