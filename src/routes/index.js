@@ -30,4 +30,20 @@ router.get('/image', function (req, res, next) {
   }
 })
 
+router.get('/landsat', function (req, res, next) {
+  if (req.query.uuid) {
+    var link = `${encodeURI(req.query.uuid)}`
+    request(link, {
+      'timeout': 900000,
+      'gzip': true
+    })
+      .on('error', function (err) {
+        console.log(err)
+      })
+      .pipe(res)
+  } else {
+    return res.status(200).json({status: 'success', message: 'bad link'})
+  }
+})
+
 module.exports = router

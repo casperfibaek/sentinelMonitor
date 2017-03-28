@@ -176,13 +176,13 @@ app.render.table = function (info) {
         map.fitBounds(footprintsGroup.getBounds({'padding': [250, 250]}))
 
         var source
-        if (isLandsat(uid)) { source = L8Thumb(uid) } else { source = `/image?uuid=${uid}` }
+        if (isLandsat(uid)) { source = `/landsat?uuid=${L8Thumb(uid)}` } else { source = `/image?uuid=${uid}` }
 
         var canvas = document.getElementById('viewport')
         var context = canvas.getContext('2d')
 
         var img = new Image()
-        // img.crossOrigin = 'Anonymous'
+        img.crossOrigin = 'Anonymous'
         img.onload = function () {
           $('#viewport').attr('height', img.height)
           $('#viewport').attr('width', img.width)
