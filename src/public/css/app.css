@@ -753,6 +753,14 @@ img[role="presentation"] {
   z-index: 1011;
 }
 
+#viewport {
+  height: auto;
+  width: auto;
+  position: absolute;
+  z-index: 9001;
+  margin: 0 auto;
+}
+
 /*.mouseFollow > canvas {
   height: 512px;
   width: 512px;

@@ -42,11 +42,12 @@ app.render.table = function (info) {
       </div>
     `
     $('#app').empty().append(setup) // <img name="default"/>
-    $('#app').prepend(`
-    <div class='mouseFollow'>
-      <canvas id="viewport" width="auto" height="auto"></canvas>
-    </div>
-    `)
+    $('#app').prepend(`<canvas id="viewport" width="auto" height="auto"></canvas>`)
+    // $('#app').prepend(`
+    // <div class='mouseFollow'>
+    //   <img name="default"/>
+    // </div>
+    // `)
 
     window.location.hash = info.sitename
     var imgArray = info.images
@@ -191,7 +192,7 @@ app.render.table = function (info) {
 
           $('#viewport').height(img.height)
           $('#viewport').width(img.width)
-          
+
           context.drawImage(img, 0, 0, img.height, img.width)
           // var canvasData = context.getImageData(0, 0, 512, 512)
           var canvasData = context.getImageData(0, 0, img.height, img.width)
