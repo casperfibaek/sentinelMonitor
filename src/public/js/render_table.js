@@ -76,9 +76,6 @@ app.render.table = function (info) {
       return `https://scihub.copernicus.eu/dhus/odata/v1/Products('${id}')/$value`
     }
 
-    var canvas = document.getElementById('viewport')
-    var context = canvas.getContext('2d')
-
     var projectGeom = JSON.parse(info.siteFootprint)
     var projectGeomArea = turf.area(projectGeom)
 
@@ -182,24 +179,23 @@ app.render.table = function (info) {
         var source
         if (isLandsat(uid)) { source = L8Thumb(uid) } else { source = `/image?uuid=${uid}` }
 
+        var canvas = document.getElementById('viewport')
+        var context = canvas.getContext('2d')
+
         var img = new Image()
         img.crossOrigin = 'Anonymous'
         img.onload = function () {
-            // remove black
-          // context.drawImage(img, 0, 0, 512, 512 * img.height / img.width)
-          console.log(img.height)
-          console.log(img.width)
+          $('#viewport').attr('height', img.height)
+          $('#viewport').attr('width', img.width)
 
-          $('#viewport').height(img.height)
-          $('#viewport').width(img.width)
-
-          context.drawImage(img, 0, 0, img.height, img.width)
-          // var canvasData = context.getImageData(0, 0, 512, 512)
-          var canvasData = context.getImageData(0, 0, img.height, img.width)
+          context.drawImage(img, 0, 0, img.width, img.height)
+          var canvasData = context.getImageData(0, 0, img.width, img.height)
           var pix = canvasData.data
+          var cutoff = 10
 
+          // remove black
           for (var i = 0, n = pix.length; i < n; i += 4) {
-            if (pix[i] <= 2 && pix[i + 1] <= 2 && pix[i + 2] <= 2) {
+            if (pix[i] <= cutoff && pix[i + 1] <= cutoff && pix[i + 2] <= cutoff) {
               pix[i + 3] = 0
             }
           }

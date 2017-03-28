@@ -754,11 +754,13 @@ img[role="presentation"] {
 }
 
 #viewport {
+  display: none;
   height: auto;
   width: auto;
-  position: absolute;
+  position: fixed;
   z-index: 9001;
-  margin: 0 auto;
+  left: 0;
+  top: 0;
 }
 
 /*.mouseFollow > canvas {
