@@ -1,6 +1,5 @@
 const path = require('path')
 const express = require('express')
-const port = process.env.PORT || 80
 const session = require('express-session')
 
 const basic = require('./routes/index')
@@ -10,8 +9,11 @@ const createSite = require('./routes/sites/createSite')
 const deleteSite = require('./routes/sites/deleteSite')
 const getImages = require('./routes/sites/getImages')
 
+var fs = require('fs')
+
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const port = process.env.PORT || 80
 const app = express()
 
 app.use(cors()) // Allow crossOrigin (remove after testing)
@@ -46,5 +48,21 @@ app.use(function (req, res, next) {
   })
 })
 app.set('port', port)
-app.listen(app.get('port'), '0.0.0.0')
-console.log('Monitor initialized..')
+
+var https = require('https')
+var privateKey = fs.readFileSync('../crt/privateKey.key').toString()
+var certificate = fs.readFileSync('../crt/certificate.crt').toString()
+var certRequest = fs.readFileSync('../crt/csr.pem').toString()
+var options = {
+  key: privateKey,
+  cert: certificate,
+  ca: certRequest
+}
+
+var redir = express()
+redir.get('/', function (req, res) {
+  res.redirect('https://monitor.trig.dk')
+})
+redir.listen(80, function () { console.log('HTTP Monitor Live') })
+
+https.createServer(options, app).listen(443, function () { console.log('HTTPS Monitor Live') })

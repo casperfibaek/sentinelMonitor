@@ -33,25 +33,25 @@ $(document).ready(function () {
   /**************************************************
                   EVENT LISTENERS
    **************************************************/
-  window.onhashchange = function () {
-    switch (window.location.hash) {
-      case ('#login'):
-        // app.render.loginScreen({'username': '', 'password': ''})
-        break
-      case ('#signup'):
-        // app.render.signupScreen({'username': '', 'password': ''})
-        break
-      case ('#sites'):
-        // app.render.sitesScreen()
-        break
-      case ('#home'):
-        // app.render.loginScreen()
-        console.log('went home')
-        break
-      case ('#about'):
-        // app.render.loginScreen()
-        console.log('asked about')
-        break
-    }
-  }
+  // window.onhashchange = function () {
+  //   switch (window.location.hash) {
+  //     case ('#login'):
+  //       // app.render.loginScreen({'username': '', 'password': ''})
+  //       break
+  //     case ('#signup'):
+  //       // app.render.signupScreen({'username': '', 'password': ''})
+  //       break
+  //     case ('#sites'):
+  //       // app.render.sitesScreen()
+  //       break
+  //     case ('#home'):
+  //       // app.render.loginScreen()
+  //       console.log('went home')
+  //       break
+  //     case ('#about'):
+  //       // app.render.loginScreen()
+  //       console.log('asked about')
+  //       break
+  //   }
+  // }
 })

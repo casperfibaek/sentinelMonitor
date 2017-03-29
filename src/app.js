@@ -63,9 +63,6 @@ var redir = express()
 redir.get('/', function (req, res) {
   res.redirect('https://monitor.trig.dk')
 })
-redir.listen(80, function () { console.log('redirect is live') })
+redir.listen(80, function () { console.log('HTTP Monitor Live') })
 
-https.createServer(options, app).listen(443)
-
-// app.listen(app.get('port'), '0.0.0.0')
-console.log('Monitor initialized..')
+https.createServer(options, app).listen(443, function () { console.log('HTTPS Monitor Live') })
