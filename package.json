@@ -17,6 +17,7 @@
     "bcrypt": "^1.0.2",
     "body-parser": "^1.16.1",
     "cors": "^2.8.1",
+    "crypto": "0.0.3",
     "express": "^4.14.1",
     "express-session": "^1.15.1",
     "geojson-precision": "^0.4.0",
