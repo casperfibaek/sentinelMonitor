@@ -12,8 +12,8 @@ const getImages = require('./routes/sites/getImages')
 var fs = require('fs')
 var http = require('http')
 var https = require('https')
-var privateKey = fs.readFileSync('..crt/privateKey.key', 'utf8')
-var certificate = fs.readFileSync('..crt/certificate.crt', 'utf8')
+var privateKey = fs.readFileSync('../crt/privateKey.key', 'utf8')
+var certificate = fs.readFileSync('../crt/certificate.crt', 'utf8')
 var credentials = {key: privateKey, cert: certificate}
 
 const bodyParser = require('body-parser')
