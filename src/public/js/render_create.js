@@ -48,7 +48,7 @@ app.render.create = function (user) {
     attributionControl: false
   })
 
-  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
     maxZoom: 21,
@@ -108,7 +108,7 @@ app.render.create = function (user) {
 
     $.ajax({
       type: 'GET',
-      url: `http://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=0`,
+      url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=0`,
       dataType: 'json'
     })
       .done(function (response) {
@@ -137,7 +137,7 @@ app.render.create = function (user) {
     if (field !== '') {
       $.ajax({
         type: 'GET',
-        url: `http://nominatim.openstreetmap.org/search?q=${field}&format=json&polygon=0&addressdetails=0`,
+        url: `https://nominatim.openstreetmap.org/search?q=${field}&format=json&polygon=0&addressdetails=0`,
         dataType: 'json'
       })
         .done(function (response) {

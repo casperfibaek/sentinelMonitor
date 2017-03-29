@@ -57,7 +57,7 @@ app.render.table = function (info) {
     var L8Index = function (id) {
       var path = id.slice(6, 9)
       var row = id.slice(3, 6)
-      return `http://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/index.html`
+      return `https://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/index.html`
     }
 
     var L8Thumb = function (id) {
@@ -83,7 +83,7 @@ app.render.table = function (info) {
       attributionControl: false
     })
 
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
         '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
       maxZoom: 21,

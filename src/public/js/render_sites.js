@@ -17,7 +17,7 @@ app.render.sites = function () {
     var L8Url = function (id) {
       var path = id.slice(6, 9)
       var row = id.slice(3, 6)
-      return `http://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/${id}_thumb_large.jpg`
+      return `https://landsat-pds.s3.amazonaws.com/L8/${row}/${path}/${id}/${id}_thumb_large.jpg`
     }
 
     if (res.status === 'success' && res.message.length !== 0) {
