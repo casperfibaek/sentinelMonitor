@@ -61,6 +61,10 @@ var options = {
 }
 
 http.createServer(app).listen(app.get('port'))
+http.get('*', function (req, res) {
+  res.redirect('https://monitor.trig.dk')
+})
+console.log(http.address().address)
 https.createServer(options, app).listen(443)
 
 // app.listen(app.get('port'), '0.0.0.0')
