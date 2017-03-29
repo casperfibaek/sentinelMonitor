@@ -18,7 +18,7 @@ require('greenlock-express').create({
   server: 'https://acme-v01.api.letsencrypt.org/directory',
   email: 'casperfibaek@gmail.com',
   agreeTos: true,
-  approveDomains: [ '35.187.84.157' ],
+  approveDomains: [ 'trig.dk/monitor' ],
   app: require('express')()
   .use(cors()) // Allow crossOrigin (remove after testing)
   .use(bodyParser.urlencoded({
