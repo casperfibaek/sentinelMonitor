@@ -10,6 +10,7 @@ const deleteSite = require('./routes/sites/deleteSite')
 const getImages = require('./routes/sites/getImages')
 
 var fs = require('fs')
+var ip = require("ip")
 
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -64,7 +65,7 @@ http.createServer(app).listen(app.get('port'))
 // http.get('*', function (req, res) {
 //   res.redirect('https://monitor.trig.dk')
 // })
-console.log(http.address().address)
+console.log(ip.address())
 https.createServer(options, app).listen(443)
 
 // app.listen(app.get('port'), '0.0.0.0')

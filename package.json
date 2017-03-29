@@ -23,6 +23,7 @@
     "geojson-precision": "^0.4.0",
     "greenlock-express": "^2.0.9",
     "hbs": "^4.0.1",
+    "ip": "^1.1.5",
     "jsonminify": "^0.4.1",
     "pg": "^6.1.2",
     "suncalc": "^1.8.0",
