@@ -1,0 +1,1 @@
+forever -o out.log -e err.log -l forever.log start app.js
