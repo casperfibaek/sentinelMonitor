@@ -49,19 +49,35 @@ app.use(function (req, res, next) {
 })
 app.set('port', port)
 
-var http = require('http')
+// var http = require('http')
 var https = require('https')
-var privateKey = fs.readFileSync('../crt/privateKey.key', 'utf8')
-var certificate = fs.readFileSync('../crt/certificate.crt', 'utf8')
-var certRequest = fs.readFileSync('../crt/csr.pem', 'utf8')
-var credentials = {
-  key: privateKey,
-  cert: certificate,
-  ca: certRequest
-}
+// var privateKey = fs.readFileSync('../crt/privateKey.key', 'utf8')
+// var certificate = fs.readFileSync('../crt/certificate.crt', 'utf8')
+// var certRequest = fs.readFileSync('../crt/csr.pem', 'utf8')
+// var credentials = {
+//   key: privateKey,
+//   cert: certificate,
+//   ca: certRequest
+// }
+//
+// http.createServer(app).listen(app.get('port'))
+// https.createServer(credentials, app).listen(443)
 
-http.createServer(app).listen(app.get('port'))
-https.createServer(credentials, app).listen(443)
+var options = {
+  key: fs.readFileSync('../crt/privateKey.key'),
+  cert: fs.readFileSync('../crt/certificate.crt'),
+  ca: fs.readFileSync('../crt/csr.pem'),
+  requestCert: true,
+  rejectUnauthorized: true
+}
+https.createServer(options, function (req, res) {
+  console.log(new Date() + ' ' +
+        req.connection.remoteAddress + ' ' +
+        req.socket.getPeerCertificate().subject.CN + ' ' +
+        req.method + ' ' + req.url)
+  res.writeHead(200)
+  res.end('hello world\n')
+}).listen(4433)
 
 // app.listen(app.get('port'), '0.0.0.0')
 console.log('Monitor initialized..')
