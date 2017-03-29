@@ -15,24 +15,29 @@ const cors = require('cors')
 // const app = express()
 
 // returns an instance of node-greenlock with additional helper methods
-var lex = require('greenlock-express').create({
-  server: 'https://acme-v01.api.letsencrypt.org/directory', // set to https://acme-v01.api.letsencrypt.org/directory in production
-  challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) },
-  store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' }),
-  approveDomains: approveDomains
-})
+// var lex = require('greenlock-express').create({
+//   server: 'https://acme-v01.api.letsencrypt.org/directory', // set to https://acme-v01.api.letsencrypt.org/directory in production
+//   challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) },
+//   store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' }),
+//   approveDomains: approveDomains
+// })
 
-function approveDomains (opts, certs, cb) {
-  if (certs) {
-    opts.domains = certs.altnames
-    opts.approveDomains = ['trig.dk']
-  } else {
-    opts.approveDomains = ['trig.dk']
-    opts.email = 'casperfibaek@gmail.com'
-    opts.agreeTos = true
+const lex = require('greenlock-express').create({
+  server: 'staging', // 'https://acme-v01.api.letsencrypt.org/directory',
+  agreeTos: true,
+  store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' }),
+  approveDomains: function approveDomains (opts, certs, cb) {
+    if (certs) {
+      opts.domains = certs.altnames
+    } else {
+      opts.email = 'casperfibaek@gmail.com'
+      opts.agreeTos = true
+      opts.domains = ['35.187.84.157']
+    }
+
+    cb(null, { options: opts, certs: certs })
   }
-  cb(null, { options: opts, certs: certs })
-}
+})
 
 require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function () {
   console.log('Listening for ACME http-01 challenges on', this.address())
