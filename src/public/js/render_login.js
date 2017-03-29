@@ -17,7 +17,7 @@ app.render.login = function () {
 
   $('#app').empty().append(setup)
 
-  window.location.hash = 'login'
+  // window.location.hash = 'login'
 
   $('form > .username').focus()
 

@@ -34,7 +34,7 @@ app.render.create = function (user) {
 
   $('#app').empty().append(setup)
 
-  window.location.hash = 'create'
+  // window.location.hash = 'create'
 
   $('input[name="projectname"]').focus()
 

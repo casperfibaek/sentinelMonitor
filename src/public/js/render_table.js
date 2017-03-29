@@ -43,7 +43,7 @@ app.render.table = function (info) {
     $('#app').empty().append(setup)
     $('#app').prepend(`<canvas id="viewport" width="auto" height="auto"></canvas>`)
 
-    window.location.hash = info.sitename
+    // window.location.hash = info.sitename
     var imgArray = info.images
 
     var round = function (num, roundTo) {

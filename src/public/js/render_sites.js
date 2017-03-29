@@ -1,6 +1,6 @@
 /* globals $ app cookies */
 app.render.sites = function () {
-  window.location.hash = 'sites'
+  // window.location.hash = 'sites'
   app.render.loading('Loading sites..')
   app.database.getSites(cookies, function (res) {
     var setup = `

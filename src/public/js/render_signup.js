@@ -18,7 +18,7 @@ app.render.signup = function (user) {
 
   $('#app').empty().append(setup)
 
-  window.location.hash = 'signup'
+  // window.location.hash = 'signup'
 
   app.render.logout.removeMessage()
 

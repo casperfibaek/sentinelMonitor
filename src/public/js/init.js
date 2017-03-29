@@ -26,9 +26,9 @@ $(document).ready(function () {
     }
   })
 
-  $('.logo').on('click', function () {
-    window.location.hash = '#home'
-  })
+  // $('.logo').on('click', function () {
+  //   window.location.hash = '#home'
+  // })
 
   /**************************************************
                   EVENT LISTENERS
