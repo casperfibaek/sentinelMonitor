@@ -15,7 +15,7 @@ const cors = require('cors')
 // const app = express()
 
 require('greenlock-express').create({
-  server: 'staging',
+  server: 'https://acme-v01.api.letsencrypt.org/directory',
   email: 'casperfibaek@gmail.com',
   agreeTos: true,
   approveDomains: [ '35.187.84.157' ],
