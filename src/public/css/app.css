@@ -28,7 +28,6 @@ h2{
 #app{
   background: rgba(18, 31, 40, 0.90);
   color: white;
-  width: 90%;
   max-width: 1200px;
   max-height: 700px;
   min-width: 300px;
