@@ -3,7 +3,6 @@ app.render.sites = function () {
   window.location.hash = 'sites'
   app.render.loading('Loading sites..')
   app.database.getSites(cookies, function (res) {
-    // console.log('rendered: sites')
     var setup = `
       <div class='sitesScreen'>
         <h2>Monitoring</h2>
@@ -38,11 +37,11 @@ app.render.sites = function () {
             <div class="head">
               <p class="name">${site.sitename}</p>
               <p class="date_top">${site.latest_image_time.slice(0, 10)}</p>
-              <p class="date_bottom">${site.latest_image_time.slice(11, 16)} GMT</p>
+              <p class="date_bottom">${site.latest_image_time.slice(11, 16)} UTC</p>
             </div>
             <div class="foot">
-              <div class="remove"><i class="fa fa-trash" aria-hidden="true"></i></div>
-              <div class="options"><i class="fa fa-cog" aria-hidden="true"></i></div>
+              <div class="remove" title="Remove the site"><i class="fa fa-trash" aria-hidden="true"></i></div>
+              <div class="options" title="Edit the site (currently doesn't work)"><i class="fa fa-cog" aria-hidden="true"></i></div>
             </div>
             <img src="${imgURL}" />
           </div>

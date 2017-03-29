@@ -40,13 +40,8 @@ app.render.table = function (info) {
         </div>
       </div>
     `
-    $('#app').empty().append(setup) // <img name="default"/>
+    $('#app').empty().append(setup)
     $('#app').prepend(`<canvas id="viewport" width="auto" height="auto"></canvas>`)
-    // $('#app').prepend(`
-    // <div class='mouseFollow'>
-    //   <img name="default"/>
-    // </div>
-    // `)
 
     window.location.hash = info.sitename
     var imgArray = info.images
@@ -154,7 +149,7 @@ app.render.table = function (info) {
           <td name="sun_azi" align="right">${round(image.sun_azimuth, 2)}\xB0</td>
           <td name="platform" align="center">${image.sat_name}</td>
           <td name="main" align="center">
-            <a href="${image.link}">
+            <a href="${image.link}" target="_blank">
               <i class="fa fa-external-link" aria-hidden="true"></i>
             </a>
           </td>
