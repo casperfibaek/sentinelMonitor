@@ -26,7 +26,7 @@ function approveDomains (opts, certs, cb) {
   if (certs) {
     opts.domains = certs.altnames
   } else {
-    opts.approveDomains = ['35.187.84.157']
+    opts.approveDomains = ['trig.dk']
     opts.email = 'casperfibaek@gmail.com'
     opts.agreeTos = true
   }
