@@ -10,11 +10,6 @@ const deleteSite = require('./routes/sites/deleteSite')
 const getImages = require('./routes/sites/getImages')
 
 var fs = require('fs')
-// var http = require('http')
-var https = require('https')
-var privateKey = fs.readFileSync('../crt/privateKey.key', 'utf8')
-var certificate = fs.readFileSync('../crt/certificate.crt', 'utf8')
-var credentials = {key: privateKey, cert: certificate}
 
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -54,7 +49,18 @@ app.use(function (req, res, next) {
 })
 app.set('port', port)
 
-// http.createServer(app).listen(app.get('port'))
+var http = require('http')
+var https = require('https')
+var privateKey = fs.readFileSync('../crt/privateKey.key', 'utf8')
+var certificate = fs.readFileSync('../crt/certificate.crt', 'utf8')
+var certRequest = fs.readFileSync('../crt/csr.pem', 'utf8')
+var credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca: certRequest
+}
+
+http.createServer(app).listen(app.get('port'))
 https.createServer(credentials, app).listen(443)
 
 // app.listen(app.get('port'), '0.0.0.0')
