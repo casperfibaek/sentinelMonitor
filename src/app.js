@@ -16,7 +16,7 @@ const cors = require('cors')
 
 // returns an instance of node-greenlock with additional helper methods
 var lex = require('greenlock-express').create({
-  server: 'staging', // set to https://acme-v01.api.letsencrypt.org/directory in production
+  server: 'https://acme-v01.api.letsencrypt.org/directory', // set to https://acme-v01.api.letsencrypt.org/directory in production
   challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) },
   store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' }),
   approveDomains: approveDomains
@@ -25,6 +25,7 @@ var lex = require('greenlock-express').create({
 function approveDomains (opts, certs, cb) {
   if (certs) {
     opts.domains = certs.altnames
+    opts.approveDomains = ['trig.dk']
   } else {
     opts.approveDomains = ['trig.dk']
     opts.email = 'casperfibaek@gmail.com'
