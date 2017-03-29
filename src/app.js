@@ -49,7 +49,6 @@ app.use(function (req, res, next) {
 })
 app.set('port', port)
 
-var http = require('http')
 var https = require('https')
 var privateKey = fs.readFileSync('../crt/privateKey.key').toString()
 var certificate = fs.readFileSync('../crt/certificate.crt').toString()
@@ -60,10 +59,12 @@ var options = {
   ca: certRequest
 }
 
-http.createServer().listen(80)
-http.get('/', function (req, res) {
+var redir = express()
+redir.get('/', function (req, res) {
   res.redirect('https://monitor.trig.dk')
 })
+redir.listen(80, function () { console.log('redirect is live') })
+
 https.createServer(options, app).listen(443)
 
 // app.listen(app.get('port'), '0.0.0.0')
