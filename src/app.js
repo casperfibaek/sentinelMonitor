@@ -60,7 +60,7 @@ var options = {
   ca: certRequest
 }
 
-http.createServer(app).listen(app.get('port'))
+http.createServer().listen(80)
 http.get('/', function (req, res) {
   res.redirect('https://monitor.trig.dk')
 })
