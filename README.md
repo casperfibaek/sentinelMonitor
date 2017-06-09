@@ -1,14 +1,7 @@
-# sentinelMonitor
+# Vågen
 
 Description:
-A tool for monitoring and downloading the newest sentinal images.
-
-Allows you to set various parameters, such as:
-  * Cloud cover percentage
-  * Sun Angle
-  * Interrest area
-  * Bands
-  * Satellite
+A management system for controlling data from Copernicus, Landsat and ASTER.
 
 Local application using electron
 Website using express/api
